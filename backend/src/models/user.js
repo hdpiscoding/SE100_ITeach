@@ -13,6 +13,14 @@ The models/index file will call this method automatically.*/
         targetKey: "key",
         as: "roleData",
       });
+      User.hasOne(models.Review, {
+        foreignKey: "userID",
+        as: "reviewsData",
+      });
+      User.hasMany(models.MyCourse, {
+        foreignKey: "courseId",
+        as: "myCoursesData",
+      });
     }
   }
   User.init(
@@ -22,7 +30,10 @@ The models/index file will call this method automatically.*/
       firstName: DataTypes.STRING,
       lastName: DataTypes.STRING,
       phoneNumber: DataTypes.STRING,
-      gender: DataTypes.STRING,
+      avatar: DataTypes.TEXT,
+      birthday: DataTypes.DATE,
+      totalCourseNumber: DataTypes.INTEGER,
+      totalStudentNumber: DataTypes.INTEGER,
       role: DataTypes.STRING,
     },
     {

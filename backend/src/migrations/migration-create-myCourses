@@ -2,44 +2,29 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Users", {
+    await queryInterface.createTable("MyCourses", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      email: {
+      userId: {
         type: Sequelize.STRING,
       },
-      password: {
+      courseId: {
         type: Sequelize.STRING,
       },
-      firstName: {
+      process: {
         type: Sequelize.STRING,
-      },
-      lastName: {
-        type: Sequelize.STRING,
-      },
+      }, // bài mấy chương mấy
+      numberOfprocess: {
+        type: Sequelize.INTERGER,
+      }, // bài sô bao nhiêu trên tổng số bài
 
-      phoneNumber: {
+      courseRole: {
         type: Sequelize.STRING,
-      },
-      avatar: {
-        type: Sequelize.BLOB("long"),
-      },
-      birthday: {
-        type: Sequelize.DATE,
-      },
-      totalCourseNumber: {
-        type: Sequelize.INTEGER,
-      },
-      totalStudentNumber: {
-        type: Sequelize.INTEGER,
-      },
-      role: {
-        type: Sequelize.STRING,
-      },
+      }, // CR1=giaoVien CR2=hocSinh
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -51,6 +36,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("Users");
+    await queryInterface.dropTable("myCourses");
   },
 };

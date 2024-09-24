@@ -12,14 +12,21 @@ The models/index file will call this method automatically.*/
         foreignKey: "role",
         as: "roleData",
       });
+      Allcode.hasMany(models.Course, {
+        foreignKey: "courseStatus",
+        as: "statusData",
+      });
+      Allcode.hasMany(models.MyCourse, {
+        foreignKey: "courseRole",
+        as: "courseRoleData",
+      });
     }
   }
   Allcode.init(
     {
       key: DataTypes.STRING,
       type: DataTypes.STRING,
-      valueEn: DataTypes.STRING,
-      valueVi: DataTypes.STRING,
+      value: DataTypes.STRING,
     },
     {
       sequelize,
