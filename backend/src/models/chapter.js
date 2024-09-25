@@ -7,16 +7,7 @@ module.exports = (sequelize, DataTypes) => {
 Helper method for defining associations.
 This method is not a part of Sequelize lifecycle.
 The models/index file will call this method automatically.*/
-    static associate(models) {
-      Chapter.belongsTo(models.Course, {
-        foreignKey: "courseId",
-        as: "courseData",
-      });
-      Chapter.hasMany(models.Lesson, {
-        foreignKey: "id",
-        as: "chapter",
-      });
-    }
+    static associate(models) {}
   }
   Chapter.init(
     {

@@ -4,7 +4,7 @@ import homeController from "../controller/homeController";
 const router = express.Router();
 const initWebRoutes = (app) => {
   ///////////////////////
-  router.all("*", auth);
+  //router.all("*", auth);
   //////////////////////
   router.get("/hello", homeController.handleHelloWorld);
   router.get("/xin-chao", homeController.hanldeXinChao);

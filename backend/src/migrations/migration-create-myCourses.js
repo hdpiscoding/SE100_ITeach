@@ -18,7 +18,7 @@ module.exports = {
       process: {
         type: Sequelize.STRING,
       }, // bài mấy chương mấy
-      numberOfprocess: {
+      numberOfProcess: {
         type: Sequelize.INTEGER,
       }, // bài sô bao nhiêu trên tổng số bài
 

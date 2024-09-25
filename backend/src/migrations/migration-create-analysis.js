@@ -21,7 +21,7 @@ module.exports = {
       income: {
         type: Sequelize.DOUBLE,
       },
-      lesson: {
+      totalLesson: {
         type: Sequelize.INTEGER,
       },
       newteacher: {
