@@ -21,6 +21,22 @@ The models/index file will call this method automatically.*/
         foreignKey: "courseId",
         as: "myCoursesData",
       });
+      User.hasMany(models.LessonComment, {
+        foreignKey: "id",
+        as: "user",
+      });
+      User.hasMany(models.Certificate, {
+        foreignKey: "id",
+        as: "user",
+      });
+      User.hasMany(models.CartItem, {
+        foreignKey: "id",
+        as: "user",
+      });
+      User.hasMany(models.Order, {
+        foreignKey: "id",
+        as: "user",
+      });
     }
   }
   User.init(

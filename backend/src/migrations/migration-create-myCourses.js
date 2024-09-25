@@ -2,37 +2,29 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Lessons", {
+    await queryInterface.createTable("MyCourses", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      chapterId: {
+      userId: {
         type: Sequelize.STRING,
       },
-      name: {
+      courseId: {
         type: Sequelize.STRING,
       },
-      video: {
-        type: Sequelize.TEXT("long"),
-      },
-      contentHtml: {
-        type: Sequelize.TEXT("long"),
-      },
-      contentMarkDown: {
-        type: Sequelize.TEXT("long"),
-      },
-      exerciseHtml: {
-        type: Sequelize.TEXT("long"),
-      },
-      exerciseMarkDown: {
-        type: Sequelize.TEXT("long"),
-      },
-      studyTime: {
-        type: Sequelize.DOUBLE,
-      },
+      process: {
+        type: Sequelize.STRING,
+      }, // bài mấy chương mấy
+      numberOfprocess: {
+        type: Sequelize.INTEGER,
+      }, // bài sô bao nhiêu trên tổng số bài
+
+      courseRole: {
+        type: Sequelize.STRING,
+      }, // CR1=giaoVien CR2=hocSinh
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -44,6 +36,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("lessons");
+    await queryInterface.dropTable("MyCourses");
   },
 };

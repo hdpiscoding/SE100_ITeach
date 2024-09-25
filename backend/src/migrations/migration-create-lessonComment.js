@@ -2,37 +2,26 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Lessons", {
+    await queryInterface.createTable("LessonComment", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      chapterId: {
+      lessonId: {
         type: Sequelize.STRING,
       },
-      name: {
+      parrentCommentId: {
         type: Sequelize.STRING,
       },
-      video: {
-        type: Sequelize.TEXT("long"),
+      userId: {
+        type: Sequelize.STRING,
       },
-      contentHtml: {
-        type: Sequelize.TEXT("long"),
+      content: {
+        type: Sequelize.TEXT,
       },
-      contentMarkDown: {
-        type: Sequelize.TEXT("long"),
-      },
-      exerciseHtml: {
-        type: Sequelize.TEXT("long"),
-      },
-      exerciseMarkDown: {
-        type: Sequelize.TEXT("long"),
-      },
-      studyTime: {
-        type: Sequelize.DOUBLE,
-      },
+
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -44,6 +33,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("lessons");
+    await queryInterface.dropTable("LessonComment");
   },
 };

@@ -19,16 +19,28 @@ The models/index file will call this method automatically.*/
         as: "statusData",
       });
       Course.hasMany(models.Review, {
-        foreignKey: "courseId",
+        foreignKey: "id",
         as: "reviewsData",
       });
       Course.hasMany(models.MyCourse, {
-        foreignKey: "courseId",
+        foreignKey: "id",
         as: "myCoursesData",
       });
       Course.hasMany(models.Chapter, {
-        foreignKey: "courseId",
+        foreignKey: "id",
         as: "chaptersData",
+      });
+      Course.hasMany(models.CartItem, {
+        foreignKey: "id",
+        as: "cartItemsData",
+      });
+      Course.hasOne(models.OrderItem, {
+        foreignKey: "id",
+        as: "course",
+      });
+      Course.hasMany(models.IDEUsed, {
+        foreignKey: "id",
+        as: "course",
       });
     }
   }

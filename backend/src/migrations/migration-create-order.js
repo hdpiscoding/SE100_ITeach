@@ -2,37 +2,29 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Lessons", {
+    await queryInterface.createTable("Chapter", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      chapterId: {
+      userId: {
         type: Sequelize.STRING,
       },
-      name: {
-        type: Sequelize.STRING,
+      date: {
+        type: Sequelize.DATE,
       },
-      video: {
-        type: Sequelize.TEXT("long"),
-      },
-      contentHtml: {
-        type: Sequelize.TEXT("long"),
-      },
-      contentMarkDown: {
-        type: Sequelize.TEXT("long"),
-      },
-      exerciseHtml: {
-        type: Sequelize.TEXT("long"),
-      },
-      exerciseMarkDown: {
-        type: Sequelize.TEXT("long"),
-      },
-      studyTime: {
+      totalCost: {
         type: Sequelize.DOUBLE,
       },
+      paymentMethod: {
+        type: Sequelize.STRING,
+      },
+      shipping: {
+        type: Sequelize.INTEGER,
+      },
+
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -44,6 +36,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("lessons");
+    await queryInterface.dropTable("Order");
   },
 };

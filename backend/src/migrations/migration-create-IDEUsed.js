@@ -2,29 +2,23 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("MyCourses", {
+    await queryInterface.createTable("IDEUsed", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      userId: {
-        type: Sequelize.STRING,
+      date: {
+        type: Sequelize.DATE,
       },
       courseId: {
         type: Sequelize.STRING,
       },
-      process: {
-        type: Sequelize.STRING,
-      }, // bài mấy chương mấy
-      numberOfprocess: {
-        type: Sequelize.INTERGER,
-      }, // bài sô bao nhiêu trên tổng số bài
+      number: {
+        type: Sequelize.INTEGER,
+      },
 
-      courseRole: {
-        type: Sequelize.STRING,
-      }, // CR1=giaoVien CR2=hocSinh
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -36,6 +30,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("myCourses");
+    await queryInterface.dropTable("IDEUseds");
   },
 };
