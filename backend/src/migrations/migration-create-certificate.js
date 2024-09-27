@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Certificate", {
+    await queryInterface.createTable("Certificates", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -10,10 +10,10 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       userId: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
       },
       lessonId: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
       },
       qr: {
         type: Sequelize.STRING,

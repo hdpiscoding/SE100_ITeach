@@ -1,7 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class LessonComment extends Model {
+  class LessonContent extends Model {
     /**
      
 Helper method for defining associations.
@@ -9,17 +9,20 @@ This method is not a part of Sequelize lifecycle.
 The models/index file will call this method automatically.*/
     static associate(models) {}
   }
-  LessonComment.init(
+  LessonContent.init(
     {
       lessonId: DataTypes.INTEGER,
-      parrentCommentId: DataTypes.STRING,
-      userId: DataTypes.INTEGER,
-      content: DataTypes.TEXT,
+
+      video: DataTypes.TEXT("long"),
+      contentHtml: DataTypes.TEXT("long"),
+      contentMarkDown: DataTypes.TEXT("long"),
+      exerciseHtml: DataTypes.TEXT("long"),
+      exerciseMarkDown: DataTypes.TEXT("long"),
     },
     {
       sequelize,
-      modelName: "LessonComment",
+      modelName: "LessonContent",
     }
   );
-  return LessonComment;
+  return LessonContent;
 };

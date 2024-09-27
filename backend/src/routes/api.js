@@ -1,14 +1,42 @@
 import express from "express";
 import teacherController from "../controller/teacherController";
-
+import adminController from "../controller/adminController";
 const router = express.Router();
 
 const initARoutes = (app) => {
   router.post(
-    "/api/create-new-course",
+    "/api/v1/create-new-course",
     teacherController.handleCreateNewCourse
   );
-
+  router.get("/api/v1/get-all-course", teacherController.handleGetAllCourse);
+  router.delete(
+    "/api/v1/delete-a-course",
+    teacherController.handleDeleteACourse
+  );
+  router.put("/api/v1/edit-a-course", teacherController.handleEditACourse);
+  router.get("/api/v1/get-my-course", teacherController.handleGetMyCourse);
+  router.post("/api/v1/post-a-lesson", teacherController.handleCreateNewLesson);
+  router.put("/api/v1/put-a-lesson", teacherController.handlePutALesson);
+  router.delete(
+    "/api/v1/delete-a-lesson",
+    teacherController.handleDeleteALesson
+  );
+  router.get("/api/v1/get-ide-use", teacherController.handleGetIDEUse);
+  router.post("/api/v1/post-ide-use", teacherController.handlePostIDEUse);
+  router.get("/api/v1/get-my-account", teacherController.handleGetMyAccount);
+  router.get("/api/v1/get-all-teacher", adminController.handleGetAllTeacher);
+  router.get(
+    "/api/v1/get-popular-teacher",
+    adminController.handleGetPopularTeacher
+  );
+  router.get(
+    "/api/v1/get-popular-course",
+    adminController.handleGetPopularCourse
+  );
+  router.get(
+    "/api/v1/get-analysis-information",
+    adminController.handleGetAnalysisInformation
+  );
   return app.use("/", router);
 };
 export default initARoutes;

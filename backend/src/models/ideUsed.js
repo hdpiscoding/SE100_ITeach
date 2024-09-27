@@ -12,7 +12,7 @@ The models/index file will call this method automatically.*/
   IDEUsed.init(
     {
       date: DataTypes.DATE,
-      courseId: DataTypes.STRING,
+      courseId: DataTypes.INTEGER,
       number: DataTypes.INTEGER,
     },
     {

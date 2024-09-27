@@ -11,7 +11,7 @@ The models/index file will call this method automatically.*/
   }
   CartItem.init(
     {
-      userId: DataTypes.STRING,
+      userId: DataTypes.INTEGER,
       courseId: DataTypes.STRING,
     },
     {

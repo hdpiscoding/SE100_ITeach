@@ -11,7 +11,7 @@ module.exports = {
       },
 
       userId: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
       },
       content: {
         type: Sequelize.TEXT("long"),
@@ -20,10 +20,10 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       courseId: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
       },
       teacherId: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
       },
     });
   },

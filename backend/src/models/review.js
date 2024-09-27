@@ -11,11 +11,11 @@ The models/index file will call this method automatically.*/
   }
   Review.init(
     {
-      userID: DataTypes.STRING,
+      userID: DataTypes.INTEGER,
       content: DataTypes.TEXT,
       star: DataTypes.INTEGER,
-      courseId: DataTypes.STRING,
-      teacherId: DataTypes.STRING,
+      courseId: DataTypes.INTEGER,
+      teacherId: DataTypes.INTEGER,
     },
     {
       sequelize,

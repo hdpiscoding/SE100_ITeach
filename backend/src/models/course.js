@@ -9,8 +9,9 @@ module.exports = (sequelize, DataTypes) => {
   Course.init(
     {
       courseName: DataTypes.STRING,
-      categoryId: DataTypes.INTEGER,
+      courseCategoryId: DataTypes.INTEGER,
       cost: DataTypes.DOUBLE,
+      level: DataTypes.STRING,
       discount: DataTypes.DOUBLE,
       totalStars: DataTypes.INTEGER,
       reviewers: DataTypes.INTEGER,
@@ -20,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
       gioiThieu: DataTypes.TEXT("long"),
       anhBia: DataTypes.TEXT("long"),
       chungchiId: DataTypes.STRING,
-      teacherId: DataTypes.STRING,
+      teacherId: DataTypes.INTEGER,
       totalLesson: DataTypes.INTEGER,
       totalStudent: DataTypes.INTEGER,
     },
