@@ -143,29 +143,23 @@ let getCartItems = (id) => {
 let getBoughtCourses = (id) => {
   return new Promise(async (resolve, reject) => {
     try {
-      let boughtCourses = await db.Order.findAll({
+      let myCourses = await db.MyCourse.findAll({
         where: { userId: id },
         include: [
           {
-            model: db.OrderItem,
-            include: [
-              {
-                model: db.Course,
-                as: "course",
-              },
-            ],
+            model: db.Course,
           },
         ],
       });
-      if (boughtCourses && boughtCourses.length > 0) {
+      if (myCourses && myCourses.length > 0) {
         resolve({
           errCode: 0,
-          data: boughtCourses,
+          data: myCourses,
         });
       } else {
         resolve({
           errCode: 1,
-          errMessage: "No bought courses found",
+          errMessage: "Not found any courses",
         });
       }
     } catch (e) {
@@ -214,6 +208,51 @@ let getAllCertificates = () => {
     }
   });
 };
+let postLessonComments = (data) => {
+  return new Promise(async (resolve, reject) => {
+    let parent = data.parentId ? data.parentId : null;
+    await db.LessonComment.create({
+      userId: data.userId,
+      lessonId: data.lessonId,
+      content: data.content,
+      parrentCommentId: parent,
+    });
+    resolve({
+      errCode: 0,
+      errMessage: "OK",
+    });
+    try {
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+let postReview = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await db.Review.create({
+        userId: data.userId,
+        courseId: data.courseId,
+        star: data.star,
+        content: data.content,
+      });
+      resolve({
+        errCode: 0,
+        errMessage: "OK",
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+let handleBuyCourse = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 module.exports = {
   getAllCourses,
   getAllCoursesCategories,
@@ -224,4 +263,7 @@ module.exports = {
   getBoughtCourses,
   getUnusedCourses,
   getAllCertificates,
+  postLessonComments,
+  postReview,
+  handleBuyCourse,
 };

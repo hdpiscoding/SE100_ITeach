@@ -32,7 +32,7 @@ const initWebRoutes = (app) => {
     studentController.handleCheckStudentBuyCourse
   );
   router.get(
-    "/api/v1/get-bought-courses",
+    "/api/v1/get-my-courses",
     studentController.handleGetBoughtCourses
   );
   router.get(
@@ -43,6 +43,12 @@ const initWebRoutes = (app) => {
     "/api/v1/get-all-certificates",
     studentController.handleGetAllCertificates
   );
+  router.post(
+    "/api/v1/post-lesson-comments",
+    studentController.handlePostLessonComments
+  );
+  router.post("/api/v1/post-review", studentController.handlePostReview);
+  router.post("/api/v1/buy-course", studentController.handleBuyCourse);
 
   return app.use("/", router);
 };

@@ -11,7 +11,7 @@ The models/index file will call this method automatically.*/
   }
   Review.init(
     {
-      userID: DataTypes.STRING,
+      userId: DataTypes.STRING,
       content: DataTypes.TEXT,
       star: DataTypes.INTEGER,
       courseId: DataTypes.STRING,

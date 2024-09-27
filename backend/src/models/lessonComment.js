@@ -11,9 +11,9 @@ The models/index file will call this method automatically.*/
   }
   LessonComment.init(
     {
-      lessonId: DataTypes.STRING,
-      parrentCommentId: DataTypes.STRING,
-      userId: DataTypes.STRING,
+      lessonId: DataTypes.INTEGER,
+      parrentCommentId: DataTypes.INTEGER,
+      userId: DataTypes.INTEGER,
       content: DataTypes.TEXT,
     },
     {
