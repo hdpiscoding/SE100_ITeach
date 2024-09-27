@@ -108,7 +108,7 @@ const handlePostReview = async (req, res) => {
   return res.status(200).json(response);
 };
 const handleBuyCourse = async (req, res) => {
-  if (!req.body.studentId || !req.body.courseId) {
+  if (!req.body.studentId || !req.body.totalCost || !req.body.oderItems) {
     return res.status(500).json({
       errCode: 1,
       errMessage: "Missing required parameter",

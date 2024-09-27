@@ -1,6 +1,7 @@
 require("dotenv").config();
 import bcrypt from "bcryptjs";
 import db from "../models/index";
+import { raw } from "body-parser";
 const { Op } = require("sequelize");
 let getAllCourses = async () => {
   return new Promise(async (resolve, reject) => {
@@ -245,9 +246,43 @@ let postReview = (data) => {
     }
   });
 };
-let handleBuyCourse = (data) => {
+let buyCourse = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
+      const order = await db.Order.create({
+        userId: data.studentId,
+        totalCost: data.totalCost,
+      });
+      const orderId = order.id;
+      for (const item of data.oderItems) {
+        await db.OrderItem.create({
+          orderId: orderId,
+          courseId: item,
+        });
+        const course = await db.Course.findOne({
+          where: { id: item },
+          raw: false,
+        });
+        if (course) {
+          course.totalStudent += 1;
+          await course.save();
+
+          // Tìm Teacher tương ứng
+          const teacher = await db.User.findOne({
+            where: { id: course.teacherId },
+            raw: false,
+          });
+          if (teacher) {
+            teacher.totalStudentNumber += 1;
+            await teacher.save();
+          }
+        }
+      }
+
+      resolve({
+        errCode: 0,
+        errMessage: "OK",
+      });
     } catch (e) {
       reject(e);
     }
@@ -265,5 +300,5 @@ module.exports = {
   getAllCertificates,
   postLessonComments,
   postReview,
-  handleBuyCourse,
+  buyCourse,
 };
