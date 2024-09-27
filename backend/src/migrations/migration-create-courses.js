@@ -15,8 +15,15 @@ module.exports = {
       courseCategoryId: {
         type: Sequelize.INTEGER,
       },
+      courseCategoryId: {
+        type: Sequelize.INTEGER,
+      },
       cost: {
         type: Sequelize.DOUBLE,
+      },
+
+      level: {
+        type: Sequelize.STRING,
       },
       discount: {
         type: Sequelize.DOUBLE,

@@ -8,6 +8,8 @@ module.exports = {
     host: process.env.DB_HOST,
     dialect: "postgres",
     logging: true,
+    timezone: "+7:00",
+    query: { raw: true },
   },
   test: {
     username: process.env.DB_USERNAME,

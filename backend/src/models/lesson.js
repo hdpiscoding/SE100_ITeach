@@ -11,13 +11,9 @@ The models/index file will call this method automatically.*/
   }
   Lesson.init(
     {
-      chapterId: DataTypes.STRING,
+      courseId: DataTypes.INTEGER,
       name: DataTypes.STRING,
-      video: DataTypes.TEXT("long"),
-      contentHtml: DataTypes.TEXT("long"),
-      contentMarkDown: DataTypes.TEXT("long"),
-      exerciseHtml: DataTypes.TEXT("long"),
-      exerciseMarkDown: DataTypes.TEXT("long"),
+      chapter: DataTypes.INTEGER,
       studyTime: DataTypes.DOUBLE,
     },
     {

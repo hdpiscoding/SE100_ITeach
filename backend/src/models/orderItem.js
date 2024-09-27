@@ -20,9 +20,9 @@ The models/index file will call this method automatically.*/
   }
   OrderItem.init(
     {
-      orderId: DataTypes.STRING,
-      courseId: DataTypes.STRING,
-      reviewId: DataTypes.STRING,
+      orderId: DataTypes.INTEGER,
+      courseId: DataTypes.INTEGER,
+      reviewId: DataTypes.INTEGER,
     },
     {
       sequelize,

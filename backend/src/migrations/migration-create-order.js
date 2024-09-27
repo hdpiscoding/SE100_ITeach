@@ -10,19 +10,11 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       userId: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
       },
-      date: {
-        type: Sequelize.DATE,
-      },
+
       totalCost: {
         type: Sequelize.DOUBLE,
-      },
-      paymentMethod: {
-        type: Sequelize.STRING,
-      },
-      shipping: {
-        type: Sequelize.INTEGER,
       },
 
       createdAt: {

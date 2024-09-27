@@ -16,11 +16,9 @@ The models/index file will call this method automatically.*/
   }
   Order.init(
     {
-      userId: DataTypes.STRING,
-      date: DataTypes.DATE,
+      userId: DataTypes.INTEGER,
+
       totalCost: DataTypes.DOUBLE,
-      paymentMethod: DataTypes.STRING,
-      shipping: DataTypes.INTEGER,
     },
     {
       sequelize,

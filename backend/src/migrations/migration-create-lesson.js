@@ -9,30 +9,20 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      chapterId: {
-        type: Sequelize.STRING,
+      courseId: {
+        type: Sequelize.INTEGER,
+      },
+      chapter: {
+        type: Sequelize.INTEGER,
       },
       name: {
         type: Sequelize.STRING,
       },
-      video: {
-        type: Sequelize.TEXT("long"),
-      },
-      contentHtml: {
-        type: Sequelize.TEXT("long"),
-      },
-      contentMarkDown: {
-        type: Sequelize.TEXT("long"),
-      },
-      exerciseHtml: {
-        type: Sequelize.TEXT("long"),
-      },
-      exerciseMarkDown: {
-        type: Sequelize.TEXT("long"),
-      },
+
       studyTime: {
         type: Sequelize.DOUBLE,
       },
+
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

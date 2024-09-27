@@ -11,8 +11,8 @@ module.exports = (sequelize, DataTypes) => {
   }
   MyCourse.init(
     {
-      userId: DataTypes.STRING,
-      courseId: DataTypes.STRING,
+      userId: DataTypes.INTEGER,
+      courseId: DataTypes.INTEGER,
       process: DataTypes.STRING, // bài mấy chương mấy
       numberOfProcess: DataTypes.INTEGER, // bài sô bao nhiêu trên tổng số bài
     },

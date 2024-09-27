@@ -11,7 +11,7 @@ The models/index file will call this method automatically.*/
   }
   Certificate.init(
     {
-      userId: DataTypes.STRING,
+      userId: DataTypes.INTEGER,
       lessonId: DataTypes.STRING,
       qr: DataTypes.STRING,
     },
