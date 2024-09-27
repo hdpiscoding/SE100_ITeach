@@ -3,13 +3,21 @@ const { Model } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
   class Course extends Model {
-    static associate(models) {}
+    static associate(models) {
+      Course.hasOne(models.CartItem, {
+        foreignKey: "courseId",
+      });
+      Course.hasOne(models.OrderItem, {
+        foreignKey: "courseId",
+        as: "course",
+      });
+    }
   }
 
   Course.init(
     {
       courseName: DataTypes.STRING,
-      categoryId: DataTypes.INTEGER,
+      courseCategoryId: DataTypes.INTEGER,
       cost: DataTypes.DOUBLE,
       discount: DataTypes.DOUBLE,
       totalStars: DataTypes.INTEGER,

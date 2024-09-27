@@ -7,7 +7,16 @@ module.exports = (sequelize, DataTypes) => {
 Helper method for defining associations.
 This method is not a part of Sequelize lifecycle.
 The models/index file will call this method automatically.*/
-    static associate(models) {}
+    static associate(models) {
+      // define association here
+      OrderItem.belongsTo(models.Order, {
+        foreignKey: "orderId",
+      });
+      OrderItem.belongsTo(models.Course, {
+        foreignKey: "courseId",
+        as: "course",
+      });
+    }
   }
   OrderItem.init(
     {

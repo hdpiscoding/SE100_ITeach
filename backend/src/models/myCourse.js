@@ -10,7 +10,6 @@ module.exports = (sequelize, DataTypes) => {
       courseId: DataTypes.STRING,
       process: DataTypes.STRING, // bài mấy chương mấy
       numberOfProcess: DataTypes.INTEGER, // bài sô bao nhiêu trên tổng số bài
-      courseRole: DataTypes.STRING, // CR1=giaoVien CR2=hocSinh
     },
     {
       sequelize,

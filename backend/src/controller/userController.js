@@ -3,16 +3,9 @@ import userService from "../service/userService";
 const handleHelloWorld = (req, res) => {
   return res.send("Hello World");
 };
-const hanldeXinChao = (req, res) => {
-  return res.send("Xin chào");
-};
+
 let handleCreateNewUser = async (req, res) => {
-  if (
-    !req.body.email ||
-    !req.body.password ||
-    !req.body.firstName ||
-    !req.body.lastName
-  ) {
+  if (!req.body.email || !req.body.password || !req.body.role) {
     return res.status(500).json({
       errCode: 1,
       message: "Missing required fields",
@@ -36,13 +29,20 @@ const handleLogin = async (req, res) => {
     access_token: userData.access_token ? userData.access_token : {},
   });
 };
-const handleGetAccount = async (req, res) => {
-  return res.status(200).json(req.user);
+const handleUpdateUserInfo = async (req, res) => {
+  let data = req.body;
+  let message = await userService.updateUserInfo(data);
+  return res.status(200).json(message);
+};
+const handleChangePassword = async (req, res) => {
+  let data = req.body;
+  let message = await userService.changePassword(data);
+  return res.status(200).json(message);
 };
 module.exports = {
   handleHelloWorld,
-  hanldeXinChao,
   handleCreateNewUser,
   handleLogin,
-  handleGetAccount,
+  handleUpdateUserInfo,
+  handleChangePassword,
 };

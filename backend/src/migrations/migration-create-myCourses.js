@@ -22,9 +22,6 @@ module.exports = {
         type: Sequelize.INTEGER,
       }, // bài sô bao nhiêu trên tổng số bài
 
-      courseRole: {
-        type: Sequelize.STRING,
-      }, // CR1=giaoVien CR2=hocSinh
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
