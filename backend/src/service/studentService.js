@@ -338,6 +338,12 @@ let buyCourse = (data) => {
             await teacher.save();
           }
         }
+        await db.MyCourse.create({
+          userId: data.studentId,
+          courseId: item,
+          process: "0",
+          numberOfProcess: 0,
+        });
       }
 
       resolve({
@@ -421,12 +427,14 @@ let getListChapters = (courseId) => {
       let chapters = await db.Chapter.findAll({
         where: { courseId: courseId },
         attributes: ["id", "chapterName", "courseId"],
+        order: [["id", "ASC"]],
 
         include: [
           {
             model: db.Lesson,
             as: "lessons",
             attributes: ["id", "name", "studyTime"],
+            order: [["id", "ASC"]],
           },
         ],
         nest: true,
@@ -498,6 +506,69 @@ let getLessonContent = (lessonId) => {
     }
   });
 };
+let addToCart = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await db.CartItem.create({
+        userId: data.studentId,
+        courseId: data.courseId,
+      });
+      resolve({
+        errCode: 0,
+        errMessage: "OK",
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+let completeLesson = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let myCourse = await db.MyCourse.findOne({
+        where: { userId: data.studentId, courseId: data.courseId },
+        raw: false,
+      });
+      if (myCourse) {
+        myCourse.numberOfProcess += 1;
+        myCourse.currentLessonId = data.lessonId;
+        await myCourse.save();
+      }
+      resolve({
+        errCode: 0,
+        errMessage: "OK",
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+let getCurrentLessonId = (courseId, studentId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let course = await db.MyCourse.findOne({
+        where: { userId: studentId, courseId: courseId },
+        attributes: ["currentLessonId"],
+        raw: true,
+      });
+      let currentId = course.currentLessonId;
+      if (currentId) {
+        resolve({
+          errCode: 0,
+          currentId,
+        });
+      } else {
+        resolve({
+          errCode: 1,
+          errMessage: "No course found",
+        });
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 module.exports = {
   getAllCourses,
   getAllCoursesCategories,
@@ -514,4 +585,7 @@ module.exports = {
   getDetailCourseInfo,
   getListChapters,
   getLessonContent,
+  addToCart,
+  completeLesson,
+  getCurrentLessonId,
 };

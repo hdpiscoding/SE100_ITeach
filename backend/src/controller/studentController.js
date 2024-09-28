@@ -147,6 +147,39 @@ const handleGetLessonContent = async (req, res) => {
   let response = await studentService.getLessonContent(req.query.lessonId);
   return res.status(200).json(response);
 };
+const handleAddToCart = async (req, res) => {
+  if (!req.body.studentId || !req.body.courseId) {
+    return res.status(500).json({
+      errCode: 1,
+      errMessage: "Missing required parameter",
+    });
+  }
+  let response = await studentService.addToCart(req.body);
+  return res.status(200).json(response);
+};
+const handleCompleteLesson = async (req, res) => {
+  if (!req.body.studentId || !req.body.lessonId || !req.body.courseId) {
+    return res.status(500).json({
+      errCode: 1,
+      errMessage: "Missing required parameter",
+    });
+  }
+  let response = await studentService.completeLesson(req.body);
+  return res.status(200).json(response);
+};
+const handleGetCurrentLessonId = async (req, res) => {
+  if (!req.query.courseId || !req.query.studentId) {
+    return res.status(500).json({
+      errCode: 1,
+      errMessage: "Missing required parameter",
+    });
+  }
+  let response = await studentService.getCurrentLessonId(
+    req.query.courseId,
+    req.query.studentId
+  );
+  return res.status(200).json(response);
+};
 module.exports = {
   handleGetAllCourses,
   handleGetAllCoursesCategories,
@@ -163,4 +196,7 @@ module.exports = {
   handleGetDetailCourseInfo,
   handleGetListChapters,
   handleGetLessonContent,
+  handleAddToCart,
+  handleCompleteLesson,
+  handleGetCurrentLessonId,
 };

@@ -61,6 +61,15 @@ const initWebRoutes = (app) => {
     "/api/v1/get-lesson-content",
     studentController.handleGetLessonContent
   );
+  router.post("/api/v1/add-to-cart", studentController.handleAddToCart);
+  router.put(
+    "/api/v1/complete-the-lesson",
+    studentController.handleCompleteLesson
+  );
+  router.get(
+    "/api/v1/get-current-lesson-id",
+    studentController.handleGetCurrentLessonId
+  );
 
   return app.use("/", router);
 };

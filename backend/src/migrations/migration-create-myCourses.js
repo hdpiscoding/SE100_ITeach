@@ -15,8 +15,8 @@ module.exports = {
       courseId: {
         type: Sequelize.INTEGER,
       },
-      process: {
-        type: Sequelize.STRING,
+      currentLessonId: {
+        type: Sequelize.INTEGER,
       }, // bài mấy chương mấy
       numberOfProcess: {
         type: Sequelize.INTEGER,
