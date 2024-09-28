@@ -53,6 +53,14 @@ const initWebRoutes = (app) => {
     "/api/v1/get-detail-course-info",
     studentController.handleGetDetailCourseInfo
   );
+  router.get(
+    "/api/v1/get-list-chapters",
+    studentController.handleGetListChapters
+  );
+  router.get(
+    "/api/v1/get-lesson-content",
+    studentController.handleGetLessonContent
+  );
 
   return app.use("/", router);
 };

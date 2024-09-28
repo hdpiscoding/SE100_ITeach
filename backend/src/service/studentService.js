@@ -364,12 +364,16 @@ let getDetailCourseInfo = (id) => {
           {
             model: db.CourseCategory,
             as: "category",
-            attributes: ["id", "name"],
+            attributes: ["id", "categoryName"],
           },
         ],
+        nest: true,
+        raw: true,
       });
-      let chapters = await db.Chapter.findAll({
+      result.chapters = await db.Chapter.findAll({
         where: { courseId: id },
+        attributes: ["id", "chapterName", "courseId"],
+
         include: [
           {
             model: db.Lesson,
@@ -377,16 +381,116 @@ let getDetailCourseInfo = (id) => {
             attributes: ["id", "name", "studyTime"],
           },
         ],
+        nest: true,
+        raw: true,
       });
-      if (course) {
+
+      result.reviews = await db.Review.findAll({
+        where: { courseId: id },
+        attributes: ["content", "star"],
+
+        include: [
+          {
+            model: db.User,
+            as: "user",
+            attributes: ["id", "firstName", "lastName", "avatar"],
+          },
+        ],
+        nest: true,
+        raw: true,
+      });
+      if (result) {
         resolve({
           errCode: 0,
-          data: course,
+          data: result,
         });
       } else {
         resolve({
           errCode: 1,
           errMessage: "Course not found",
+        });
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+let getListChapters = (courseId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let chapters = await db.Chapter.findAll({
+        where: { courseId: courseId },
+        attributes: ["id", "chapterName", "courseId"],
+
+        include: [
+          {
+            model: db.Lesson,
+            as: "lessons",
+            attributes: ["id", "name", "studyTime"],
+          },
+        ],
+        nest: true,
+        raw: true,
+      });
+      if (chapters && chapters.length > 0) {
+        resolve({
+          errCode: 0,
+          data: chapters,
+        });
+      } else {
+        resolve({
+          errCode: 1,
+          errMessage: "No chapters found",
+        });
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+let getLessonContent = (lessonId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let result = {};
+      result.content = await db.LessonContent.findOne({
+        where: { lessonId: lessonId },
+        attributes: [
+          "lessonId",
+          "video",
+          "contentHtml",
+          "contentMarkDown",
+          "exerciseHtml",
+          "exerciseMarkDown",
+        ],
+      });
+      result.comments = await db.LessonComment.findAll({
+        where: { lessonId: lessonId },
+        attributes: [
+          "id",
+          "content",
+          "userId",
+          "parrentCommentId",
+          "createdAt",
+        ],
+        include: [
+          {
+            model: db.User,
+            as: "userInfo",
+            attributes: ["id", "firstName", "lastName", "avatar"],
+          },
+        ],
+        nest: true,
+        raw: true,
+      });
+      if (result) {
+        resolve({
+          errCode: 0,
+          data: result,
+        });
+      } else {
+        resolve({
+          errCode: 1,
+          errMessage: "No lesson found",
         });
       }
     } catch (e) {
@@ -408,4 +512,6 @@ module.exports = {
   postReview,
   buyCourse,
   getDetailCourseInfo,
+  getListChapters,
+  getLessonContent,
 };

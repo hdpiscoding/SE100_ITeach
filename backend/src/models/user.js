@@ -12,6 +12,14 @@ The models/index file will call this method automatically.*/
         foreignKey: "teacherId",
         as: "teacher",
       });
+      User.hasMany(models.Review, {
+        foreignKey: "userId",
+        as: "user",
+      });
+      User.hasMany(models.LessonComment, {
+        foreignKey: "userId",
+        as: "userInfo",
+      });
     }
   }
   User.init(

@@ -27,9 +27,6 @@ module.exports = {
       exerciseMarkDown: {
         type: Sequelize.TEXT("long"),
       },
-      lessonConten: {
-        type: Sequelize.STRING,
-      },
 
       createdAt: {
         allowNull: false,

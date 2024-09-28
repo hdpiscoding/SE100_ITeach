@@ -127,6 +127,26 @@ const handleGetDetailCourseInfo = async (req, res) => {
   let response = await studentService.getDetailCourseInfo(req.query.id);
   return res.status(200).json(response);
 };
+const handleGetListChapters = async (req, res) => {
+  if (!req.query.courseId) {
+    return res.status(500).json({
+      errCode: 1,
+      errMessage: "Missing required parameter",
+    });
+  }
+  let response = await studentService.getListChapters(req.query.courseId);
+  return res.status(200).json(response);
+};
+const handleGetLessonContent = async (req, res) => {
+  if (!req.query.lessonId) {
+    return res.status(500).json({
+      errCode: 1,
+      errMessage: "Missing required parameter",
+    });
+  }
+  let response = await studentService.getLessonContent(req.query.lessonId);
+  return res.status(200).json(response);
+};
 module.exports = {
   handleGetAllCourses,
   handleGetAllCoursesCategories,
@@ -141,4 +161,6 @@ module.exports = {
   handlePostReview,
   handleBuyCourse,
   handleGetDetailCourseInfo,
+  handleGetListChapters,
+  handleGetLessonContent,
 };

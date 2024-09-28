@@ -53,7 +53,7 @@ module.exports = {
         type: Sequelize.STRING,
       },
       teacherId: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
       },
       totalLesson: {
         type: Sequelize.INTEGER,
