@@ -6,7 +6,28 @@ const { Op } = require("sequelize");
 let getAllCourses = async () => {
   return new Promise(async (resolve, reject) => {
     try {
-      let courses = await db.Course.findAll();
+      let courses = await db.Course.findAll({
+        attributes: [
+          "id",
+          "courseName",
+          "cost",
+          "discount",
+          "anhBia",
+          "intro",
+          "level",
+          "totalStudent",
+          "totalStars",
+        ],
+        include: [
+          {
+            model: db.CourseCategory,
+            as: "category",
+            attributes: ["id", "categoryName"],
+          },
+        ],
+        nest: true,
+        raw: true,
+      });
       if (courses && courses.length > 0) {
         resolve({
           errCode: 0,
@@ -149,6 +170,26 @@ let getBoughtCourses = (id) => {
         include: [
           {
             model: db.Course,
+            attributes: [
+              "id",
+              "courseName",
+              "cost",
+              "discount",
+              "anhBia",
+              "intro",
+              "level",
+
+              "totalStudent",
+            ],
+            include: [
+              {
+                model: db.CourseCategory,
+                as: "category",
+                attributes: ["id", "categoryName"],
+              },
+            ],
+            nest: true,
+            raw: true,
           },
         ],
       });
@@ -180,6 +221,26 @@ let getUnusedCourses = (id) => {
               {
                 model: db.Course,
                 as: "course",
+                attributes: [
+                  "id",
+                  "courseName",
+                  "cost",
+                  "discount",
+                  "anhBia",
+                  "intro",
+                  "level",
+
+                  "totalStudent",
+                ],
+                include: [
+                  {
+                    model: db.CourseCategory,
+                    as: "category",
+                    attributes: ["id", "categoryName"],
+                  },
+                ],
+                nest: true,
+                raw: true,
               },
             ],
           },
@@ -288,6 +349,51 @@ let buyCourse = (data) => {
     }
   });
 };
+let getDetailCourseInfo = (id) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let result = {};
+      result.course = await db.Course.findOne({
+        where: { id: id },
+        include: [
+          {
+            model: db.User,
+            as: "teacher",
+            attributes: ["id", "firstName", "lastName"],
+          },
+          {
+            model: db.CourseCategory,
+            as: "category",
+            attributes: ["id", "name"],
+          },
+        ],
+      });
+      let chapters = await db.Chapter.findAll({
+        where: { courseId: id },
+        include: [
+          {
+            model: db.Lesson,
+            as: "lessons",
+            attributes: ["id", "name", "studyTime"],
+          },
+        ],
+      });
+      if (course) {
+        resolve({
+          errCode: 0,
+          data: course,
+        });
+      } else {
+        resolve({
+          errCode: 1,
+          errMessage: "Course not found",
+        });
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 module.exports = {
   getAllCourses,
   getAllCoursesCategories,
@@ -301,4 +407,5 @@ module.exports = {
   postLessonComments,
   postReview,
   buyCourse,
+  getDetailCourseInfo,
 };

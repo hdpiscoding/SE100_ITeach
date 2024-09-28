@@ -49,6 +49,10 @@ const initWebRoutes = (app) => {
   );
   router.post("/api/v1/post-review", studentController.handlePostReview);
   router.post("/api/v1/buy-course", studentController.handleBuyCourse);
+  router.get(
+    "/api/v1/get-detail-course-info",
+    studentController.handleGetDetailCourseInfo
+  );
 
   return app.use("/", router);
 };
