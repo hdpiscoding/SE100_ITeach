@@ -37,6 +37,12 @@ const auth = (req, res, next) => {
     console.log(">>>Token:", token);
     try {
       //verify token
+      //verify token
+
+      //verify token
+
+      //verify token
+
       const decoded = verifyJWT(token);
       console.log(">>>Decoded:", decoded);
       req.user = {
