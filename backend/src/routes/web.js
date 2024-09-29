@@ -1,11 +1,11 @@
 import express from "express";
-import auth from "../middleware/auth";
+import { auth, checkPermission } from "../middleware/auth";
 import userController from "../controller/userController";
 import studentController from "../controller/studentController";
 const router = express.Router();
 const initWebRoutes = (app) => {
   ///////////////////////
-  //router.all("*", auth);
+  router.all("*", auth, checkPermission);
   //////////////////////
   router.get("/api/v1/hello", userController.handleHelloWorld);
   router.post("/api/v1/create-new-user", userController.handleCreateNewUser);

@@ -127,7 +127,7 @@ let updateUserInfo = (data) => {
           errMessage: "Missing required fields",
         });
       }
-      let user = await db.User.findOne({ where: { id: data.id } });
+      let user = await db.User.findOne({ where: { id: data.id }, raw: false });
       if (user) {
         user.firstName = data.firstName;
         user.lastName = data.lastName;
@@ -161,7 +161,7 @@ let changePassword = (data) => {
           errMessage: "Missing required fields",
         });
       }
-      let user = await db.User.findOne({ where: { id: data.id } });
+      let user = await db.User.findOne({ where: { id: data.id }, raw: false });
       let check = bcrypt.compareSync(data.oldPassword, user.password);
       if (user) {
         if (!check) {

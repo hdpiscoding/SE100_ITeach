@@ -145,6 +145,8 @@ let getCartItems = (id) => {
             attributes: ["courseName", "cost", "anhBia"],
           },
         ],
+        nest: true,
+        raw: true,
       });
       if (cart && cart.length > 0) {
         resolve({
@@ -192,6 +194,8 @@ let getBoughtCourses = (id) => {
             raw: true,
           },
         ],
+        nest: true,
+        raw: true,
       });
       if (myCourses && myCourses.length > 0) {
         resolve({
@@ -243,8 +247,12 @@ let getUnusedCourses = (id) => {
                 raw: true,
               },
             ],
+            nest: true,
+            raw: true,
           },
         ],
+        nest: true,
+        raw: true,
       });
       if (boughtCourses && boughtCourses.length > 0) {
         resolve({
