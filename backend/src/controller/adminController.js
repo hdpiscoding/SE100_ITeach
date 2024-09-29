@@ -12,7 +12,7 @@ let handleGetPopularCourse = async (req, res) => {
   return res.status(200).json(data);
 };
 let handleGetAnalysisInformation = async (req, res) => {
-  if (!req.body.year || !req.body.month) {
+  if (!req.body.year) {
     return res.status(500).json({
       errCode: 1,
       message: "Missing required parameters",

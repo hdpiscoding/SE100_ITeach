@@ -149,6 +149,60 @@ let handleGetMyAccount = async (req, res) => {
   let data = await teacherService.getMyAccountInformation(req.body);
   return res.status(200).json(data);
 };
+let handleGetAllStudentOfCourse = async (req, res) => {
+  let courseId = req.body.courseId;
+  if (!courseId) {
+    return res.status(500).json({
+      errCode: 1,
+      message: "Missing required fields",
+    });
+  }
+  let data = await teacherService.getAllStudentOfCourse(req.body);
+  return res.status(200).json(data);
+};
+let handleCreateNewChapter = async (req, res) => {
+  if (!req.body.courseId || !req.body.chapterName) {
+    return res.status(500).json({
+      errCode: 1,
+      message: "Missing required fields",
+    });
+  }
+  let data = await teacherService.createNewChapter(req.body);
+  return res.status(200).json(data);
+};
+let handleGetAllChapter = async (req, res) => {
+  let courseId = req.body.courseId;
+  if (!courseId) {
+    return res.status(500).json({
+      errCode: 1,
+      message: "Missing required fields",
+    });
+  }
+  let data = await teacherService.getAllChapter(req.body);
+  return res.status(200).json(data);
+};
+let handlePutAChapter = async (req, res) => {
+  let id = req.body.id;
+  if (!id) {
+    return res.status(500).json({
+      errCode: 1,
+      message: "Missing required fields",
+    });
+  }
+  let data = await teacherService.putAChapter(req.body);
+  return res.status(200).json(data);
+};
+let handleDeleteAChapter = async (req, res) => {
+  let id = req.body.id;
+  if (!id) {
+    return res.status(500).json({
+      errCode: 1,
+      message: "Missing required fields",
+    });
+  }
+  let data = await teacherService.deleteAChapter(req.body);
+  return res.status(200).json(data);
+};
 module.exports = {
   handleCreateNewCourse,
   handleGetAllCourse,
@@ -161,4 +215,9 @@ module.exports = {
   handleGetIDEUse,
   handlePostIDEUse,
   handleGetMyAccount,
+  handleGetAllStudentOfCourse,
+  handleCreateNewChapter,
+  handleGetAllChapter,
+  handlePutAChapter,
+  handleDeleteAChapter,
 };

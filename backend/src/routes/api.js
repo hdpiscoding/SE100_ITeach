@@ -1,6 +1,7 @@
 import express from "express";
 import teacherController from "../controller/teacherController";
 import adminController from "../controller/adminController";
+
 const router = express.Router();
 
 const initARoutes = (app) => {
@@ -36,6 +37,20 @@ const initARoutes = (app) => {
   router.get(
     "/api/v1/get-analysis-information",
     adminController.handleGetAnalysisInformation
+  );
+  router.get(
+    "/api/v1/get-all-student-of-course",
+    teacherController.handleGetAllStudentOfCourse
+  );
+  router.post(
+    "/api/v1/post-a-chapter",
+    teacherController.handleCreateNewChapter
+  );
+  router.get("/api/v1/get-all-chapter", teacherController.handleGetAllChapter);
+  router.put("/api/v1/put-a-chapter", teacherController.handlePutAChapter);
+  router.delete(
+    "/api/v1/delete-a-chapter",
+    teacherController.handleDeleteAChapter
   );
   return app.use("/", router);
 };

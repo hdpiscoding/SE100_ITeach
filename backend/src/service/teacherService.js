@@ -1,6 +1,7 @@
 require("dotenv").config();
 import { where } from "sequelize";
 import course from "../models/course";
+const { Op, fn, col, literal } = require("sequelize");
 import db from "../models/index";
 let createNewCourse = (data) => {
   return new Promise(async (resolve, reject) => {
@@ -285,7 +286,22 @@ let postIDEUse = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
       let IDEUsed = await db.IDEUsed.findOne({
-        where: { courseId: data.courseId, date: data.date },
+        where: {
+          courseId: data.courseId,
+          [Op.and]: [
+            literal(
+              `EXTRACT(YEAR FROM "date") = ${new Date(data.date).getFullYear()}`
+            ),
+            literal(
+              `EXTRACT(MONTH FROM "date") = ${
+                new Date(data.date).getMonth() + 1
+              }`
+            ),
+            literal(
+              `EXTRACT(DAY FROM "date") = ${new Date(data.date).getDate()}`
+            ),
+          ],
+        },
         raw: false,
       });
       if (IDEUsed) {
@@ -331,6 +347,128 @@ let getMyAccountInformation = (data) => {
     }
   });
 };
+let getAllStudentOfCourse = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let students = await db.MyCourse.findAll({
+        where: { courseId: data.courseId },
+        attributes: { exclude: ["createdAt", "updatedAt"] },
+        include: [
+          {
+            model: db.User,
+            attributes: { exclude: ["password", "createdAt", "updatedAt"] },
+          },
+        ],
+        raw: true,
+        nest: true,
+      });
+
+      if (!students) {
+        resolve({
+          errCode: 1,
+          errMessage: "No students found",
+        });
+      } else {
+        resolve({
+          errCode: 0,
+          errMessage: "OK",
+          students,
+        });
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+let createNewChapter = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await db.Chapter.create({
+        chapterName: data.chapterName,
+        courseId: data.courseId,
+      });
+      resolve({
+        errCode: 0,
+        errMessage: "OK",
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+let getAllChapter = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let chapters = await db.Chapter.findAll({
+        where: { courseId: data.courseId },
+        attributes: { exclude: ["createdAt", "updatedAt"] },
+        order: [["id", "ASC"]],
+      });
+      if (!chapters) {
+        resolve({
+          errCode: 1,
+          errMessage: "No chapter found",
+        });
+      } else {
+        resolve({
+          errCode: 0,
+          errMessage: "OK",
+          chapters,
+        });
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+let putAChapter = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let chapter = await db.Chapter.findOne({
+        where: { id: data.id },
+        raw: false, // Ensure id is an integer
+      });
+      if (chapter) {
+        chapter.chapterName = data.chapterName;
+        await chapter.save(); // Save the instance
+        resolve({
+          errCode: 0,
+          errMessage: "Edited",
+        });
+      } else {
+        resolve({
+          errCode: 1,
+          errMessage: "Chapter not found",
+        });
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+let deleteAChapter = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let chapter = await db.Chapter.findOne({
+        where: { id: parseInt(data.id) },
+      });
+      if (!chapter) {
+        resolve({
+          errCode: 2,
+          errMessage: "Invalid id",
+        });
+      }
+      await db.Chapter.destroy({ where: { id: parseInt(data.id) } });
+      resolve({
+        errCode: 0,
+        errMessage: "Deleted",
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
 module.exports = {
   createNewCourse,
   getAllCourses,
@@ -343,4 +481,9 @@ module.exports = {
   getIDEUse,
   postIDEUse,
   getMyAccountInformation,
+  getAllStudentOfCourse,
+  createNewChapter,
+  getAllChapter,
+  putAChapter,
+  deleteAChapter,
 };

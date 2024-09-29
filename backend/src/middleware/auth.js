@@ -19,7 +19,7 @@ const studentPaths = [
   "/api/v1/complete-the-lesson",
   "/api/v1/get-current-lesson-id",
 ];
-const teacherPaths = [];
+const teacherPaths = ["/api/v1/get-all-course", "/api/v1/create-new-course"];
 const adminPaths = [];
 const commonPaths = [
   "/api/v1/update-user-info",
