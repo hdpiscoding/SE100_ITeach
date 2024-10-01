@@ -12,7 +12,7 @@ The models/index file will call this method automatically.*/
   Certificate.init(
     {
       userId: DataTypes.INTEGER,
-      lessonId: DataTypes.STRING,
+      courseId: DataTypes.STRING,
       qr: DataTypes.STRING,
     },
     {

@@ -12,7 +12,7 @@ module.exports = {
       userId: {
         type: Sequelize.INTEGER,
       },
-      lessonId: {
+      courseId: {
         type: Sequelize.INTEGER,
       },
       qr: {
