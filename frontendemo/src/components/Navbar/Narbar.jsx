@@ -1,5 +1,5 @@
 import React from 'react';
-
+import Login_SignUp from '../Login_SignUp';
 const Narbar = () => {
   return (
     <nav className="p-7 flex justify-center">
@@ -15,6 +15,9 @@ const Narbar = () => {
         </li>
         <li>
           <a href="#" className="text-black">Về chúng tôi</a>
+        </li>
+        <li>
+          <Login_SignUp />
         </li>
       </ul>
     </nav>
