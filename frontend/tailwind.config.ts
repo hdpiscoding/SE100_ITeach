@@ -12,6 +12,9 @@ const config: Config = {
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
+			SignUp:'#0B7077',
+			bg:'#D2E6E4',
+			orange:'#FD661F',
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'
