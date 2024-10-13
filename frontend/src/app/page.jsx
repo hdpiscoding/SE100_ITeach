@@ -4,6 +4,7 @@ import React from 'react'
 import Navbar from '@/components/Navbar'
 import Banner from '@/components/Banner'
 import Home from '@/components/Home'
+import Footer from '@/components/Footer'
 
 
 const page = () => {
@@ -14,8 +15,9 @@ const page = () => {
     <Banner/>
   </div>
     <Home/>
+    <Footer/>
   </div>
-  )
+  ) 
 }
 
 export default page
