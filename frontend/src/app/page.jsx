@@ -7,6 +7,7 @@ import Home from '@/components/HomePage'
 import Footer from '@/components/Footer'
 import CoursePage from '@/components/CoursesPage'
 import Login from '@/components/Login'
+import SignIn from '@/components/SignIn'
 
 
 const page = () => {
@@ -21,7 +22,7 @@ const page = () => {
     
     {/* <Navbar></Navbar>
     <CoursePage/> */}
-    <Login/>
+    <SignIn></SignIn>
 
   </div>
   ) 

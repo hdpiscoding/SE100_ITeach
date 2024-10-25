@@ -4,8 +4,8 @@ import {Button} from '@/components/ui/button'
 const Login = () => {
   return (
     <div className='flex justify-center space-x-3 rounded-xl  w-fit pr-2'>
-        <Image className='inline-block' src="/assets/images/bg_signin.png" width={350} height={100} />
-        <div className=' w-[350px]'>
+        <Image className='inline-block' src="/assets/images/bg_signin.png" width={400} height={100} />
+        <div className=' w-[400px]'>
            <div className='flex justify-end mt-5'>
              <Image className='' src="/assets/images/close.png" width={20} height={20}/>
             </div>
@@ -22,7 +22,7 @@ const Login = () => {
             </div>
              </div>
             <Button className='bg-filter w-full rounded-2xl font-bold text-white text-1xl my-3'>Login</Button>
-           <div className='flex justify-center'> <h1 className=''>Or you can</h1></div>
+           <div className='flex justify-center mt-2'> <h1 className=''>Or you can</h1></div>
             <div className='bg-xanhface flex p-2 justify-center rounded-2xl space-x-2 my-3'>
             <Image className='inline-block' src="/assets/images/facebook.png" width={25} height={20}/>
             <h1 className='font-bold text-white'>Sign Up with Facebook</h1>
