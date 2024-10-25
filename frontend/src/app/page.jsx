@@ -6,6 +6,7 @@ import Banner from '@/components/Banner'
 import Home from '@/components/HomePage'
 import Footer from '@/components/Footer'
 import CoursePage from '@/components/CoursesPage'
+import Login from '@/components/Login'
 
 
 const page = () => {
@@ -18,8 +19,10 @@ const page = () => {
     <Home/>
     <Footer/> */}
     
-    <Navbar></Navbar>
-    <CoursePage/>
+    {/* <Navbar></Navbar>
+    <CoursePage/> */}
+    <Login/>
+
   </div>
   ) 
 }
