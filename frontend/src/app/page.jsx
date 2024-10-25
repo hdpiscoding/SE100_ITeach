@@ -3,19 +3,23 @@
 import React from 'react'
 import Navbar from '@/components/Navbar'
 import Banner from '@/components/Banner'
-import Home from '@/components/Home'
+import Home from '@/components/HomePage'
 import Footer from '@/components/Footer'
+import CoursePage from '@/components/CoursesPage'
 
 
 const page = () => {
   return (
   <div className=''>
-  <div className='bg-bg rounded-b-3xl' >
+  {/* <div className='bg-bg rounded-b-3xl' >
     <Navbar/>
     <Banner/>
   </div>
     <Home/>
-    <Footer/>
+    <Footer/> */}
+    
+    <Navbar></Navbar>
+    <CoursePage/>
   </div>
   ) 
 }

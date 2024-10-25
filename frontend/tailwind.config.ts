@@ -15,6 +15,7 @@ const config: Config = {
 			SignUp:'#0B7077',
 			bg:'#D2E6E4',
 			orange:'#FD661F',
+			filter:'#3DCBB1',
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'
