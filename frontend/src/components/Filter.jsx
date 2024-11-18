@@ -18,8 +18,8 @@ const Filter = () => {
        <div className='w-[300px] p-3 '>
            <div className='space-y-6'>
            <div className='flex justify-between'>
-             <button className='text-filter'>Filter</button>
-             <button className='text-filter bg-transparent' onClick={Clear}>Clear</button>
+             <button className='text-filter select-none'>Filter</button>
+             <button className='text-filter bg-transparent select-none' onClick={Clear}>Clear</button>
            </div>
           <div className='flex justify-between'> 
            <h1 className='font-bold'>Rating</h1>
@@ -76,19 +76,19 @@ const Filter = () => {
            </div>
            {checkedduration && (<div className='space-y-3'>
             <div className='space-x-2'>
-               <input type="checkbox" name="0-2" id="0-2" />
+               <input type="checkbox" className='accent-filter' name="0-2" id="0-2" />
                <label htmlFor="0-2">0-2 hours(9.4K)</label>
             </div>
             <div className='space-x-2'>
-               <input type="checkbox" name="3-5" id="3-5" />
+               <input type="checkbox" className='accent-filter' name="3-5" id="3-5" />
                <label htmlFor="3-5">3-5 Hours (4.1K)</label>
             </div>
             <div className='space-x-2'> 
-               <input type="checkbox" name="6-12" id="6-12" />
+               <input type="checkbox" className='accent-filter' name="6-12" id="6-12" />
                <label htmlFor="6-12">6-12 Hours (3.8K)</label>
             </div>
             <div className='space-x-2'>
-               <input type="checkbox" name="12+" id="12+" />
+               <input type="checkbox" className='accent-filter' name="12+" id="12+" />
                <label htmlFor="12+">12+ Hours (1K)</label>
             </div>
            </div>)}
@@ -100,31 +100,31 @@ const Filter = () => {
            </div>
             {checkedcategories && (<div className='space-y-3'>
             <div className='space-x-2'>
-               <input type="checkbox" name="Design" id="Design" />
+               <input type="checkbox" name="Design" className='accent-filter' id="Design" />
                <label htmlFor="Design">Design (3.2K)</label>
             </div>
             <div className='space-x-2'>
-               <input type="checkbox" name="Programming" id="Programming" />
+               <input type="checkbox" name="Programming" className='accent-filter' id="Programming" />
                <label htmlFor="Programming">Programming (1.4K)</label>
             </div>
             <div className='space-x-2'> 
-               <input type="checkbox" name="Business" id="Business" />
+               <input type="checkbox" name="Business" className='accent-filter' id="Business" />
                <label htmlFor="Business">Business & Marketing (809)</label>
             </div>
             <div className='space-x-2'>
-               <input type="checkbox" name="Finance" id="Finance" />
+               <input type="checkbox" name="Finance" className='accent-filter' id="Finance" />
                <label htmlFor="Finance">Finance (548)</label>
             </div>
             <div className='space-x-2'>
-               <input type="checkbox" name="Music & Film" id="Music & Film" />
+               <input type="checkbox" name="Music & Film"className='accent-filter' id="Music & Film" />
                <label htmlFor="Music & Film">Music & Film (1.9K)</label>
             </div>
             <div className='space-x-2'>
-               <input type="checkbox" name="Photo & Video" id="Photo & Video" />
+               <input type="checkbox" name="Photo & Video" className='accent-filter' id="Photo & Video" />
                <label htmlFor="Photo & Video">Photo & Video (2.3K)</label>
             </div>
             <div className='space-x-2'> 
-               <input type="checkbox" name="Writing" id="Writing" />
+               <input type="checkbox" name="Writing" className='accent-filter' id="Writing" />
                <label htmlFor="Writing">Writing (753)</label>
             </div>
            </div>)}

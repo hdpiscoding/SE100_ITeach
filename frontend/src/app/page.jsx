@@ -8,6 +8,7 @@ import Footer from '@/components/Footer'
 import CoursePage from '@/components/CoursesPage'
 import Login from '@/components/Login'
 import SignIn from '@/components/SignIn'
+import AboutUs from '@/components/AboutUs'
 
 
 const page = () => {
@@ -17,12 +18,14 @@ const page = () => {
     <Navbar/>
     <Banner/>
   </div>
-    <Home/>
+
     <Footer/> */}
     
     {/* <Navbar></Navbar>
     <CoursePage/> */}
-    <SignIn></SignIn>
+   {/* <AboutUs></AboutUs> */}
+      {/* <Login></Login> */}
+      {/* <Home></Home> */}
 
   </div>
   ) 
