@@ -1,5 +1,10 @@
 import { verifyJWT } from "./JWTAction";
-const nonSecurePaths = ["/api/v1/login", "/api/v1/create-new-user"];
+const nonSecurePaths = [
+  "/api/v1/login",
+  "/api/v1/create-new-user",
+  "/api/auth/google",
+  "/api/auth/google/callback",
+];
 const studentPaths = [
   "/api/v1/get-all-courses",
   "/api/v1/get-all-courses-categories",

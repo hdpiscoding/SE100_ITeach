@@ -10,7 +10,8 @@ import bodyParser from "body-parser";
 import { getDownloadURL } from "firebase/storage";
 const admin = require("firebase-admin");
 dotenv.config();
-
+const authRouter = require("./routes/auth");
+require("../passport");
 const app = express();
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
@@ -18,6 +19,7 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 //configViewEngine(app);
 initWebRoutes(app);
 initApiRoutes(app);
+app.use("/api/auth", authRouter);
 var serviceAccount = require(process.env.Credential);
 admin.initializeApp({
   credential: admin.credential.applicationDefault(),
