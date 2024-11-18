@@ -21,10 +21,10 @@ const page = () => {
 
     <Footer/> */}
     
-    {/* <Navbar></Navbar>
-    <CoursePage/> */}
+    {/* <Navbar></Navbar> */}
+    {/* <CoursePage/> */}
    {/* <AboutUs></AboutUs> */}
-      {/* <Login></Login> */}
+      <Login></Login>
       {/* <Home></Home> */}
 
   </div>
