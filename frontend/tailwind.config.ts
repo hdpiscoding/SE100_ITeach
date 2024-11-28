@@ -18,6 +18,8 @@ const config: Config = {
 			filter:'#3DCBB1',
 			gray:'#DDDDDD',
 			xanhface:'#1877F2',
+			process:'#00FFCB',
+			stroke:'#44AB96',
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'

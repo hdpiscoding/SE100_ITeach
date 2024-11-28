@@ -1,3 +1,4 @@
+'use client';
 import React from 'react'
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import Image from 'next/image'
@@ -14,12 +15,12 @@ const Filter = () => {
       setRatevalue('')
    }
   return (
-    <div className='drop-shadow-sm'>
-       <div className='w-[300px] p-3 '>
-           <div className='space-y-6'>
+   <div className='drop-shadow-sm'>
+       <div className='w-[300px] p-3 md:w-[250px] sm:w-[200px]'>
+           <div className='space-y-6 sm:space-y-4'>
            <div className='flex justify-between'>
-             <button className='text-filter select-none'>Filter</button>
-             <button className='text-filter bg-transparent select-none' onClick={Clear}>Clear</button>
+             <button className='text-filter select-none sm:text-sm'>Filter</button>
+             <button className='text-filter bg-transparent select-none sm:text-sm' onClick={Clear}>Clear</button>
            </div>
           <div className='flex justify-between'> 
            <h1 className='font-bold'>Rating</h1>
@@ -61,7 +62,7 @@ const Filter = () => {
                 </div>
                </RadioGroup>
              </div>
-             <div className='space-y-2'>
+             <div className='space-y-2 md:text-base sm:text-sm'>
              <h1>4.5 & up (5.8K)</h1>
              <h1>3.5 & up (1.2K)</h1>
              <h1>3.0 & up (867)</h1>
