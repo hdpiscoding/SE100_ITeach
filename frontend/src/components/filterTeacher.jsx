@@ -5,7 +5,12 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { Poppins } from 'next/font/google'
 
-const Filter = () => {
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  display: 'swap',
+})
+const FilterTeacher = () => {
    const [checkedrate, setCheckedrate] = useState(true)
    const [checkedduration, setCheckedduration] = useState(true)
    const [checkedcategories, setCheckedcategories] = useState(true)
@@ -131,38 +136,8 @@ const Filter = () => {
                <label htmlFor="Writing">Writing (753)</label>
             </div>
            </div>)}
-           
-           <div className='flex justify-between'> 
-           <h1 className='font-bold'>Software</h1>
-            {checkedsoftware ? <Image src="/assets/images/arrow_up.png" width={20} height={20} onClick={()=>setCheckedsoftware(!checkedsoftware)}/>
-             : <Image src="/assets/images/arrow_down.png" width={20} height={20} onClick={()=>setCheckedsoftware(!checkedsoftware)}/>}
-           </div>
-           <div className='flex justify-between'> 
-           <h1 className='font-bold'>Level</h1>
-            {checkedlevel ? <Image src="/assets/images/arrow_up.png" width={20} height={20} onClick={()=>setCheckedlevel(!checkedlevel)}/>
-             : <Image src="/assets/images/arrow_down.png" width={20} height={20} onClick={()=>setCheckedlevel(!checkedlevel)}/>}
-           </div>
-           {checkedlevel && (<RadioGroup defaultValue="">
-               <div className="flex items-center space-x-2">
-                 <RadioGroupItem value="All" id="All" className='text-filter border-filter' />
-                <label htmlFor="All">All Levels</label>
-               </div>
-               <div className="flex items-center space-x-2">
-               <RadioGroupItem value="Beginner" id="Beginner" className='text-filter border-filter'/>
-               <label htmlFor="Beginner">Beginner</label>
-                </div>
-                <div className="flex items-center space-x-2">
-               <RadioGroupItem value="Intermediate" id="Intermediate" className='text-filter border-filter'/>
-               <label htmlFor="Intermediate">Intermediate</label>
-                </div>
-                <div className="flex items-center space-x-2">
-               <RadioGroupItem value="Advanced" id="Advanced" className='text-filter border-filter'/>
-               <label htmlFor="Advanced">Advanced</label>
-                </div>
-               </RadioGroup>)}
-           
                <div className='flex justify-between'> 
-           <h1 className='font-bold'>Language</h1>
+           <h1 className='font-bold'>Số lượng học sinh</h1>
             {checkedlanguage ? <Image src="/assets/images/arrow_up.png" width={20} height={20} onClick={()=>setCheckedlanguage(!checkedlanguage)}/>
              : <Image src="/assets/images/arrow_down.png" width={20} height={20} onClick={()=>setCheckedlanguage(!checkedlanguage)}/>}
            </div>
@@ -173,4 +148,4 @@ const Filter = () => {
   )
 }
 
-export default Filter
+export default FilterTeacher

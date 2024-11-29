@@ -3,8 +3,10 @@ import React from "react";
 import Image from "next/image";
 import MarkdownIt from "markdown-it";
 import MDEditor from "@uiw/react-md-editor";
+import { useRouter } from "next/navigation";
 const md = new MarkdownIt();
 const Step1 = () => {
+  const router = useRouter();
   const [imagePreview, setImagePreview] = React.useState(null);
   const fileInputRef = React.useRef(null);
   const [markdownContent, setMarkdownContent] = React.useState("");
@@ -138,7 +140,7 @@ const Step1 = () => {
             <button className="bg-white text-orange px-5 py-2 rounded-md border border-orange">
               Xóa khóa học
             </button>
-            <button className="bg-orange text-white px-10 py-2 rounded-md">
+            <button onClick={()=>router.push("/step2")} className="bg-orange text-white px-10 py-2 rounded-md">
               Tiếp tục
             </button>
           </div>

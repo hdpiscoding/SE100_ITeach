@@ -20,6 +20,9 @@ const config: Config = {
 			xanhface:'#1877F2',
 			process:'#00FFCB',
 			stroke:'#44AB96',
+			stroke1:'#00DDC0',
+			textfilter:'#8c8c8c',
+			strokeswap:'#3DCBB1',
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'

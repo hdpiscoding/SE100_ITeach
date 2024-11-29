@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import Image from "next/image";
-import Filter from "@/components/Filter";
-import Coursecard from "@/components/Coursecard";
+import FilterTeacher from "@/components/filterTeacher";
+import TeacherCard from "@/components/teacherCard";
 import {
   Select,
   SelectContent,
@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const CoursesPage = () => {
+const TeacherAdmin = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const coursesPerPage = 12;
 
@@ -52,7 +52,7 @@ const CoursesPage = () => {
              width={5}
              height={5}
            />
-           <span className="text-orange font-bold"> Khóa học</span>
+           <span className="text-orange font-bold"> Giáo viên</span>
         
         
        </div>
@@ -99,10 +99,10 @@ const CoursesPage = () => {
           </div>
           <div>
             <div className="grid grid-cols-[1fr_4fr] gap-6">
-              <Filter />
+              <FilterTeacher />
               <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6">
                 {currentCourses.map((_, index) => (
-                  <Coursecard key={index} />
+                  <TeacherCard key={index} />
                 ))}
               </div>
             </div>
@@ -141,4 +141,4 @@ const CoursesPage = () => {
   );
 };
 
-export default CoursesPage;
+export default TeacherAdmin;

@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Filter from "@/components/Filter";
-import Coursecard from "@/components/Coursecard";
+import CourseCardAdmin from "@/components/courseCardAdmin";
 import {
   Select,
   SelectContent,
@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const CoursesPage = () => {
+const CoursesAdmin = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const coursesPerPage = 12;
 
@@ -61,7 +61,13 @@ const CoursesPage = () => {
    </div>
       <div className="grid grid-cols-[0.5fr_11fr_0.5fr] ">
         <div></div>
+        
         <div className="space-y-7 my-10">
+            <div className="flex justify-center space-x-10">
+                <span className="text-xl">Khóa học công khai</span>
+                <span className="text-xl text-orange">Khóa học chờ duyệt(99)</span>
+                <span className="text-xl ">Khóa học tạm ngưng</span>
+            </div>
           <div className="flex justify-between">
             <div className="flex lg:flex-row flex-col lg:space-x-5 space-y-3 lg:space-y-0">
               <div className="rounded-3xl border-filter border-2 lg:w-[300px] w-full flex justify-between py-1">
@@ -93,8 +99,7 @@ const CoursesPage = () => {
               </div>
             </div>
             <div className="space-x-1 md:text-base sm:text-sm">
-              <span>Showing {courses.length} results of</span>
-              <span className="text-filter font-bold">Java</span>
+              <span>2900 kết quả tìm kiếm</span>
             </div>
           </div>
           <div>
@@ -102,7 +107,7 @@ const CoursesPage = () => {
               <Filter />
               <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6">
                 {currentCourses.map((_, index) => (
-                  <Coursecard key={index} />
+                  <CourseCardAdmin key={index} />
                 ))}
               </div>
             </div>
@@ -141,4 +146,4 @@ const CoursesPage = () => {
   );
 };
 
-export default CoursesPage;
+export default CoursesAdmin;
