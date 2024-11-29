@@ -8,9 +8,9 @@ const Banner = () => {
       <div className='-ml-24'>
         <div className="rounded-lg w-fit bg-white p-1.5">Never stop learning</div>
         <div className='my-5 space-y-0'>
-          <h1 className='text-5xl text-SignUp font-bold'>"Sáng tạo tương lai,</h1>
-          <h1 className='text-5xl text-SignUp font-bold'>làm chủ công nghệ</h1>
-          <h1 className='text-5xl text-SignUp font-bold'>cùng ITeach!"</h1>
+          <h1 className='text-5xl text-DarkGreen font-bold'>"Sáng tạo tương lai,</h1>
+          <h1 className='text-5xl text-DarkGreen font-bold'>làm chủ công nghệ</h1>
+          <h1 className='text-5xl text-DarkGreen font-bold'>cùng ITeach!"</h1>
         </div>
         <div>
           <Button className='bg-orange'>HỌC NGAY</Button>

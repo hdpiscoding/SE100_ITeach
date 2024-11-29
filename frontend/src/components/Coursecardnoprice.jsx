@@ -5,9 +5,9 @@ const Coursecardnoprice = () => {
   return (
     <div className='rounded-md overflow-hidden bg-slate-100 w-[300px] space-y-3'>
            <div className='flex justify-center p-3'> 
-            <Image  width={50} height={50} src="/assets/images/online_course.png" />
+            <Image alt="online_course" width={50} height={50} src="/assets/images/online_course.png" />
             </div>
-            <h5 className='ml-2 text-center text-SignUp font-semibold text-2xl'>
+            <h5 className='ml-2 text-center text-DarkGreen font-semibold text-2xl'>
                Thuật toán
             </h5>
            <div className='flex justify-center'>
@@ -17,7 +17,7 @@ const Coursecardnoprice = () => {
            </div >
            
            <div className='flex justify-center p-2'>
-             <Button className='bg-white text-SignUp w-[150px]'>More</Button>
+             <Button className='bg-white text-DarkGreen w-[150px]'>More</Button>
             </div>
         </div>
   )

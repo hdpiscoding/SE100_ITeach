@@ -4,11 +4,11 @@ import { Button } from '@/components/ui/button'
 const Coursecard = () => {
   return (
         <div className='rounded-md overflow-hidden bg-slate-100 w-[300px] space-y-3'>
-            <Image  width={300} height={50} src="/assets/images/course.webp" />
+            <Image alt="course" width={300} height={50} src="/assets/images/course.webp" />
             <h5 className='mx-4'>
                 1-28 July 2022
             </h5>
-            <h3 className='font-bold text-SignUp mx-4'>
+            <h3 className='font-bold text-DarkGreen mx-4'>
                 Product Management Basic-Course
             </h3>
             <h4 className='mx-4'>
@@ -24,7 +24,7 @@ const Coursecard = () => {
                     $ 500
                 </span>
           </div >
-             <Button className='bg-SignUp m-2'>Enroll Now</Button>
+             <Button className='bg-DarkGreen m-2'>Enroll Now</Button>
             </div>
         </div>
         

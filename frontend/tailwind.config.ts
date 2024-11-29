@@ -9,16 +9,26 @@ const config: Config = {
   ],
   theme: {
   	extend: {
+		fontFamily: {
+			sans: ["Poppins", "sans-serif"], // Set Poppins as the default sans font
+		},
+
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
-			SignUp:'#0B7077',
+			DarkGreen:'#0B7077',
+			DarkGreen_Hover:'#1C8A91',
 			bg:'#D2E6E4',
 			orange:'#FD661F',
 			filter:'#3DCBB1',
 			gray:'#DDDDDD',
 			xanhface:'#1877F2',
-  			card: {
+			White:'#FFFFFF',
+			Lime: '#00DDC0',
+			DarkGray: '#A7A7A7',
+			LightGray: '#EEEEEE',
+			Red: '#D85B5B',
+			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'
   			},

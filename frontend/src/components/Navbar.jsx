@@ -1,32 +1,59 @@
+'use client';
 import React from 'react'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import { useState } from 'react'
+import Link from "next/link";
 const Navbar = () => {
-  const [Login, setLogin] = useState(true)
+  const [login, setLogin] = useState(true)
   return (
-    <div className='p-3 flex justify-around '>
-        <Image src='/assets/images/logo.png' alt='logo' width={200} height={15}  />
-        <ul className='p-5 flex space-x-40'>
-            <li className='active:text-orange hover:text-orange '><a  href="">Trang chủ</a></li>
-            <li className='active:text-orange hover:text-orange'><a href="">Quá trình</a></li>
-            <li className='active:text-orange hover:text-orange'><a href="">Khóa học</a></li>
-            <li className='active:text-orange hover:text-orange'><a href="">Về chúng tôi</a></li>
-        </ul>
-        {!Login ?(
-        <div className='p-3 space-x-5'>
-            <Button className='bg-white text-SignUp '>LOG IN</Button>
-            <Button className='bg-SignUp' >SIGN UP</Button>
-        </div>):
-        (
-        <div className='p-3 space-x-5'>
-            <Image className='inline-block' src="/assets/images/Search.png" width={30} height={30}/>
-            <Image  className='inline-block' src="/assets/images/Bag.png" width={30} height={30}/>
-            <Image  className='inline-block' src="/assets/images/user.png" width={30} height={30}/>
-        </div>
-        )}
-        
-    </div>
+      <div className="grid grid-cols-[0.5fr_11fr_0.5fr]">
+          <div className='p-3 flex col-start-2 justify-between'>
+              <Link href="/">
+                  <Image src='/assets/images/logo.png' alt='logo' width={200} height={15}/>
+              </Link>
+
+              <ul className='p-5 flex gap-24'>
+                  <li className='active:text-orange hover:text-orange font-semibold'>
+                      <Link href="">Trang chủ</Link>
+                  </li>
+
+                  <li className='active:text-orange hover:text-orange font-semibold'>
+                      <Link href="">Quá trình</Link>
+                  </li>
+
+                  <li className='active:text-orange hover:text-orange font-semibold'>
+                      <Link href="">Khóa học</Link>
+                  </li>
+
+                  <li className='active:text-orange hover:text-orange font-semibold'>
+                      <Link href="">Về chúng tôi</Link>
+                  </li>
+              </ul>
+              {!login ? (
+                      <div className='p-3 flex items-center gap-5'>
+                          <Button className='bg-white text-DarkGreen '>LOG IN</Button>
+                          <Button className='bg-DarkGreen'>SIGN UP</Button>
+                      </div>) :
+                  (
+                      <div className='p-3 flex items-center gap-5'>
+                          <Image alt="search" className='inline-block cursor-pointer' src="/assets/images/Search.png"
+                                 width={30} height={30}/>
+
+                          <Link href="/student/cart">
+                              <Image alt="bag" className='inline-block cursor-pointer' src="/assets/images/Bag.png"
+                                     width={30} height={30}/>
+                          </Link>
+
+                          <Link href="/student/account">
+                              <Image alt="user" className='inline-block cursor-pointer' src="/assets/images/user.png"
+                                     width={30} height={30}/>
+                          </Link>
+                      </div>
+                  )}
+
+          </div>
+      </div>
   )
 }
 
