@@ -46,7 +46,7 @@ const AboutUs = () => {
             </h1>
           </div>
           <div className="flex justify-center">
-            <p className="w-full md:w-[600px] text-white text-base md:text-xl text-center">
+            <p className="w-full text-white text-base md:text-xl text-center">
               From preschool to pre-tertiary, our students enjoy fun,
               interactive and relevant lessons and are empowered to think beyond
               the confines of the classroom.
@@ -100,6 +100,7 @@ const AboutUs = () => {
                 alt="aboutus"
                 width={500}
                 height={500}
+                className="h-[250px] md:h-[400px] lg:h-[500px] w-auto"
               />
             </div>
           </div>
@@ -110,6 +111,7 @@ const AboutUs = () => {
                 alt="aboutus"
                 width={500}
                 height={500}
+                className="h-[250px] md:h-[400px] lg:h-[500px] w-auto"
               />
             </div>
             <div className="space-y-3 md:space-y-5">
@@ -121,6 +123,7 @@ const AboutUs = () => {
                 alt="aboutus"
                 width={400}
                 height={10}
+
               />
               <p className="text-base md:text-lg lg:text-xl ">
                 Tất cả khóa học tại ITeach được xây dựng bởi các chuyên gia hàng
@@ -156,6 +159,7 @@ const AboutUs = () => {
                 alt="aboutus"
                 width={500}
                 height={500}
+                className="h-[250px] md:h-[400px] lg:h-[500px] w-auto"
               />
             </div>
           </div>

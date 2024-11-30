@@ -17,12 +17,12 @@ const Filter = () => {
       setRatevalue('')
    }
   return (
-   <div className='drop-shadow-lg border border-gray-200 rounded-lg bg-white text-textfilter h-fit'>
-       <div className='w-[300px] p-3 md:w-[250px] sm:w-[200px]'>
+   <div className='drop-shadow-lg border border-gray-200 rounded-lg bg-white text-textfilter h-fit lg:text-xl md:text-lg sm:text-sm text-xs'>
+       <div className='lg:w-[300px] p-3 md:w-[250px] sm:w-[200px] w-[150px]'>
            <div className='space-y-6 sm:space-y-4'>
            <div className='flex justify-between'>
-             <button className='text-filter select-none sm:text-sm'>Filter</button>
-             <button className='text-filter bg-transparent select-none sm:text-sm' onClick={Clear}>Clear</button>
+             <button className='text-filter select-none lg:text-xl md:text-lg sm:text-sm text-xs'>Filter</button>
+             <button className='text-filter bg-transparent select-none lg:text-xl md:text-lg sm:text-sm text-xs' onClick={Clear}>Clear</button>
            </div>
           <div className='flex justify-between'> 
            <h1 className='font-bold'>Rating</h1>

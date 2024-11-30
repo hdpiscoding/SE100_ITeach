@@ -63,16 +63,16 @@ const CoursesAdmin = () => {
         <div></div>
         
         <div className="space-y-7 my-10">
-            <div className="flex justify-center space-x-10">
-                <span className="text-xl">Khóa học công khai</span>
-                <span className="text-xl text-orange">Khóa học chờ duyệt(99)</span>
-                <span className="text-xl ">Khóa học tạm ngưng</span>
+            <div className="flex justify-center space-x-10 lg:text-xl md:text-lg sm:text-sm text-xs">
+                <span className="">Khóa học công khai</span>
+                <span className=" text-orange">Khóa học chờ duyệt(99)</span>
+                <span className=" ">Khóa học tạm ngưng</span>
             </div>
           <div className="flex justify-between">
             <div className="flex lg:flex-row flex-col lg:space-x-5 space-y-3 lg:space-y-0">
-              <div className="rounded-3xl border-filter border-2 lg:w-[300px] w-full flex justify-between py-1">
+              <div className="rounded-3xl border-filter border-2 lg:w-[300px] w-full flex justify-between lg:py-1">
                 <input
-                  className="outline-none lg:w-[270px] w-full ml-2"
+                  className="outline-none lg:w-[270px] w-full ml-2 lg:text-xl md:text-lg sm:text-sm text-xs"
                   type="text"
                   placeholder="Search courses..."
                 />
@@ -98,7 +98,7 @@ const CoursesAdmin = () => {
                 </Select>
               </div>
             </div>
-            <div className="space-x-1 md:text-base sm:text-sm">
+            <div className="space-x-1 lg:text-xl md:text-lg sm:text-sm text-xs">
               <span>2900 kết quả tìm kiếm</span>
             </div>
           </div>
