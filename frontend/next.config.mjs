@@ -20,6 +20,12 @@ const nextConfig = {
                 port: '',
                 pathname: '/Upload/cke/images/1_LOGO%20SHOW%20WEB/7_JavaScript/Javascript%20c%C6%A1%20ba%CC%89n/00_%20Javascript%20basic_Kteam.png',
             },
+            {
+                protocol: 'https',
+                hostname: 'img.allfootballapp.com',
+                port: '',
+                pathname: '/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp',
+            },
         ],
     },
 };

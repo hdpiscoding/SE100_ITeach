@@ -32,29 +32,29 @@ const StudentAccountPage = () => {
                 <div className="col-start-2 flex flex-col gap-6">
                     <div className="flex items-center justify-center">
                         <ul className="flex items-center justify-between gap-20 select-none">
-                            <li className={`cursor-pointer flex flex-col gap-0.5`} onClick={() => handleTabChange(0)}>
-                            <span className={`${tab === 0 ? "text-Lime" : "text-black"} hover:text-Lime font-semibold`}>
-                                Thông tin cá nhân
-                            </span>
+                            {["Thông tin cá nhân", "Mật khẩu", "Lịch sử mua hàng"].map((label, index) => (
+                                <li
+                                    key={index}
+                                    className="cursor-pointer flex flex-col gap-0.5"
+                                    onClick={() => handleTabChange(index)}
+                                >
+                                    {/* Text */}
+                                    <span
+                                        className={`font-semibold ${
+                                            tab === index ? "text-Lime scale-110" : "text-black scale-100"
+                                        } hover:text-Lime transition-transform duration-300 ease-in-out`}
+                                    >
+                                      {label}
+                                    </span>
 
-                                <div className={`border-t-[3px] rounded border-Lime ${tab !== 0 ? "invisible" : ""}`}/>
-                            </li>
-
-                            <li className="cursor-pointer flex flex-col gap-0.5" onClick={() => handleTabChange(1)}>
-                            <span className={`hover:text-Lime ${tab === 1 ? "text-Lime" : "text-black"} font-semibold`}>
-                                Mật khẩu
-                            </span>
-
-                                <div className={`border-t-[3px] rounded border-Lime ${tab !== 1 ? "invisible" : ""}`}/>
-                            </li>
-
-                            <li className="cursor-pointer flex flex-col gap-0.5" onClick={() => handleTabChange(2)}>
-                            <span className={`hover:text-Lime ${tab === 2 ? "text-Lime" : "text-black"} font-semibold`}>
-                                Lịch sử mua hàng
-                            </span>
-
-                                <div className={`border-t-[3px] rounded border-Lime ${tab !== 2 ? "invisible" : ""}`}/>
-                            </li>
+                                    {/* Underline bar */}
+                                    <div
+                                        className={`border-t-[3px] rounded border-Lime transition-all duration-300 ${
+                                            tab === index ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
+                                        }`}
+                                    />
+                                </li>
+                            ))}
                         </ul>
                     </div>
 
