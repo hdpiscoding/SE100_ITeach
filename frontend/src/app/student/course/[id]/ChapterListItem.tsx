@@ -11,7 +11,7 @@ export default function ChapterListItem(props: any) {
 
     return (
         <div className="flex flex-col">
-            <span className="font-semibold text-lg">
+            <span className="font-semibold text-lg text-left">
                 Chương {props.index}: {props.name}
             </span>
 

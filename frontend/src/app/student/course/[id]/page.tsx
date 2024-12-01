@@ -15,6 +15,8 @@ import LessonListItem from "@/app/student/course/[id]/LessonListItem";
 import {Progress} from "@/components/ui/progress";
 import RatingListItem from "@/app/student/course/[id]/RatingListItem";
 import {Pagination, Stack} from "@mui/material";
+import {FaUser} from "react-icons/fa";
+import { Textarea } from "@/components/ui/textarea"
 
 
 interface Teacher {
@@ -40,6 +42,12 @@ interface Review {
     avatar: string;
     rating: number;
     comment: string;
+}
+
+interface User {
+    id: number;
+    email: string;
+    avatar: string;
 }
 
 export default function CourseDetailPage() {
@@ -74,14 +82,18 @@ export default function CourseDetailPage() {
         }
     }, [tab]);
 
-    const [isBuy, setIsBuy] = useState<boolean>(true);
+    const [isBuy, setIsBuy] = useState<boolean>(false);
+    const [isFinish, setIsFinish] = useState<boolean>(false);
 
     // State for rating
+    const [user, setUser] = useState<User>({
+        id: 1,
+        email: "hdp@gmail.com",
+        avatar: ""
+    });
     const [averageRating, setAverageRating] = useState<number>(4.2);
     const [rating, setRating] = useState<number | null>(5);
-    const [email, setEmail] = useState<string>("");
     const [comment, setComment] = useState<string>("");
-    const [userAvatar, setUserAvatar] = useState<string>("");
     const [ratingCount, setRatingCount] = useState<number>(100);
     const [ratingValueList, setRatingValueList] = useState<number[]>([48, 30, 17, 4, 1]);
     const [reviews, setReviews] = useState<Array<Review>>(
@@ -96,7 +108,7 @@ export default function CourseDetailPage() {
             {
                 id: 2,
                 email: "user2@example.com",
-                avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
+                avatar: "",
                 rating: 4,
                 comment: "Khóa học cung cấp rất nhiều thông tin hữu ích, nhưng tôi hy vọng có thêm ví dụ thực tế để áp dụng ngay vào công việc."
             },
@@ -124,7 +136,7 @@ export default function CourseDetailPage() {
             {
                 id: 6,
                 email: "user6@example.com",
-                avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
+                avatar: "",
                 rating: 4,
                 comment: "Khóa học rất chất lượng, giảng viên giải thích rõ ràng, nhưng một số bài tập thực hành vẫn chưa đủ để người học nắm vững kiến thức."
             },
@@ -152,7 +164,7 @@ export default function CourseDetailPage() {
             {
                 id: 10,
                 email: "user10@example.com",
-                avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
+                avatar: "",
                 rating: 2,
                 comment: "Khóa học chưa đáp ứng được kỳ vọng. Các bài giảng chưa được cập nhật, có nhiều lỗi trong các bài tập thực hành."
             }
@@ -182,6 +194,7 @@ export default function CourseDetailPage() {
     const [totalChapter, setTotalChapter] = useState<number>(12);
     const [totalLecture, setTotalLecture] = useState<number>(108);
     const [discount, setDiscount] = useState<number>(0.3);
+    const [students, setStudents] = useState<number>(1000);
     const [teacher, setTeacher] = useState<Teacher>({
         id: "1",
         name: "Cristiano Ronaldo",
@@ -426,22 +439,36 @@ export default function CourseDetailPage() {
                         </span>
                         </div>
 
-                        <div className="flex items-center gap-4">
-                            <div className="relative rounded-[50%] overflow-hidden h-[60px] w-[60px]">
-                                <Image
-                                    src={teacher.avatar}
-                                    alt="user avatar"
-                                    className="object-cover"
-                                    fill
-                                />
+                        <div className="flex flex-col gap-4 lg:gap-0 lg:flex-row lg:items-center lg:justify-between mr-6">
+                            <div className="flex items-center gap-4">
+                                {teacher.avatar ?
+                                    <div
+                                        className="relative rounded-[50%] overflow-hidden h-[60px] w-[60px]">
+                                        <Image
+                                            src={teacher.avatar}
+                                            alt="user avatar"
+                                            className="object-cover"
+                                            fill
+                                        />
+                                    </div>
+                                    :
+                                    <div className="bg-DarkGray h-[60px] w-[60px] rounded-[50%] flex items-center justify-center">
+                                        <FaUser className="text-3xl text-LightGray"/>
+                                    </div>}
+
+                                <span className="text-Lime font-semibold">
+                                    {teacher.name}
+                                </span>
                             </div>
 
-                            <span className="text-Lime font-semibold">
-                            {teacher.name}
-                        </span>
+                            <div className="bg-white rounded-3xl py-2 px-4 w-fit">
+                                <span className="font-semibold text-DarkGreen">
+                                    {students} học viên
+                                </span>
+                            </div>
                         </div>
 
-                        <div>
+                        <div className="mr-6">
                             <p>
                                 {description}
                             </p>
@@ -511,7 +538,7 @@ export default function CourseDetailPage() {
                                 :
                                 <Button className="bg-orange text-white hover:bg-Orange_Hover rounded-2xl">
                                     <span className="font-semibold">
-                                        Mua ngay
+                                        Học ngay
                                     </span>
                                 </Button>}
                         </div>
@@ -647,36 +674,52 @@ export default function CourseDetailPage() {
                                 ))}
                             </div>
 
-                            {/*<div className="border rounded-xl">*/}
-                            {/*    <div className="flex items-center gap-2">*/}
-                            {/*        <div*/}
-                            {/*            className="relative rounded-[50%] overflow-hidden h-[40px] w-[40px] flex items-center">*/}
-                            {/*            <Image*/}
-                            {/*                src={userAvatar}*/}
-                            {/*                alt="user avatar"*/}
-                            {/*                className="object-cover"*/}
-                            {/*                fill*/}
-                            {/*            />*/}
-                            {/*        </div>*/}
+                            {isBuy
+                                &&
+                                <div className="flex flex-col lg:flex-row lg:items-center gap-2">
+                                    <div className="flex items-center gap-2">
+                                        <div
+                                            className={`bg-DarkGray ${user.avatar ? "" : "p-[10px]"} rounded-[50%] h-fit w-fit`}>
+                                            {user.avatar ?
+                                                <div
+                                                    className="relative rounded-[50%] overflow-hidden h-[40px] w-[40px] flex items-center">
+                                                    <Image
+                                                        src={user.avatar}
+                                                        alt="user avatar"
+                                                        className="object-cover"
+                                                        fill
+                                                    />
+                                                </div>
+                                                :
+                                                <FaUser className="text-xl text-LightGray"/>}
+                                        </div>
 
-                            {/*        <div className="flex flex-col justify-center">*/}
-                            {/*            <span className="font-semibold">*/}
-                            {/*                {name}*/}
-                            {/*            </span>*/}
+                                        <div className="flex flex-col justify-center">
+                                        <span className="font-semibold">
+                                            {user.email}
+                                        </span>
 
-                            {/*            <Rating*/}
-                            {/*                value={rating}*/}
-                            {/*                onChange={(event, newValue: number | null) => {setRating(newValue)}}*/}
-                            {/*            />*/}
-                            {/*        </div>*/}
+                                            <Rating
+                                                value={rating}
+                                                onChange={(event, newValue: number | null) => {
+                                                    setRating(newValue)
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
 
-                            {/*        <div className="lg:max-w-[700px] max-w-[200px] lg:pl-8 pl-2">*/}
-                            {/*            <p>*/}
-                            {/*                {comment}*/}
-                            {/*            </p>*/}
-                            {/*        </div>*/}
-                            {/*    </div>*/}
-                            {/*</div>*/}
+                                    <div className="lg:max-w-[700px] max-w-[450px] lg:pl-16 flex flex-col gap-2">
+                                        <Textarea
+                                            placeholder="Nhập nội dung đánh giá tại đây..."
+                                            value={comment}
+                                            onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
+                                                setComment(event.target.value);
+                                            }}
+                                            className="resize-none lg:w-[700px] w-[450px]"/>
+                                        <Button className={`bg-DarkGreen hover:bg-DarkGreen_Hover w-fit`}
+                                                disabled={comment === ""}>Đăng tải</Button>
+                                    </div>
+                                </div>}
 
                             <div className="flex items-center justify-center mt-4">
                                 <Stack>
@@ -711,6 +754,33 @@ export default function CourseDetailPage() {
                             <span className="font-bold text-DarkGreen text-2xl">
                                 CHỨNG CHỈ
                             </span>
+
+                            <div className="bg-LighterGray rounded-2xl p-4 flex flex-col justify-center lg:flex-row items-center">
+                                <div className="flex flex-col gap-6 lg:pr-10">
+                                    <span className="text-xl font-semibold">
+                                        Chứng nhận hoàn thành khóa học
+                                    </span>
+
+                                    <p>
+                                        Bạn sẽ nhận được giấy chứng nhận hoàn thành khóa học điện tử sau khi hoàn thành
+                                        toàn bộ nội dung khóa học
+                                    </p>
+
+                                    <div className="flex items-center gap-5">
+                                        <span>
+                                            Trạng thái
+                                        </span>
+
+                                        <Button className={`${isFinish && isBuy ? "bg-DarkGreen hover:bg-DarkGreen_Hover" : "bg-gray text-black"}`} disabled={!isFinish}>
+                                            Xem chứng chỉ
+                                        </Button>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <Image src="/assets/images/certificate.png" alt="certificate" width={300} height={200}/>
+                                </div>
+                            </div>
                         </section>
                     </div>
                 </div>
