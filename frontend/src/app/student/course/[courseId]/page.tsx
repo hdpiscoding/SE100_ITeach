@@ -10,13 +10,14 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion"
-import ChapterListItem from "@/app/student/course/[id]/ChapterListItem";
-import LessonListItem from "@/app/student/course/[id]/LessonListItem";
+import ChapterListItem from "@/app/student/course/[courseId]/ChapterListItem";
+import LessonListItem from "@/app/student/course/[courseId]/LessonListItem";
 import {Progress} from "@/components/ui/progress";
-import RatingListItem from "@/app/student/course/[id]/RatingListItem";
+import RatingListItem from "@/app/student/course/[courseId]/RatingListItem";
 import {Pagination, Stack} from "@mui/material";
 import {FaUser} from "react-icons/fa";
 import { Textarea } from "@/components/ui/textarea"
+import {useParams} from "next/navigation";
 
 
 interface Teacher {
@@ -51,6 +52,8 @@ interface User {
 }
 
 export default function CourseDetailPage() {
+    const {courseId} = useParams();
+
     // Refs for scrolling
     const introRef = useRef<HTMLDivElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
@@ -602,11 +605,11 @@ export default function CourseDetailPage() {
                                     {chapters.map((chapter, index) => (
                                         <AccordionItem value={String(index)}>
                                             <AccordionTrigger>
-                                                <ChapterListItem index={index + 1} name={chapter.name} duration={chapter.duration} videos={chapter.lessons.length}/>
+                                                <ChapterListItem type={"course"} index={index + 1} name={chapter.name} duration={chapter.duration} videos={chapter.lessons.length}/>
                                             </AccordionTrigger>
                                             <AccordionContent>
                                                 {chapter.lessons.map((lesson, index) => (
-                                                    <LessonListItem index={index + 1} name={lesson.name} duration={lesson.duration}/>
+                                                    <LessonListItem type={"course"} index={index + 1} name={lesson.name} duration={lesson.duration}/>
                                                 ))}
                                             </AccordionContent>
                                         </AccordionItem>
