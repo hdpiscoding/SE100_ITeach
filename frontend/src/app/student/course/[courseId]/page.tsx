@@ -17,7 +17,7 @@ import RatingListItem from "@/app/student/course/[courseId]/RatingListItem";
 import {Pagination, Stack} from "@mui/material";
 import {FaUser} from "react-icons/fa";
 import { Textarea } from "@/components/ui/textarea"
-import {useParams} from "next/navigation";
+import {useParams, useRouter} from "next/navigation";
 
 
 interface Teacher {
@@ -31,9 +31,10 @@ interface Chapter {
     name: string;
     duration: number;
     lessons: {
-        id: number;
+        id: string;
         name: string;
         duration: number;
+        video: string;
     }[];
 }
 
@@ -52,7 +53,9 @@ interface User {
 }
 
 export default function CourseDetailPage() {
-    const {courseId} = useParams();
+    //const {courseId} = useParams();
+    const courseId = 1;
+    const router = useRouter();
 
     // Refs for scrolling
     const introRef = useRef<HTMLDivElement>(null);
@@ -212,19 +215,22 @@ export default function CourseDetailPage() {
                 duration: 90,
                 lessons: [
                     {
-                        id: 1,
+                        id: "a",
                         name: "JavaScript là gì?",
-                        duration: 30
+                        duration: 30,
+                        video: "https://youtu.be/0SJE9dYdpps"
                     },
                     {
-                        id: 2,
+                        id: "b",
                         name: "JavaScript hoạt động như thế nào trong trình duyệt?",
-                        duration: 30
+                        duration: 30,
+                        video: "https://youtu.be/W0vEUmyvthQ"
                     },
                     {
-                        id: 3,
+                        id: "c",
                         name: "Cài đặt môi trường phát triển",
-                        duration: 30
+                        duration: 30,
+                        video: "https://youtu.be/efI98nT8Ffo"
                     }
                 ]
             },
@@ -234,19 +240,22 @@ export default function CourseDetailPage() {
                 duration: 120,
                 lessons: [
                     {
-                        id: 1,
+                        id: "d",
                         name: "Biến và kiểu dữ liệu",
-                        duration: 40
+                        duration: 40,
+                        video: "https://youtu.be/CLbx37dqYEI"
                     },
                     {
-                        id: 2,
+                        id: "e",
                         name: "Các toán tử trong JavaScript",
-                        duration: 40
+                        duration: 40,
+                        video: "https://youtu.be/SZb-N7TfPlw"
                     },
                     {
-                        id: 3,
+                        id: "f",
                         name: "Câu lệnh điều kiện và vòng lặp",
-                        duration: 40
+                        duration: 40,
+                        video: "https://youtu.be/9MpHrdWBdxg"
                     }
                 ]
             },
@@ -256,19 +265,22 @@ export default function CourseDetailPage() {
                 duration: 90,
                 lessons: [
                     {
-                        id: 1,
+                        id: "g",
                         name: "Định nghĩa và gọi hàm",
-                        duration: 30
+                        duration: 30,
+                        video: "https://youtu.be/4g9ENVc2KLA"
                     },
                     {
-                        id: 2,
+                        id: "h",
                         name: "Tham số và giá trị trả về",
-                        duration: 30
+                        duration: 30,
+                        video: "https://youtu.be/jE6UPl17Nvo"
                     },
                     {
-                        id: 3,
+                        id: "i",
                         name: "Biến cục bộ và toàn cục",
-                        duration: 30
+                        duration: 30,
+                        video: "https://youtu.be/orIXdOPFWeM"
                     }
                 ]
             },
@@ -278,19 +290,22 @@ export default function CourseDetailPage() {
                 duration: 120,
                 lessons: [
                     {
-                        id: 1,
+                        id: "j",
                         name: "Mảng và cách sử dụng",
-                        duration: 40
+                        duration: 40,
+                        video: "https://youtu.be/YzO65uOJNMg"
                     },
                     {
-                        id: 2,
+                        id: "k",
                         name: "Đối tượng và thuộc tính",
-                        duration: 40
+                        duration: 40,
+                        video: "https://youtu.be/orIXdOPFWeM"
                     },
                     {
-                        id: 3,
+                        id: "l",
                         name: "Thao tác với mảng và đối tượng",
-                        duration: 40
+                        duration: 40,
+                        video: "https://youtu.be/KrYacXScNQk"
                     }
                 ]
             },
@@ -300,24 +315,28 @@ export default function CourseDetailPage() {
                 duration: 150,
                 lessons: [
                     {
-                        id: 1,
+                        id: "m",
                         name: "DOM là gì?",
-                        duration: 30
+                        duration: 30,
+                        video: "https://youtu.be/TsTr-tKCREc"
                     },
                     {
-                        id: 2,
+                        id: "n",
                         name: "Truy xuất và thao tác DOM",
-                        duration: 40
+                        duration: 40,
+                        video: "https://youtu.be/gETNXKi3l_U"
                     },
                     {
-                        id: 3,
+                        id: "o",
                         name: "Sự kiện và xử lý sự kiện",
-                        duration: 40
+                        duration: 40,
+                        video: "https://youtu.be/AA3WWZAMv_0"
                     },
                     {
-                        id: 4,
+                        id: "p",
                         name: "Tạo và xóa phần tử DOM",
-                        duration: 40
+                        duration: 40,
+                        video: "https://youtu.be/SXW4QSjk4Js"
                     }
                 ]
             },
@@ -327,19 +346,22 @@ export default function CourseDetailPage() {
                 duration: 120,
                 lessons: [
                     {
-                        id: 1,
+                        id: "q",
                         name: "JSON là gì?",
-                        duration: 30
+                        duration: 30,
+                        video: "https://youtu.be/Uph14HYkgEQ"
                     },
                     {
-                        id: 2,
+                        id: "r",
                         name: "Xử lý dữ liệu JSON",
-                        duration: 40
+                        duration: 40,
+                        video: "https://youtu.be/Uph14HYkgEQ"
                     },
                     {
-                        id: 3,
+                        id: "s",
                         name: "Gửi và nhận dữ liệu từ API",
-                        duration: 50
+                        duration: 50,
+                        video: "https://youtu.be/Uph14HYkgEQ"
                     }
                 ]
             },
@@ -349,19 +371,22 @@ export default function CourseDetailPage() {
                 duration: 90,
                 lessons: [
                     {
-                        id: 1,
+                        id: "t",
                         name: "Các loại lỗi trong JavaScript",
-                        duration: 30
+                        duration: 30,
+                        video: "https://youtu.be/Uph14HYkgEQ"
                     },
                     {
-                        id: 2,
+                        id: "u",
                         name: "Sử dụng console và debugger",
-                        duration: 30
+                        duration: 30,
+                        video: "https://youtu.be/Uph14HYkgEQ"
                     },
                     {
-                        id: 3,
+                        id: "v",
                         name: "Try-catch và xử lý ngoại lệ",
-                        duration: 30
+                        duration: 30,
+                        video: "https://youtu.be/Uph14HYkgEQ"
                     }
                 ]
             },
@@ -371,24 +396,28 @@ export default function CourseDetailPage() {
                 duration: 150,
                 lessons: [
                     {
-                        id: 1,
+                        id: "w",
                         name: "Let, Const và Arrow Function",
-                        duration: 30
+                        duration: 30,
+                        video: "https://youtu.be/tCPTBPua1Xo"
                     },
                     {
-                        id: 2,
+                        id: "x",
                         name: "Template Literals và Destructuring",
-                        duration: 40
+                        duration: 40,
+                        video: "https://youtu.be/7Ls-fa8iVXA"
                     },
                     {
-                        id: 3,
+                        id: "y",
                         name: "Modules và Import/Export",
-                        duration: 40
+                        duration: 40,
+                        video: "https://youtu.be/08lWi4T2Bfg"
                     },
                     {
-                        id: 4,
+                        id: "z",
                         name: "Promises và Async/Await",
-                        duration: 40
+                        duration: 40,
+                        video: "https://youtu.be/XN2mt1i1kjk"
                     }
                 ]
             }
@@ -426,7 +455,7 @@ export default function CourseDetailPage() {
                 <Button
                     className="col-start-2 bg-bg border border-orange text-orange rounded-xl w-fit hover:bg-orange hover:text-white mb-4">
                     <div className="flex items-center gap-2">
-                        <ArrowLeft height={18} width={18}/>
+                        <ArrowLeft height={18} width={18} onClick={() => {router.back();}}/>
 
                         <span className="font-semibold">
                                 Khám phá thêm
@@ -605,13 +634,14 @@ export default function CourseDetailPage() {
                                     {chapters.map((chapter, index) => (
                                         <AccordionItem value={String(index)}>
                                             <AccordionTrigger>
-                                                <ChapterListItem type={"course"} index={index + 1} name={chapter.name} duration={chapter.duration} videos={chapter.lessons.length}/>
+                                                <ChapterListItem type="course" index={index + 1} name={chapter.name} duration={chapter.duration} videos={chapter.lessons.length}/>
                                             </AccordionTrigger>
-                                            <AccordionContent>
-                                                {chapter.lessons.map((lesson, index) => (
-                                                    <LessonListItem type={"course"} index={index + 1} name={lesson.name} duration={lesson.duration}/>
-                                                ))}
-                                            </AccordionContent>
+
+                                            {chapter.lessons.map((lesson, index) => (
+                                                <AccordionContent id={String(lesson.id)} onClick={() => {router.push(`/student/course/${courseId}/lesson/${lesson.id}`)}}>
+                                                    <LessonListItem type="course" index={index + 1} name={lesson.name} duration={lesson.duration}/>
+                                                </AccordionContent>
+                                            ))}
                                         </AccordionItem>
                                     ))}
                                 </Accordion>
