@@ -25,6 +25,7 @@ const config: Config = {
   			White: '#FFFFFF',
   			Lime: '#00DDC0',
   			DarkGray: '#A7A7A7',
+			DarkerGray: '#808080',
   			LightGray: '#EEEEEE',
 			LighterGray: '#F5F5F5',
   			Red: '#D85B5B',

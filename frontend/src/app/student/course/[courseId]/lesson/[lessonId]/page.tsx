@@ -11,6 +11,7 @@ import {ScrollArea} from "@/components/ui/scroll-area";
 import LessonContent from "@/app/student/course/[courseId]/lesson/[lessonId]/LessonContent";
 import {Button} from "@/components/ui/button";
 import {useParams, useRouter} from "next/navigation";
+import LessonComment from "@/app/student/course/[courseId]/lesson/[lessonId]/LessonComment";
 const ReactPlayer = dynamic(() => import('react-player'), {
     ssr: false, // Tắt server-side rendering cho ReactPlayer
 });
@@ -43,6 +44,18 @@ interface Teacher {
     id: number;
     name: string;
     avatar: string;
+}
+
+interface User {
+    id: string,
+    email: string,
+    avatar: string,
+}
+
+const user: User = {
+    id: "u1a2b3c4d5e6f7g8h9i0",
+    email: "hdp@gmail.com",
+    avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
 }
 
 const course: Course = {
@@ -361,6 +374,7 @@ export default function LessonPage() {
         setIsPlayerReady(true); // Tắt loading khi player đã sẵn sàng
     };
 
+    // State for accordion
     const [openItems, setOpenItems] = useState<string[]>([]);
     const openAccordion = (chapterId: string | undefined) => {
         if (!openItems.includes(String(chapterId))) {
@@ -545,7 +559,7 @@ export default function LessonPage() {
                 </div>
 
                 <div className={`${tab === 2 ? 'block' : 'hidden'}`}>
-
+                    <LessonComment user={user}/>
                 </div>
             </div>
         </div>

@@ -62,7 +62,7 @@ export default function CourseDetailPage() {
     const contentRef = useRef<HTMLDivElement>(null);
     const reviewRef = useRef<HTMLDivElement>(null);
     const certificateRef = useRef<HTMLDivElement>(null);
-    const [tab, setTab] = useState<number>(0);
+    const [tab, setTab] = useState<number|undefined>(undefined);
 
 
     const handleScrollTo = (ref: React.RefObject<HTMLDivElement>) => {
@@ -596,7 +596,7 @@ export default function CourseDetailPage() {
                         {["Giới thiệu", "Nội dung", "Đánh giá", "Chứng chỉ"].map((label, index) => (
                             <li key={index} className="relative">
                                 <span
-                                    className={`cursor-pointer font-semibold font-lg ${
+                                    className={`cursor-pointer ${(index === 0 && tab === undefined) ? "text-orange" : ""} font-semibold font-lg ${
                                         tab === index ? "text-orange" : "text-black"
                                     } transition-colors duration-300 ease-in-out`}
                                     onClick={() => {
@@ -607,7 +607,7 @@ export default function CourseDetailPage() {
                                 </span>
 
                                 <div
-                                    className={`absolute left-0 top-full mt-1 w-full h-[2px] bg-orange rounded transition-all duration-300 ${
+                                    className={`absolute ${(index === 0 && tab === undefined) ? "opacity-100 scale-x-100" : ""} left-0 top-full mt-1 w-full h-[2px] bg-orange rounded transition-all duration-300 ${
                                         tab === index ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
                                     }`}
                                 />
