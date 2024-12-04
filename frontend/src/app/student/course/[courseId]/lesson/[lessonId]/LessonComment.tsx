@@ -93,7 +93,7 @@ const rawComments: LessonComment[] = [
             id: "u4d5e6f7g8h9i0j1a2b3",
             email: "r9@gmail.com",
             avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
-            role: "student"
+            role: "teacher"
         },
         lessonId: "l2b3c4d5e6f7g8h9i0a1",
         content: "Sure, here's my understanding...",
@@ -127,6 +127,7 @@ const rawComments: LessonComment[] = [
 
 export default function LessonComment(props: any) {
     const [userComment, setUserComment] = useState<string>("");
+    const [count, setCount] = useState<number>(0);
 
     const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setUserComment(e.target.value);
@@ -138,16 +139,94 @@ export default function LessonComment(props: any) {
         setComments(buildCommentTree(rawComments));
     }, []);
 
+    const addComment = (newComment: LessonComment) => {
+        setComments((prevComments) => {
+            // Nếu comment là root, thêm trực tiếp
+            if (!newComment.parentCommentId) {
+                return [...prevComments, newComment];
+            }
+
+            // Tìm comment cha và thêm bình luận con vào
+            const addToParent = (comments: LessonComment[]): LessonComment[] => {
+                return comments.map((comment: LessonComment) => {
+                    if (comment.id === newComment.parentCommentId) {
+                        return {
+                            ...comment,
+                            children: comment.children ? [...comment.children, newComment] : [newComment],
+                        };
+                    }
+                    if (comment.children) {
+                        return {
+                            ...comment,
+                            children: addToParent(comment.children),
+                        };
+                    }
+                    return comment;
+                });
+            };
+
+            return addToParent(prevComments);
+        });
+    };
+
+    const handleUploadComment = () => {
+        let newComment: LessonComment = {
+            id: String(count),
+            user: {
+                id: props.user?.id,
+                email: props.user?.email,
+                avatar: props.user?.avatar,
+                role: props.user.role
+            },
+            lessonId: props.lessonId,
+            content: userComment,
+            parentCommentId: null
+        }
+        addComment(newComment);
+        setUserComment("");
+    }
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.shiftKey && e.key === "Enter") {
+            e.preventDefault();
+            setUserComment((prev) => prev + "\n");
+        }
+        else if (e.key === "Enter") {
+            e.preventDefault();
+            handleUploadComment();
+        }
+    }
+
+    const handleUploadReply = (content: string, parentId: string, currentUser: any) => {
+        let newComment: LessonComment = {
+            id: String(count),
+            user: {
+                id: currentUser.id,
+                email: currentUser.email,
+                avatar: currentUser.avatar,
+                role: currentUser.role
+            },
+            lessonId: props.lessonId,
+            content: content,
+            parentCommentId: parentId
+        }
+        addComment(newComment);
+        setUserComment("");
+    }
+
     return (
         <div className="grid lg:grid-cols-[68%_1%_31%] grid-cols-1 gap-4 lg:gap-0 mt-6">
             <span className="text-xl font-bold lg:mb-6">
                 Bình luận
             </span>
 
-            <ScrollArea className="lg:col-start-1 w-full h-[500px]">
+            <ScrollArea className="lg:col-start-1 w-full max-h-[500px]">
                 <div className="mr-4">
                     {comments.map((comment) => (
-                        <NestedCommentItem comment={comment} currentUser={props.user}/>
+                        <NestedCommentItem comment={comment}
+                                           currentUser={props.user}
+                                           lessonId={props.lessonId}
+                                           addComment={addComment}/>
                     ))}
                 </div>
             </ScrollArea>
@@ -175,13 +254,19 @@ export default function LessonComment(props: any) {
                     </div>
 
 
+
                     <div className="flex flex-row gap-3 w-full items-center">
-                        <Textarea className="rounded-lg resize-none" placeholder="Viết bình luận..." value={userComment} onChange={handleCommentChange}/>
+                        <Textarea className="rounded-lg resize-none"
+                                  placeholder="Viết bình luận..."
+                                  value={userComment}
+                                  onChange={handleCommentChange}
+                                  onKeyDown={(e: React.KeyboardEvent) => handleKeyDown(e)}/>
 
                         <TooltipProvider>
                             <Tooltip>
                                 <TooltipTrigger asChild>
-                                    <Send className={`h-4 w-4 ${userComment ? "cursor-pointer text-DarkGreen hover:text-DarkGreen_Hover active:scale-90 transition-transform duration-150" : "text-DarkGray"}`}/>
+                                    <Send className={`h-4 w-4 ${userComment ? "cursor-pointer text-DarkGreen hover:text-DarkGreen_Hover active:scale-90 transition-transform duration-150" : "text-DarkGray"}`}
+                                          onClick={handleUploadComment}/>
                                 </TooltipTrigger>
                                 <TooltipContent>
                                     <p>Đăng tải</p>

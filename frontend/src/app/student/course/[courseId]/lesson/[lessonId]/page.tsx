@@ -42,7 +42,7 @@ interface Course {
 
 interface Teacher {
     id: number;
-    name: string;
+    email: string;
     avatar: string;
 }
 
@@ -50,12 +50,14 @@ interface User {
     id: string,
     email: string,
     avatar: string,
+    role: string
 }
 
 const user: User = {
     id: "u1a2b3c4d5e6f7g8h9i0",
     email: "hdp@gmail.com",
     avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
+    role: "student"
 }
 
 const course: Course = {
@@ -70,7 +72,7 @@ const course: Course = {
 
 const teacher: Teacher = {
     id: 1,
-    name: "Cristiano Ronaldo",
+    email: "r9@gmail.com",
     avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp"
 }
 
@@ -418,7 +420,7 @@ export default function LessonPage() {
                                     </div>}
 
                                 <span className="text-Lime font-semibold">
-                                    {teacher.name}
+                                    {teacher.email}
                                 </span>
                             </div>
 
@@ -559,7 +561,7 @@ export default function LessonPage() {
                 </div>
 
                 <div className={`${tab === 2 ? 'block' : 'hidden'}`}>
-                    <LessonComment user={user}/>
+                    <LessonComment user={user} lessonId={currentLesson?.id}/>
                 </div>
             </div>
         </div>
