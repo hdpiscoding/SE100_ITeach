@@ -1,5 +1,5 @@
 'use client';
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import Image from "next/image";
 import {FaUser} from "react-icons/fa";
 import {Textarea} from "@/components/ui/textarea";
@@ -31,7 +31,12 @@ export default function NestedCommentItem({comment, lessonId, currentUser, addCo
     const [userComment, setUserComment] = useState<string>("");
     const [showReply, setShowReply] = useState<boolean>(false);
     const [showMore, setShowMore] = useState<boolean>(false);
-    const [count, setCount] = useState<number>(0);
+    const [commentId, setCommentId] = useState<string | null>(null);
+
+    useEffect(() => {
+        const randomId = Math.random().toString(36).substring(7);
+        setCommentId(randomId); // Chỉ set sau khi client render
+    }, []);
 
     const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setUserComment(e.target.value);
@@ -39,7 +44,7 @@ export default function NestedCommentItem({comment, lessonId, currentUser, addCo
 
     const handleUploadComment = () => {
         let newComment: LessonComment = {
-            id: String(count),
+            id: String(commentId),
             user: {
                 id: currentUser.id,
                 email: currentUser.email,
@@ -51,7 +56,7 @@ export default function NestedCommentItem({comment, lessonId, currentUser, addCo
             parentCommentId: comment.id
         }
         addComment(newComment);
-        setCount(count + 1);
+        console.log(newComment);
         setUserComment("");
     }
 

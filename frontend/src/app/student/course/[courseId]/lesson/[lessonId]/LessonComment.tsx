@@ -127,7 +127,12 @@ const rawComments: LessonComment[] = [
 
 export default function LessonComment(props: any) {
     const [userComment, setUserComment] = useState<string>("");
-    const [count, setCount] = useState<number>(0);
+    const [commentId, setCommentId] = useState<string | null>(null);
+
+    useEffect(() => {
+        const randomId = Math.random().toString(36).substring(7);
+        setCommentId(randomId); // Chỉ set sau khi client render
+    }, []);
 
     const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setUserComment(e.target.value);
@@ -146,15 +151,17 @@ export default function LessonComment(props: any) {
                 return [...prevComments, newComment];
             }
 
-            // Tìm comment cha và thêm bình luận con vào
+            // Hàm đệ quy để thêm comment vào đúng vị trí
             const addToParent = (comments: LessonComment[]): LessonComment[] => {
                 return comments.map((comment: LessonComment) => {
                     if (comment.id === newComment.parentCommentId) {
+                        // Nếu tìm thấy comment cha, thêm comment con vào children
                         return {
                             ...comment,
-                            children: comment.children ? [...comment.children, newComment] : [newComment],
+                            children: [...(comment.children || []), newComment],
                         };
                     }
+                    // Nếu comment có children, tiếp tục tìm trong children của comment này
                     if (comment.children) {
                         return {
                             ...comment,
@@ -169,9 +176,10 @@ export default function LessonComment(props: any) {
         });
     };
 
+
     const handleUploadComment = () => {
         let newComment: LessonComment = {
-            id: String(count),
+            id: String(commentId),
             user: {
                 id: props.user?.id,
                 email: props.user?.email,
@@ -183,6 +191,7 @@ export default function LessonComment(props: any) {
             parentCommentId: null
         }
         addComment(newComment);
+        console.log(newComment);
         setUserComment("");
     }
 
@@ -195,23 +204,6 @@ export default function LessonComment(props: any) {
             e.preventDefault();
             handleUploadComment();
         }
-    }
-
-    const handleUploadReply = (content: string, parentId: string, currentUser: any) => {
-        let newComment: LessonComment = {
-            id: String(count),
-            user: {
-                id: currentUser.id,
-                email: currentUser.email,
-                avatar: currentUser.avatar,
-                role: currentUser.role
-            },
-            lessonId: props.lessonId,
-            content: content,
-            parentCommentId: parentId
-        }
-        addComment(newComment);
-        setUserComment("");
     }
 
     return (

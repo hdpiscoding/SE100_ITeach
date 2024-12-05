@@ -4,9 +4,9 @@ import Image from 'next/image';
 
 const Banner = () => {
   return (
-    <div className='flex justify-around h-fit mt-10'>
+    <div className='flex justify-around h-fit bg-bg'>
       <div className='-ml-24'>
-        <div className="rounded-lg w-fit bg-white p-1.5">Never stop learning</div>
+        <div className="rounded-lg w-fit bg-white p-1.5 mt-10">Never stop learning</div>
         <div className='my-5 space-y-0'>
           <h1 className='text-5xl text-DarkGreen font-bold'>"Sáng tạo tương lai,</h1>
           <h1 className='text-5xl text-DarkGreen font-bold'>làm chủ công nghệ</h1>

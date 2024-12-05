@@ -12,6 +12,7 @@ import LessonContent from "@/app/student/course/[courseId]/lesson/[lessonId]/Les
 import {Button} from "@/components/ui/button";
 import {useParams, useRouter} from "next/navigation";
 import LessonComment from "@/app/student/course/[courseId]/lesson/[lessonId]/LessonComment";
+import LessonAssignments from "@/app/student/course/[courseId]/lesson/[lessonId]/LessonAssignments";
 const ReactPlayer = dynamic(() => import('react-player'), {
     ssr: false, // Tắt server-side rendering cho ReactPlayer
 });
@@ -557,7 +558,7 @@ export default function LessonPage() {
                 </div>
 
                 <div className={`${tab === 1 ? 'block' : 'hidden'}`}>
-
+                    <LessonAssignments/>
                 </div>
 
                 <div className={`${tab === 2 ? 'block' : 'hidden'}`}>
