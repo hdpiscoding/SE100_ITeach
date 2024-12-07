@@ -632,13 +632,13 @@ export default function CourseDetailPage() {
                             <div>
                                 <Accordion type="multiple" className="w-full bg-LighterGray px-4 py-1 rounded-2xl">
                                     {chapters.map((chapter, index) => (
-                                        <AccordionItem value={String(index)}>
+                                        <AccordionItem value={String(index)} key={String(index)}>
                                             <AccordionTrigger>
                                                 <ChapterListItem type="course" index={index + 1} name={chapter.name} duration={chapter.duration} videos={chapter.lessons.length}/>
                                             </AccordionTrigger>
 
                                             {chapter.lessons.map((lesson, index) => (
-                                                <AccordionContent id={String(lesson.id)} onClick={() => {router.push(`/student/course/${courseId}/lesson/${lesson.id}`)}}>
+                                                <AccordionContent key={String(lesson.id)} id={String(lesson.id)} onClick={() => {router.push(`/student/course/${courseId}/lesson/${lesson.id}`)}}>
                                                     <LessonListItem type="course" index={index + 1} name={lesson.name} duration={lesson.duration}/>
                                                 </AccordionContent>
                                             ))}
@@ -686,7 +686,7 @@ export default function CourseDetailPage() {
                                                 {5 - index} sao
                                             </span>
 
-                                            <Progress value={rating}/>
+                                            <Progress value={rating} indicatorColor="bg-Yellow"/>
 
                                             <span className="font-semibold">
                                                 {rating}%

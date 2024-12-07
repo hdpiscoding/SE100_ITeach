@@ -2,9 +2,10 @@
 import React, {useState} from "react";
 import Link from "next/link";
 import Image from "next/image";
-import Profile from "@/app/student/account/Profile";
-import Password from "@/app/student/account/Password";
-import OrderHistory from "@/app/student/account/OrderHistory";
+import dynamic from "next/dynamic";
+const Profile = dynamic(() => import('@/app/student/account/Profile'));
+const Password = dynamic(() => import('@/app/student/account/Password'));
+const OrderHistory = dynamic(() => import('@/app/student/account/OrderHistory'));
 
 const StudentAccountPage = () => {
     const [tab, setTab] = useState(0);

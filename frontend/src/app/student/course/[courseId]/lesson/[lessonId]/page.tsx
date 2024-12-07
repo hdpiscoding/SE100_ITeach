@@ -396,7 +396,7 @@ export default function LessonPage() {
                 <div className="grid lg:grid-cols-[68%_1%_31%] grid-cols-1 gap-4 lg:gap-0">
                     <div className="flex flex-col gap-4">
                         <div className="flex items-center gap-2">
-                            <ArrowLeft className="h-7 w-7 cursor-pointer text-DarkGreen" onClick={() => {router.back();}}/>
+                            <ArrowLeft className="h-7 w-7 cursor-pointer text-DarkGreen" onClick={() => {router.push(`/student/course/${course.id}`)}}/>
                             <span className="font-bold text-DarkGreen text-3xl">
                                 {course.name}
                             </span>

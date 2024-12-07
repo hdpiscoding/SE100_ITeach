@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import React from "react";
+import React, {Suspense} from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Loading from "./loading";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -24,6 +25,12 @@ export const metadata: Metadata = {
   },
 };
 
+const AsyncChildren = async ({ children }: { children: React.ReactNode }) => {
+  // Giả lập độ trễ (lazy load)
+  await new Promise((resolve) => setTimeout(resolve, 5000));
+  return <>{children}</>;
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -31,13 +38,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+    <body>
+      <header>
         <Navbar/>
+      </header>
+
+      <Suspense fallback={<Loading/>}>
         <main>
-          {children}
+            {children}
         </main>
+      </Suspense>
+
+
+      <footer>
         <Footer/>
-      </body>
+      </footer>
+    </body>
     </html>
   );
 }
