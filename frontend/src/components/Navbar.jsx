@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import { useState } from 'react'
 import Link from "next/link";
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
+import {Send} from "lucide-react";
 const Navbar = () => {
   const [login, setLogin] = useState(true)
   return (
@@ -37,18 +39,36 @@ const Navbar = () => {
                       </div>) :
                   (
                       <div className='p-3 flex items-center gap-5'>
-                          <Image alt="search" className='inline-block cursor-pointer' src="/assets/images/Search.png"
-                                 width={30} height={30}/>
+                          {/*<Image alt="search" className='inline-block cursor-pointer' src="/assets/images/Search.png"*/}
+                          {/*       width={30} height={30}/>*/}
 
-                          <Link href="/student/cart">
-                              <Image alt="bag" className='inline-block cursor-pointer' src="/assets/images/Bag.png"
-                                     width={30} height={30}/>
-                          </Link>
+                          <TooltipProvider>
+                              <Tooltip>
+                                  <TooltipTrigger asChild>
+                                      <Link href="/student/cart">
+                                          <Image alt="bag" className='inline-block cursor-pointer' src="/assets/images/Bag.png"
+                                                 width={30} height={30}/>
+                                      </Link>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                      <p>Giỏ hàng</p>
+                                  </TooltipContent>
+                              </Tooltip>
+                          </TooltipProvider>
 
-                          <Link href="/student/account">
-                              <Image alt="user" className='inline-block cursor-pointer' src="/assets/images/user.png"
-                                     width={30} height={30}/>
-                          </Link>
+                          <TooltipProvider>
+                              <Tooltip>
+                                  <TooltipTrigger asChild>
+                                      <Link href="/student/account">
+                                          <Image alt="user" className='inline-block cursor-pointer' src="/assets/images/user.png"
+                                                 width={30} height={30}/>
+                                      </Link>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                      <p>Thông tin cá nhân</p>
+                                  </TooltipContent>
+                              </Tooltip>
+                          </TooltipProvider>
                       </div>
                   )}
 

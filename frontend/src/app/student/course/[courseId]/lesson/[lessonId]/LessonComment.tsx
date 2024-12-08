@@ -8,6 +8,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
 import {Send} from 'lucide-react'
 import {TooltipContent, Tooltip, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
+import {Pagination, Stack} from "@mui/material";
 
 interface LessonComment {
     id: string;
@@ -176,6 +177,29 @@ export default function LessonComment(props: any) {
         });
     };
 
+    // set up pagination
+    const [page, setPage] = React.useState<number>(1);
+    const [itemsPerPage, setItemsPerPage] = useState<number>(3);
+    const [totalPages, setTotalPages] = useState<number>(Math.ceil(comments.length / itemsPerPage));
+    const [currentComments, setCurrentComments] = useState<LessonComment[]>([]);
+
+    useEffect(() => {
+        setTotalPages(Math.ceil(comments.length / itemsPerPage));
+    }, [comments, itemsPerPage]);
+
+    useEffect(() => {
+        const indexOfLastItem = page * itemsPerPage;
+        const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+        setCurrentComments(comments.slice(indexOfFirstItem, indexOfLastItem));
+    }, [page, comments, itemsPerPage]);
+
+    const handlePageChange = (event: React.ChangeEvent<unknown>, newPage: number) => {
+        setPage(newPage);
+    };
+
+// end of set up pagination
+
+
 
     const handleUploadComment = () => {
         let newComment: LessonComment = {
@@ -214,7 +238,7 @@ export default function LessonComment(props: any) {
 
             <ScrollArea className="lg:col-start-1 w-full max-h-[500px]">
                 <div className="mr-4">
-                    {comments.map((comment) => (
+                    {currentComments.map((comment) => (
                         <NestedCommentItem comment={comment}
                                            currentUser={props.user}
                                            lessonId={props.lessonId}
@@ -222,6 +246,34 @@ export default function LessonComment(props: any) {
                     ))}
                 </div>
             </ScrollArea>
+
+            <div className="lg:col-start-1 flex items-center justify-center my-4">
+                <Stack>
+                    <Pagination
+                        count={totalPages}
+                        page={page}
+                        onChange={handlePageChange}
+                        variant="text"
+                        shape="rounded"
+                        sx={{
+                            "& .MuiPaginationItem-root": {
+                                color: "#AAAAAA",            // Màu văn bản mặc định
+                            },
+                            '& .MuiPaginationItem-root:hover': {
+                                // Màu khi hover
+                                backgroundColor: '#3DCBB1', // Màu nền khi hover
+                                color: 'white', // Màu chữ khi hover
+                            },
+                            "& .Mui-selected": {
+                                backgroundColor: "#3DCBB1 !important", // Màu nền cho item được chọn
+                                color: "white",              // Màu chữ cho item được chọn
+                            },
+                            "& .MuiPaginationItem-ellipsis": {
+                                color: "#AAAAAA"              // Màu sắc cho dấu ba chấm (ellipsis)
+                            }
+                        }}/>
+                </Stack>
+            </div>
 
             <div className="lg:col-start-1 flex flex-col gap-6 w-full">
                 <div className="flex gap-4">
@@ -245,8 +297,6 @@ export default function LessonComment(props: any) {
                         <div className="border-l"/>
                     </div>
 
-
-
                     <div className="flex flex-row gap-3 w-full items-center">
                         <Textarea className="rounded-lg resize-none"
                                   placeholder="Viết bình luận..."
@@ -257,8 +307,9 @@ export default function LessonComment(props: any) {
                         <TooltipProvider>
                             <Tooltip>
                                 <TooltipTrigger asChild>
-                                    <Send className={`h-4 w-4 ${userComment ? "cursor-pointer text-DarkGreen hover:text-DarkGreen_Hover active:scale-90 transition-transform duration-150" : "text-DarkGray"}`}
-                                          onClick={handleUploadComment}/>
+                                    <Send
+                                        className={`h-4 w-4 ${userComment ? "cursor-pointer text-DarkGreen hover:text-DarkGreen_Hover active:scale-90 transition-transform duration-150" : "text-DarkGray"}`}
+                                        onClick={handleUploadComment}/>
                                 </TooltipTrigger>
                                 <TooltipContent>
                                     <p>Đăng tải</p>

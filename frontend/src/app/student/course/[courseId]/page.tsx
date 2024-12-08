@@ -18,6 +18,7 @@ import {Pagination, Stack} from "@mui/material";
 import {FaUser} from "react-icons/fa";
 import { Textarea } from "@/components/ui/textarea"
 import {useParams, useRouter} from "next/navigation";
+import Markdown from "react-markdown";
 
 
 interface Teacher {
@@ -88,7 +89,7 @@ export default function CourseDetailPage() {
         }
     }, [tab]);
 
-    const [isBuy, setIsBuy] = useState<boolean>(false);
+    const [isBuy, setIsBuy] = useState<boolean>(true);
     const [isFinish, setIsFinish] = useState<boolean>(false);
 
     // State for rating
@@ -423,31 +424,23 @@ export default function CourseDetailPage() {
             }
     ]);
 
-    const [intro, setIntro] = useState<React.ReactNode>(<div
-        style={{lineHeight: '1.6'}}>
-        <h1 style={{color: '#2c3e50'}}>Khóa học JavaScript cơ bản</h1>
-        <p>
-            Chào mừng bạn đến với khóa học <strong>JavaScript cơ bản</strong>! Đây là khóa học lý tưởng
-            dành cho những ai mới bắt đầu học lập trình hoặc muốn tìm hiểu về ngôn ngữ lập trình phổ
-            biến nhất trong việc phát triển web.
-        </p>
-        <h2 style={{color: '#16a085'}}>Bạn sẽ học được gì?</h2>
-        <ul>
-            <li>Hiểu rõ các khái niệm cơ bản của JavaScript như biến, kiểu dữ liệu, và hàm.</li>
-            <li>Khám phá cách làm việc với DOM để xây dựng giao diện web động.</li>
-            <li>Tìm hiểu về vòng lặp, điều kiện, và các cấu trúc dữ liệu quan trọng.</li>
-            <li>Học cách sử dụng JavaScript để tương tác với người dùng và tạo các hiệu ứng web thú vị.</li>
-        </ul>
-        <h2 style={{color: '#e67e22'}}>Dành cho ai?</h2>
-        <p>
-            Khóa học này dành cho bất kỳ ai muốn học lập trình từ đầu, hoặc những lập trình viên ở mức
-            độ cơ bản muốn củng cố kiến thức JavaScript trước khi tiến xa hơn với các công nghệ hiện đại
-            như React, Angular, hoặc Node.js.
-        </p>
-        <p>
-            Hãy tham gia ngay hôm nay và bắt đầu hành trình chinh phục JavaScript của bạn!
-        </p>
-    </div>);
+    const [intro, setIntro] = useState<string>(`# Khóa học JavaScript cơ bản
+
+Chào mừng bạn đến với **khóa học JavaScript cơ bản**! Đây là khóa học lý tưởng dành cho những ai mới bắt đầu học lập trình hoặc muốn tìm hiểu về ngôn ngữ lập trình phổ biến nhất trong việc phát triển web.
+
+## Bạn sẽ học được gì?
+- Hiểu rõ các khái niệm cơ bản của JavaScript như **biến**, **kiểu dữ liệu**, và **hàm**.
+- Khám phá cách làm việc với **DOM** để xây dựng giao diện web động.
+- Tìm hiểu về **vòng lặp**, **điều kiện**, và các **cấu trúc dữ liệu** quan trọng.
+- Học cách sử dụng JavaScript để tương tác với người dùng và tạo các hiệu ứng web thú vị.
+
+## Dành cho ai?
+Khóa học này dành cho:
+- Bất kỳ ai muốn học lập trình từ đầu.
+- Những lập trình viên ở mức độ cơ bản muốn củng cố kiến thức JavaScript trước khi tiến xa hơn với các công nghệ hiện đại như **React**, **Angular**, hoặc **Node.js**.
+
+Hãy tham gia ngay hôm nay và bắt đầu hành trình chinh phục JavaScript của bạn!
+`);
 
     return (
         <div>
@@ -568,7 +561,7 @@ export default function CourseDetailPage() {
                                     </span>
                                 </Button>
                                 :
-                                <Button className="bg-orange text-white hover:bg-Orange_Hover rounded-2xl">
+                                <Button className="bg-orange text-white hover:bg-Orange_Hover rounded-2xl" onClick={() => setTab(1)}>
                                     <span className="font-semibold">
                                         Học ngay
                                     </span>
@@ -621,7 +614,31 @@ export default function CourseDetailPage() {
                                 GIỚI THIỆU
                             </span>
 
-                            {intro}
+                            <Markdown children={intro}
+                                      className="space-y-4"
+                                      components={{
+                                          blockquote: ({node, ...props}) => (
+                                              <blockquote className="border-l-[3px] border-blue-500 pl-4 italic bg-LightGray p-2" {...props} />
+                                          ),
+                                          ul: ({node, ...props}) => (
+                                              <ul className="list-disc pl-6" {...props} />
+                                          ),
+                                          ol: ({node, ...props}) => (
+                                              <ol className="list-decimal pl-6" {...props} />
+                                          ),
+                                          h1: ({ children }) => (
+                                              <h1 className="text-4xl font-bold my-4">{children}</h1>
+                                          ),
+                                          h2: ({ children }) => (
+                                              <h2 className="text-3xl font-semibold my-3">{children}</h2>
+                                          ),
+                                          h3: ({ children }) => (
+                                              <h3 className="text-2xl font-medium my-2">{children}</h3>
+                                          ),
+                                          h4: ({ children }) => (
+                                              <h4 className="text-xl font-light text-red-400 my-1">{children}</h4>
+                                          ),
+                                      }}/>
                         </section>
 
                         <section ref={contentRef} className="flex flex-col gap-5">
@@ -681,7 +698,7 @@ export default function CourseDetailPage() {
 
                                 <div className="lg:col-start-3 grid grid-cols-1 gap-4">
                                     {ratingValueList.map((rating, index) => (
-                                        <div className="grid grid-cols-[12%_78%_10%] items-center gap-2">
+                                        <div key={index} className="grid grid-cols-[12%_78%_10%] items-center gap-2">
                                             <span>
                                                 {5 - index} sao
                                             </span>
