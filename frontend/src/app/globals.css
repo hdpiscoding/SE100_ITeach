@@ -147,3 +147,7 @@ body {
     opacity: 1;
   }
 }
+
+.rdp-vhidden {
+  @apply hidden;
+}

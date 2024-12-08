@@ -25,6 +25,7 @@ import {
 import { Calendar } from "@/components/ui/calendar"
 import { Input } from "@/components/ui/input"
 import Image from "next/image";
+import DatePicker from "@/components/ui/date-picker";
 
 const formSchema = z.object({
     firstName: z.optional(z.string()),
@@ -41,7 +42,7 @@ export default function Profile(props: any) {
     const [lastName, setLastName] = React.useState("");
     const [phone, setPhone] = React.useState("");
     const [email, setEmail] = React.useState("abc@gmail.com");
-    const [dob, setDob] = React.useState<Date | undefined>(undefined);
+    const [dob, setDob] = React.useState<Date | undefined>(new Date("2004-07-11"));
     const [avatar, setAvatar] = React.useState<File | null>(null);
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -124,8 +125,7 @@ export default function Profile(props: any) {
                                           )}
                                       />
 
-                                      <div
-                                          className="flex flex-col gap-4 md:flex-col lg:flex lg:flex-row lg:items-center lg:justify-between">
+                                      <div className="flex flex-col-reverse gap-4 md:flex-col lg:flex lg:flex-row lg:items-center lg:justify-between">
                                           <FormField
                                               control={form.control}
                                               name="phone"
@@ -144,43 +144,13 @@ export default function Profile(props: any) {
                                               control={form.control}
                                               name="dob"
                                               render={({field}) => (
-                                                  <FormItem className="flex flex-col space-y-3">
+                                                  <FormItem className="flex flex-col space-y-4">
                                                       <FormLabel>Ngày sinh</FormLabel>
-                                                      <Popover>
-                                                          <PopoverTrigger asChild>
-                                                              <FormControl>
-                                                                  <Button
-                                                                      variant={"outline"}
-                                                                      className={cn(
-                                                                          "w-[253px] pl-3 mt-3 text-left font-normal",
-                                                                          !field.value && "text-muted-foreground"
-                                                                      )}
-                                                                  >
-                                                                      {field.value ? (
-                                                                          format(field.value, "dd/MM/yyyy")
-                                                                      ) : (
-                                                                          <span>DD/MM/YYYY</span>
-                                                                      )}
-                                                                      <CalendarIcon
-                                                                          className="ml-auto h-4 w-4 opacity-50"/>
-                                                                  </Button>
-                                                              </FormControl>
-                                                          </PopoverTrigger>
-                                                          <PopoverContent className="w-auto p-0" align="start">
-                                                              <Calendar
-                                                                  mode="single"
-                                                                  selected={dob}
-                                                                  onSelect={(date) => {
-                                                                      setDob(date);
-                                                                      field.onChange(date);
-                                                                  }}
-                                                                  disabled={(date) =>
-                                                                      date > new Date() || date < new Date("1900-01-01")
-                                                                  }
-                                                                  initialFocus
-                                                              />
-                                                          </PopoverContent>
-                                                      </Popover>
+                                                      <DatePicker
+                                                          className="w-full lg:w-[300px] flex items-center justify-start"
+                                                          date={dob}
+                                                          setDate={setDob}
+                                                      />
                                                       <FormMessage/>
                                                   </FormItem>
                                               )}
