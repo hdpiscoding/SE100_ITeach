@@ -5,7 +5,6 @@ import {ScrollArea} from "@/components/ui/scroll-area";
 import Image from "next/image";
 import {FaUser} from "react-icons/fa";
 import {Textarea} from "@/components/ui/textarea";
-import {Button} from "@/components/ui/button";
 import {Send} from 'lucide-react'
 import {TooltipContent, Tooltip, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
 import {Pagination, Stack} from "@mui/material";

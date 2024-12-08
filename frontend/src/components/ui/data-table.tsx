@@ -3,11 +3,13 @@ import { Button } from "@/components/ui/button"
 import * as React from "react"
 import {
     ColumnDef,
+    ColumnFiltersState,
     SortingState,
     flexRender,
     getPaginationRowModel,
     getSortedRowModel,
     getCoreRowModel,
+    getFilteredRowModel,
     useReactTable,
 } from "@tanstack/react-table"
 
@@ -19,21 +21,25 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import {Input} from "@/components/ui/input";
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[],
-    itemsPerPage?: number
+    itemsPerPage?: number,
+    callBy: "cart" | "analysis"
 }
 
 export function DataTable<TData, TValue>({
                                              columns,
                                              data,
-                                             itemsPerPage
+                                             itemsPerPage,
+                                             callBy
                                          }: DataTableProps<TData, TValue>) {
-    const [sorting, setSorting] = React.useState<SortingState>([])
-    const [pageSize, setPageSize] = React.useState(itemsPerPage || 10)
-    const [pageIndex, setPageIndex] = React.useState(0)
+    const [sorting, setSorting] = React.useState<SortingState>([]);
+    const [pageSize, setPageSize] = React.useState(itemsPerPage || 10);
+    const [pageIndex, setPageIndex] = React.useState(0);
+    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 
     const table = useReactTable({
         data,
@@ -42,12 +48,15 @@ export function DataTable<TData, TValue>({
         getPaginationRowModel: getPaginationRowModel(),
         onSortingChange: setSorting,
         getSortedRowModel: getSortedRowModel(),
+        onColumnFiltersChange: setColumnFilters,
+        getFilteredRowModel: getFilteredRowModel(),
         state: {
             sorting,
             pagination: {
                 pageSize,
                 pageIndex
-            }
+            },
+            columnFilters,
         },
         onPaginationChange: (updater) => {
             const newState =
@@ -61,8 +70,19 @@ export function DataTable<TData, TValue>({
 
     return (
         <div>
-            <div className="border">
-                <Table>
+            <div>
+                <div className="flex items-center py-4">
+                    <Input
+                        placeholder="Tìm kiếm theo tên..."
+                        value={(table.getColumn("lastName")?.getFilterValue() as string) ?? ""}
+                        onChange={(event) =>
+                            table.getColumn("lastName")?.setFilterValue(event.target.value)
+                        }
+                        className="max-w-sm"
+                    />
+                </div>
+
+                <Table className="border">
                     <TableHeader className="bg-LightGray">
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
@@ -96,11 +116,19 @@ export function DataTable<TData, TValue>({
                                 </TableRow>
                             ))
                         ) : (
-                            <TableRow>
-                                <TableCell colSpan={columns.length} className="h-24 text-center">
-                                    Bạn chưa có sản phẩm nào trong giỏ hàng 😞
-                                </TableCell>
-                            </TableRow>
+                            callBy === "cart"
+                                ?
+                                <TableRow>
+                                    <TableCell colSpan={columns.length} className="h-24 text-center">
+                                        Bạn chưa có sản phẩm nào trong giỏ hàng 😞
+                                    </TableCell>
+                                </TableRow>
+                                :
+                                <TableRow>
+                                    <TableCell colSpan={columns.length} className="h-24 text-center">
+                                        Không tìm thấy học viên... 😞
+                                    </TableCell>
+                                </TableRow>
                         )}
                     </TableBody>
                 </Table>

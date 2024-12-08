@@ -2,27 +2,17 @@
 import React, {useEffect} from "react";
 import { FaUser } from "react-icons/fa";
 import { zodResolver } from "@hookform/resolvers/zod"
-import { format } from "date-fns"
-import { cn } from "@/lib/utils"
-import { CalendarIcon } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { z } from "zod";
 import { Button } from "@/components/ui/button"
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover"
-import { Calendar } from "@/components/ui/calendar"
 import { Input } from "@/components/ui/input"
 import Image from "next/image";
 import DatePicker from "@/components/ui/date-picker";
@@ -150,6 +140,7 @@ export default function Profile(props: any) {
                                                           className="w-full lg:w-[300px] flex items-center justify-start"
                                                           date={dob}
                                                           setDate={setDob}
+                                                          type={"date"}
                                                       />
                                                       <FormMessage/>
                                                   </FormItem>

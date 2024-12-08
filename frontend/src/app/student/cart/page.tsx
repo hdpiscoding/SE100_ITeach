@@ -68,7 +68,7 @@ export default function CartPage() {
 
                 <div className="grid grid-cols-[70%_2%_28%] col-start-2">
                     <div className="col-start-1">
-                        <DataTable columns={columns} data={orderItems} itemsPerPage={10}/>
+                        <DataTable columns={columns} data={orderItems} itemsPerPage={10} callBy="cart"/>
                     </div>
 
                     <div className="col-start-3 border rounded-sm flex flex-col p-4 h-fit">

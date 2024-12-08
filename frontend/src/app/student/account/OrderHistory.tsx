@@ -99,7 +99,7 @@ export default function OrderHistory() {
             <div className="border-t"/>
 
             <div>
-                <DataTable columns={columns} data={orders} itemsPerPage={10}/>
+                <DataTable columns={columns} data={orders} itemsPerPage={10} callBy="cart"/>
             </div>
         </div>
     );

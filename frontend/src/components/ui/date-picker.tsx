@@ -6,15 +6,18 @@ import { Calendar } from "./calendar";
 import { format } from "date-fns";
 import { updateDatePart } from "@/lib/utils";
 import { cn } from "@/lib/utils"
+import MonthCalendar from "@/components/ui/month-calendar";
 
+type DatePickerType = "date" | "month";
 
 type DatePickerProps = {
     className: string;
     date: Date | undefined;
     setDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
+    type: DatePickerType;
 };
 
-const DatePicker = ({ className, date, setDate }: DatePickerProps) => {
+const DatePicker = ({ className, date, setDate, type }: DatePickerProps) => {
     const [ month, setMonth ] = useState<Date | undefined>(new Date());
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
@@ -38,7 +41,10 @@ const DatePicker = ({ className, date, setDate }: DatePickerProps) => {
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {date ? (
                         <span>
-                          {format(updateDatePart(month as Date,date), "dd/MM/yyyy")}
+                          {type === "date"
+                              ?
+                              format(updateDatePart(month as Date,date), "dd/MM/yyyy") :
+                              format(updateDatePart(month as Date,date), "MM/yyyy")}
                         </span>
                     ) : (
                         <span className="sm:block">DD/MM/YYYY</span>
@@ -46,20 +52,26 @@ const DatePicker = ({ className, date, setDate }: DatePickerProps) => {
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
-                <Calendar
-                    mode="single"
-                    month={month}
-                    onMonthChange={(month) => setMonth(month)}
-                    selected={date}
-                    onSelect={(e) => {
-                        setDate(e);
-                        setIsCalendarOpen(false);
-                    }}
-                    initialFocus
-                    captionLayout="dropdown-buttons"
-                    fromYear={1940}
-                    toYear={2025}
-                />
+                {type === "date"
+                    ?
+                    <Calendar
+                        mode="single"
+                        month={month}
+                        onMonthChange={(month) => setMonth(month)}
+                        selected={date}
+                        onSelect={(e) => {
+                            setDate(e);
+                            setIsCalendarOpen(false);
+                        }}
+                        initialFocus
+                        captionLayout="dropdown-buttons"
+                        fromYear={1940}
+                        toYear={2025}
+                    />
+                    :
+                    <MonthCalendar currentMonth={date ?? new Date()}
+                                   onMonthChange={(newMonth) => setDate(newMonth)}
+                                   onClose={() => setIsCalendarOpen(false)}/>}
             </PopoverContent>
         </Popover>
     );
