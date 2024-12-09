@@ -25,12 +25,6 @@ export const metadata: Metadata = {
   },
 };
 
-const AsyncChildren = async ({ children }: { children: React.ReactNode }) => {
-  // Giả lập độ trễ (lazy load)
-  await new Promise((resolve) => setTimeout(resolve, 5000));
-  return <>{children}</>;
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -48,7 +42,6 @@ export default function RootLayout({
             {children}
         </main>
       </Suspense>
-
 
       <footer>
         <Footer/>

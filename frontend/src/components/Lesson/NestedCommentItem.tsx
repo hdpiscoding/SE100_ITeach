@@ -111,24 +111,27 @@ export default function NestedCommentItem({comment, lessonId, currentUser, addCo
                     </p>
 
                     <div className="flex items-center gap-4">
-                        <TooltipProvider>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <div
-                                        className="flex items-center gap-1 cursor-pointer p-2 rounded-3xl w-fit hover:bg-LighterGray group"
-                                        onClick={() => setShowReply(!showReply)}>
-                                        <MessageCircle className="h-4 w-4 text-DarkGray group-hover:text-DarkGreen"/>
+                        {currentUser.role !== "admin"
+                            &&
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <div
+                                            className="flex items-center gap-1 cursor-pointer p-2 rounded-3xl w-fit hover:bg-LighterGray group"
+                                            onClick={() => setShowReply(!showReply)}>
+                                            <MessageCircle className="h-4 w-4 text-DarkGray group-hover:text-DarkGreen"/>
 
-                                        <span className="text-[0.8rem] text-DarkerGray group-hover:text-DarkGreen">
-                                            Phản hồi
-                                        </span>
-                                    </div>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    <p>Phản hồi</p>
-                                </TooltipContent>
-                            </Tooltip>
-                        </TooltipProvider>
+                                            <span className="text-[0.8rem] text-DarkerGray group-hover:text-DarkGreen">
+                                                Phản hồi
+                                            </span>
+                                        </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>Phản hồi</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        }
 
                         {(comment?.children !== undefined && comment.children?.length > 0)
                             &&

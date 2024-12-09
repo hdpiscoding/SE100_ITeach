@@ -71,16 +71,18 @@ export function DataTable<TData, TValue>({
     return (
         <div>
             <div>
-                <div className="flex items-center py-4">
-                    <Input
-                        placeholder="Tìm kiếm theo tên..."
-                        value={(table.getColumn("lastName")?.getFilterValue() as string) ?? ""}
-                        onChange={(event) =>
-                            table.getColumn("lastName")?.setFilterValue(event.target.value)
-                        }
-                        className="max-w-sm"
-                    />
-                </div>
+                {callBy === "analysis"
+                    &&
+                    <div className="flex items-center py-4">
+                        <Input
+                            placeholder="Tìm kiếm theo tên học viên..."
+                            value={(table.getColumn("lastName")?.getFilterValue() as string) ?? ""}
+                            onChange={(event) =>
+                                table.getColumn("lastName")?.setFilterValue(event.target.value)
+                            }
+                            className="max-w-sm"
+                        />
+                    </div>}
 
                 <Table className="border">
                     <TableHeader className="bg-LightGray">
@@ -89,7 +91,7 @@ export function DataTable<TData, TValue>({
                                 {headerGroup.headers.map((header) => {
                                     return (
                                         <TableHead key={header.id} className="font-semibold text-center align-middle">
-                                            {header.isPlaceholder
+                                        {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
                                                     header.column.columnDef.header,

@@ -6,6 +6,6 @@ const CourseDetail = dynamic(() => import('@/components/Course/CourseDetail'), {
 
 export default function CourseDetailPage() {
     return (
-        <CourseDetail role="student"/>
+        <CourseDetail role="admin"/>
     );
 };

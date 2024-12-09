@@ -10,7 +10,7 @@ import {
     DialogTrigger
 } from "@/components/ui/dialog";
 import {DataTable} from "@/components/ui/data-table";
-import {dialogColumns} from "@/app/student/account/DialogColumns";
+import {dialogColumns} from "@/components/Account/DialogColumns";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -41,6 +41,11 @@ export const columns: ColumnDef<Order>[] = [
                 </Button>
             )
         },
+        sortingFn: (rowA, rowB) => {
+            const dateA = new Date(rowA.getValue("date")).getTime()
+            const dateB = new Date(rowB.getValue("date")).getTime()
+            return dateA - dateB;
+        }
     },
     {
         accessorKey: "total",
@@ -116,7 +121,7 @@ export const columns: ColumnDef<Order>[] = [
                             <DialogTitle>Chi tiết đơn hàng</DialogTitle>
                         </DialogHeader>
 
-                        <DataTable columns={dialogColumns} data={orderItems} itemsPerPage={3}/>
+                        <DataTable columns={dialogColumns} data={orderItems} itemsPerPage={3} callBy="cart"/>
 
                     </DialogContent>
                 </Dialog>

@@ -1,6 +1,6 @@
 'use client';
 import React, {useEffect, useState} from 'react';
-import NestedCommentItem from "@/app/student/course/[courseId]/lesson/[lessonId]/NestedCommentItem";
+import NestedCommentItem from "@/components/Lesson/NestedCommentItem";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import Image from "next/image";
 import {FaUser} from "react-icons/fa";
@@ -274,50 +274,52 @@ export default function LessonComment(props: any) {
                 </Stack>
             </div>
 
-            <div className="lg:col-start-1 flex flex-col gap-6 w-full">
-                <div className="flex gap-4">
-                    <div className="flex flex-col">
-                        {props.user?.avatar ?
-                            <div
-                                className="relative rounded-[50%] overflow-hidden h-[40px] w-[40px]">
-                                <Image
-                                    src={props.user?.avatar}
-                                    alt="user avatar"
-                                    className="object-cover"
-                                    fill
-                                />
-                            </div>
-                            :
-                            <div
-                                className="bg-DarkGray h-[40px] w-[40px] rounded-[50%] flex items-center justify-center text-center">
-                                <FaUser className="text-[22px] text-LightGray"/>
-                            </div>}
+            {props.user?.role !== "admin"
+                &&
+                <div className="lg:col-start-1 flex flex-col gap-6 w-full">
+                    <div className="flex gap-4">
+                        <div className="flex flex-col">
+                            {props.user?.avatar ?
+                                <div
+                                    className="relative rounded-[50%] overflow-hidden h-[40px] w-[40px]">
+                                    <Image
+                                        src={props.user?.avatar}
+                                        alt="user avatar"
+                                        className="object-cover"
+                                        fill
+                                    />
+                                </div>
+                                :
+                                <div
+                                    className="bg-DarkGray h-[40px] w-[40px] rounded-[50%] flex items-center justify-center text-center">
+                                    <FaUser className="text-[22px] text-LightGray"/>
+                                </div>}
 
-                        <div className="border-l"/>
+                            <div className="border-l"/>
+                        </div>
+
+                        <div className="flex flex-row gap-3 w-full items-center">
+                            <Textarea className="rounded-lg resize-none"
+                                      placeholder="Viết bình luận..."
+                                      value={userComment}
+                                      onChange={handleCommentChange}
+                                      onKeyDown={(e: React.KeyboardEvent) => handleKeyDown(e)}/>
+
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Send
+                                            className={`h-4 w-4 ${userComment ? "cursor-pointer text-DarkGreen hover:text-DarkGreen_Hover active:scale-90 transition-transform duration-150" : "text-DarkGray"}`}
+                                            onClick={handleUploadComment}/>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>Đăng tải</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        </div>
                     </div>
-
-                    <div className="flex flex-row gap-3 w-full items-center">
-                        <Textarea className="rounded-lg resize-none"
-                                  placeholder="Viết bình luận..."
-                                  value={userComment}
-                                  onChange={handleCommentChange}
-                                  onKeyDown={(e: React.KeyboardEvent) => handleKeyDown(e)}/>
-
-                        <TooltipProvider>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <Send
-                                        className={`h-4 w-4 ${userComment ? "cursor-pointer text-DarkGreen hover:text-DarkGreen_Hover active:scale-90 transition-transform duration-150" : "text-DarkGray"}`}
-                                        onClick={handleUploadComment}/>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    <p>Đăng tải</p>
-                                </TooltipContent>
-                            </Tooltip>
-                        </TooltipProvider>
-                    </div>
-                </div>
-            </div>
+                </div>}
         </div>
     );
 };

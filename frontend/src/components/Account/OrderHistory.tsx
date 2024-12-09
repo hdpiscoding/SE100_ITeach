@@ -1,7 +1,7 @@
 'use client';
 import React, {useEffect, useState} from "react";
 import {DataTable} from "@/components/ui/data-table";
-import {columns} from "@/app/student/account/columns";
+import {columns} from "@/components/Account/columns";
 
 interface Order {
     id: string;
@@ -91,7 +91,7 @@ export default function OrderHistory() {
     }, []);
 
     return (
-        <div className="border rounded-md bg-white flex flex-col mx-4">
+        <div className="rounded-md bg-white flex flex-col mx-4">
               <span className="font-bold text-2xl px-6 py-3">
                   Lịch sử mua hàng
               </span>
