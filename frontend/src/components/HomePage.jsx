@@ -10,8 +10,12 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { Pagination, Navigation } from "swiper/modules";
 import Banner from "@/components/Banner";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const Home = () => {
+  const [activeButton, setActiveButton] = useState("All Program");
+  const router = useRouter();
   return (
     <div className="">
       <div className="relative w-full h-fit">
@@ -32,21 +36,26 @@ const Home = () => {
         </h1>
 
         <div className="my-8 md:my-14 flex overflow-x-auto flex-wrap justify-center space-x-3 md:space-x-5 pb-4 md:pb-0">
-          <Button className="bg-white text-black hover:bg-SignUp active:bg-SignUp border-2 whitespace-nowrap min-w-[150px]">
-            All Program
-          </Button>
-          <Button className="bg-white text-black hover:bg-SignUp active:bg-SignUp border-2 whitespace-nowrap min-w-[150px]">
-            All Program
-          </Button>
-          <Button className="bg-white text-black hover:bg-SignUp active:bg-SignUp border-2 whitespace-nowrap min-w-[150px]">
-            All Program
-          </Button>
-          <Button className="bg-white text-black hover:bg-SignUp active:bg-SignUp border-2 whitespace-nowrap min-w-[150px]">
-            All Program
-          </Button>
-          <Button className="bg-white text-black hover:bg-SignUp active:bg-SignUp border-2 whitespace-nowrap min-w-[150px]">
-            All Program
-          </Button>
+          {[
+            "All Program",
+            "Thuật Toán",
+            "Kiến thức cơ sở",
+            "Lập trình cơ bản",
+            "Lập trình nâng cao",
+            "Giải quyết vấn đề",
+          ].map((text) => (
+            <Button
+              key={text}
+              onClick={() => setActiveButton(text)}
+              className={`border-2 whitespace-nowrap min-w-[150px] ${
+                activeButton === text
+                  ? "bg-SignUp text-white"
+                  : "bg-white text-black hover:bg-SignUp hover:text-white"
+              }`}
+            >
+              {text}
+            </Button>
+          ))}
         </div>
 
         <div className=" grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-2 gap-6 justify-items-center">
@@ -79,7 +88,10 @@ const Home = () => {
         </div>
 
         <div className="flex justify-center mt-[80px] mb-[150px]">
-          <Button className="text-SignUp bg-white border border-SignUp w-[200px]">
+          <Button
+            onClick={() => router.push("/course")}
+            className="text-SignUp bg-white border border-SignUp w-[200px]"
+          >
             Xem tất cả
           </Button>
         </div>
@@ -181,6 +193,10 @@ const Home = () => {
           <style jsx global>{`
             .swiper {
               padding-bottom: 50px !important;
+              overflow: visible !important;
+            }
+            .swiper-wrapper {
+              padding: 0 1px !important; /* Thêm dòng này */
             }
 
             .swiper-pagination {
@@ -194,7 +210,7 @@ const Home = () => {
             }
 
             .swiper-pagination-bullet-active {
-              background: #00DDC0 !important;
+              background: #00ddc0 !important;
             }
           `}</style>
         </div>

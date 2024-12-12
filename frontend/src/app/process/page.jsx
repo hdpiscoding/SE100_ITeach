@@ -4,11 +4,38 @@ import Image from "next/image";
 import { useState } from "react";
 import FilterProcess from "@/components/filterProcess";
 import Coursecard from "@/components/Coursecard";
+import CertificateCard from "@/components/certificateCard";
 const Process = () => {
   let username = "Username";
   let khoahoc = 24;
   let chungchi = 24;
   const [activeTab, setActiveTab] = useState("registered");
+  const renderContent = () => {
+    if (activeTab === "certificate") {
+      return (
+        <div className="grid lg:grid-cols-2 md:grid-cols-2 grid-cols-1 gap-6">
+          <CertificateCard/>
+          <CertificateCard/>
+          <CertificateCard/>
+          <CertificateCard/>
+          <CertificateCard/>
+          <CertificateCard/>
+        </div>
+      );
+    }
+
+    return (
+      <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6">
+        <Coursecard />
+        <Coursecard />
+        <Coursecard />
+        <Coursecard />
+        <Coursecard />
+        <Coursecard />
+        <Coursecard />
+      </div>
+    );
+  };
   return (
     <div className="">
       <div className="relative w-full h-[30vh] md:h-[50vh] lg:h-[70vh]">
@@ -20,7 +47,7 @@ const Process = () => {
           className="object-cover z-0"
           sizes="100vw"
         />
-      
+
         <div className="absolute inset-0 flex items-center justify-center lg:text-5xl md:text-4xl text-2xl">
           <div className="p-6 rounded-lg">
             <span className="font-bold text-orange">Hello </span>
@@ -68,15 +95,7 @@ const Process = () => {
             <div className=" ">
               <FilterProcess />
             </div>
-            <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6">
-              <Coursecard/>
-              <Coursecard/>
-              <Coursecard/>
-              <Coursecard/>
-              <Coursecard/>
-              <Coursecard/>
-              <Coursecard/>
-            </div>
+            <div className="w-full">{renderContent()}</div>
           </div>
         </div>
         <div></div>

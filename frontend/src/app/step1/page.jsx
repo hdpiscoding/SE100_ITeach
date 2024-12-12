@@ -31,7 +31,8 @@ const Step1 = () => {
         <div className="space-y-3 md:space-y-5 lg:space-y-7">
           <div className="flex items-center space-x-5">
             <Image
-              className="inline-block"
+              onClick={() => router.push("/courseTeacher")}
+              className="inline-block cursor-pointer"
               src="/assets/images/vector.png"
               alt="step1"
               width={20}

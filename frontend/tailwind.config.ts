@@ -23,6 +23,7 @@ const config: Config = {
 			stroke1:'#00DDC0',
 			textfilter:'#8c8c8c',
 			strokeswap:'#3DCBB1',
+			certificate:'#6E6E6E',
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'

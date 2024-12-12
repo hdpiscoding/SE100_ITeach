@@ -6,8 +6,10 @@ import Image from "next/image";
 const FilterProcess = () => {
     const [checkedcategories, setCheckedcategories] = useState(false);
     return (
-        <div className="border border-stroke lg:rounded-2xl md:rounded-xl rounded-lg  lg:text-xl md:text-lg text-xs h-fit lg:p-5 md:p-3 sm:p-2 p-2 text-textfilter ">
-       <div>
+        <div className="border border-stroke lg:rounded-2xl md:rounded-xl rounded-lg
+          lg:text-xl md:text-lg text-xs h-fit lg:p-5 md:p-3 sm:p-2 p-2 text-textfilter  ">
+       <div className="lg:space-y-7 md:space-y-5 sm:space-y-3 space-y-2">
+         <div className="text-SignUp font-bold cursor-pointer ">Lọc</div>
            <div className='flex justify-between'> 
               <h1 className='font-bold lg:text-xl md:text-lg sm:text-xs text-xs'>Categories</h1>
                {checkedcategories ? <Image src="/assets/images/arrow_up.png" width={20} height={20} onClick={()=>setCheckedcategories(!checkedcategories)}/>
