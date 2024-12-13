@@ -10,7 +10,13 @@ const Navbar = () => {
   const pathname = usePathname();
   const [login, setLogin] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const navLinks = [
+  const role = "student";
+  const navLinks = role === "student" ? [
+    { href: "/", label: "Trang chủ" },
+    { href: "/student/process", label: "Quá trình" },
+    { href: "/student/course", label: "Khóa học" },
+    { href: "/aboutus", label: "Về chúng tôi" },
+  ] : [
     { href: "/", label: "Trang chủ" },
     { href: "/process", label: "Quá trình" },
     { href: "/course", label: "Khóa học" },
@@ -74,16 +80,7 @@ const Navbar = () => {
                   </div>
                 ) : (
                   <div className="flex justify-between gap-x-2 sm:gap-x-3 md:gap-x-4 lg:gap-x-5">
-                    <Link href="/search">
-                      <Image
-                        className="w-[18px] sm:w-[22px] md:w-[25px] lg:w-[30px] h-[18px] sm:h-[22px] md:h-[25px] lg:h-[30px]"
-                        src="/assets/images/Search.png"
-                        width={30}
-                        height={30}
-                        alt="search"
-                      />
-                    </Link>
-                    <Link href="/cart">
+                    <Link href="/student/cart">
                       <Image
                         className="w-[18px] sm:w-[22px] md:w-[25px] lg:w-[30px] h-[18px] sm:h-[22px] md:h-[25px] lg:h-[30px]"
                         src="/assets/images/Bag.png"
@@ -92,7 +89,7 @@ const Navbar = () => {
                         alt="bag"
                       />
                     </Link>
-                    <Link href="/profile">
+                    <Link href="/student/account">
                       <Image
                         className="w-[18px] sm:w-[22px] md:w-[25px] lg:w-[30px] h-[18px] sm:h-[22px] md:h-[25px] lg:h-[30px]"
                         src="/assets/images/user.png"
@@ -128,20 +125,7 @@ const Navbar = () => {
                 {login && (
                   <div className="pt-4 border-t space-y-4">
                     <Link
-                      href="/search"
-                      className="flex items-center space-x-2 py-2"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      <Image
-                        src="/assets/images/Search.png"
-                        width={20}
-                        height={20}
-                        alt="search"
-                      />
-                      <span>Tìm kiếm</span>
-                    </Link>
-                    <Link
-                      href="/cart"
+                      href="/student/cart"
                       className="flex items-center space-x-2 py-2"
                       onClick={() => setIsMenuOpen(false)}
                     >
@@ -154,7 +138,7 @@ const Navbar = () => {
                       <span>Giỏ hàng</span>
                     </Link>
                     <Link
-                      href="/profile"
+                      href="/student/account"
                       className="flex items-center space-x-2 py-2"
                       onClick={() => setIsMenuOpen(false)}
                     >
