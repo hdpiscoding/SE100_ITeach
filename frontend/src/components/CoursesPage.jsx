@@ -23,7 +23,7 @@ const CoursesPage = () => {
            <div className='flex space-x-5'>
                 <div className='rounded-3xl border-filter border-2 w-[300px] flex justify-between py-1 '>
                     <input className='outline-none w-[270px] ml-2' type="text" placeholder=''/>
-                    <Image className='inline-block mr-2 mt-1 h-[20px]' src="/assets/images/search_course.png" width={15} height={0}/>
+                    <Image alt="search" className='inline-block mr-2 mt-1 h-[20px]' src="/assets/images/search_course.png" width={15} height={0}/>
                 </div>
                 <span className='mt-2'>Sort by:</span>
                 <Select>
