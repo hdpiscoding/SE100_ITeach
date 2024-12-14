@@ -79,7 +79,7 @@ const Navbar = () => {
                     </Button>
                   </div>
                 ) : (
-                  <div className="flex justify-between gap-x-2 sm:gap-x-3 md:gap-x-4 lg:gap-x-5">
+                  <div className="flex justify-end gap-x-2 sm:gap-x-3 md:gap-x-4 lg:gap-x-5">
                     <Link href="/student/cart">
                       <Image
                         className="w-[18px] sm:w-[22px] md:w-[25px] lg:w-[30px] h-[18px] sm:h-[22px] md:h-[25px] lg:h-[30px]"

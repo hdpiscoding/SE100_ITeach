@@ -66,7 +66,7 @@ const FilterTeacher = () => {
    }
   return (
    <div className='drop-shadow-lg border border-gray-200 rounded-lg bg-white text-textfilter h-fit'>
-       <div className='w-[300px] p-3 md:w-[250px] sm:w-[200px]'>
+       <div className='w-[300px] p-3 md:w-[250px] sm:w-[200px] font-poppins'>
            <div className='space-y-6 sm:space-y-4'>
            <div className='flex justify-between'>
              <button className='text-filter select-none sm:text-sm'>Filter</button>

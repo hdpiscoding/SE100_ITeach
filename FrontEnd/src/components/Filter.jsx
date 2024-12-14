@@ -67,8 +67,8 @@ const Filter = () => {
    setSelectedLevel(value);
  };
   return (
-    <div className="drop-shadow-lg border border-gray-200 rounded-lg bg-white text-textfilter h-fit lg:text-xl md:text-lg sm:text-sm text-xs">
-      <div className="lg:w-[300px] p-3 md:w-[250px] sm:w-[200px] w-[150px]">
+    <div className="font-poppins drop-shadow-lg border border-gray-200 rounded-lg bg-white text-textfilter h-fit lg:text-xl md:text-lg sm:text-sm text-xs">
+      <div className="w-fit p-3">
         <div className="space-y-6 sm:space-y-4">
           <div className="flex justify-between">
             <button className="text-filter select-none lg:text-xl md:text-lg sm:text-sm text-xs">

@@ -36,7 +36,7 @@ const CertificateCard = () => {
                     {/* QR code và logo section */}
                     <div className="col-span-1 flex flex-col justify-between">
                       <Image
-                        className="w-full lg:w-[50px] lg:h-[20px]  h-[15px] "
+                        className="w-full lg:w-[50px] lg:h-[20px]  h-[10px] "
                         src="/assets/images/logo.png"
                         alt="signature"
                         width={200}

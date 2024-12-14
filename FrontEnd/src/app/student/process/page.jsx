@@ -13,7 +13,7 @@ const Process = () => {
   const renderContent = () => {
     if (activeTab === "certificate") {
       return (
-        <div className="grid lg:grid-cols-2 md:grid-cols-2 grid-cols-1 gap-6">
+        <div className="grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-2 grid-cols-1 lg:gap-6 md:gap-4 sm:gap-3 gap-2">
           <CertificateCard/>
           <CertificateCard/>
           <CertificateCard/>
@@ -25,7 +25,7 @@ const Process = () => {
     }
 
     return (
-      <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6">
+      <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 grid-cols-1 lg:gap-6 md:gap-4 sm:gap-3 gap-2">
         <Coursecard />
         <Coursecard />
         <Coursecard />
@@ -91,8 +91,8 @@ const Process = () => {
               Chứng chỉ
             </span>
           </div>
-          <div className="grid grid-cols-[1fr_4fr] gap-6 p-3 ">
-            <div className=" ">
+          <div className="grid lg:grid-cols-[1fr_4fr] md:grid-cols-[1fr_3fr] sm:grid-cols-[1fr_2fr] grid-cols-[1fr_1fr] gap-6 p-3  ">
+            <div className="w-full ">
               <FilterProcess />
             </div>
             <div className="w-full">{renderContent()}</div>
