@@ -1,6 +1,5 @@
 import React from "react";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
 
 const Footer = () => {
   return (
@@ -21,51 +20,51 @@ const Footer = () => {
           <div className="space-y-4">
             <div className="flex items-start gap-2">
               <Image
-                className="lg:h-[25px] md:h-[20px] sm:h-[15px] h-[15px] w-auto"
+                className="lg:h-[17px] md:h-[17px] sm:h-[15px] h-[15px] w-auto"
                 src="/assets/images/Location.png"
                 width={17}
                 height={25}
                 alt="location"
               />
-              <span className="text-SignUp font-bold">Address:</span>
+              <span className="text-SignUp font-bold lg:text-base md:text-base sm:text-base text-xs">Address:</span>
             </div>
-            <h1 className="text-SignUp">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit
+            <h1 className="text-SignUp lg:text-base md:text-base sm:text-base text-xs">
+            "Code Your Future, One Line at a Time!"
             </h1>
 
             <div className="flex items-center gap-2">
               <Image
-                className="lg:h-[25px] md:h-[20px] sm:h-[15px] h-[15px] w-auto"
+                className="lg:h-[17px] md:h-[17px] sm:h-[15px] h-[15px] w-auto"
                 src="/assets/images/Call.png"
                 width={20}
                 height={25}
                 alt="phone"
               />
-              <span className="text-SignUp font-bold">Tel: +9229341037</span>
+              <span className="text-SignUp font-bold lg:text-base md:text-base sm:text-base text-xs">Tel: +9229341037</span>
             </div>
 
             <div className="flex items-center gap-2">
               <Image
-                className="lg:h-[25px] md:h-[20px] sm:h-[15px] h-[15px] w-auto"
+                className="lg:h-[17px] md:h-[17px] sm:h-[15px] h-[15px] w-auto"
                 src="/assets/images/Time Circle.png"
                 width={20}
                 height={25}
                 alt="time"
               />
-              <span className="text-SignUp font-bold">
+              <span className="text-SignUp font-bold lg:text-base md:text-base sm:text-base text-xs">
                 Response hours: 8 to 20
               </span>
             </div>
 
             <div className="flex items-center gap-2">
               <Image
-                className="lg:h-[25px] md:h-[20px] sm:h-[15px] h-[15px] w-auto"
+                className="lg:h-[17px] md:h-[17px] sm:h-[15px] h-[15px] w-auto"
                 src="/assets/images/Group.png"
                 width={20}
                 height={25}
                 alt="email"
               />
-              <span className="text-SignUp font-bold">
+              <span className="text-SignUp font-bold lg:text-base md:text-base sm:text-base text-xs">
                 Email: info@onlearn.com
               </span>
             </div>
@@ -77,7 +76,7 @@ const Footer = () => {
         
           <div className="space-y-4 min-w-[150px]">
             <h1 className="font-bold lg:text-lg md:text-lg sm:text-base text-sm">Categories</h1>
-            <div className="space-y-2">
+            <div className="space-y-2 lg:text-base md:text-base sm:text-base text-xs">
               <h1 className="text-SignUp">Counseling</h1>
               <h1 className="text-SignUp">Health and fitness</h1>
               <h1 className="text-SignUp">Individual development</h1>
