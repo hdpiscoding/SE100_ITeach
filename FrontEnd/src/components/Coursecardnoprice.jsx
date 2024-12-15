@@ -1,6 +1,5 @@
 import React from 'react'
 import Image from 'next/image'
-import { Button } from '@/components/ui/button'
 const Coursecardnoprice = () => {
   return (
     <div className='rounded-md overflow-hidden bg-slate-100 w-fit space-y-3'>

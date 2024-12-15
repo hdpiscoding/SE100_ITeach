@@ -61,12 +61,16 @@ const TeacherInfor = () => {
                             <label htmlFor="phone" className="text-sm">Số điện thoại</label>
                             <input type="text" id="phone" className="border border-gray rounded-md p-2 w-full" />
                         </div>
-                       <Button className="bg-SignUp text-white rounded-3xl lg:text-sm md:text-xs sm:text-xs lg:py-3 sm:py-0 md:py-1 lg:px-10 md:px-5 sm:px-3">Đình chỉ</Button>
+                     
                     </div>
-                    <div className="flex lg:justify-center items-center sm:mt-5 sm:justify-start">
+                    <div className="flex lg:justify-center items-center sm:mt-5 sm:justify-start mt-5">
                        <TeacherCard/>
                     </div>
                 </div>
+               <div className="p-5">
+                  <button className="bg-SignUp text-white lg:rounded-3xl md:rounded-2xl sm:rounded-2xl rounded-xl lg:text-sm md:text-xs
+                          sm:text-xs text-xs lg:py-3 sm:py-0 md:py-1 lg:px-10 md:px-5 sm:px-3 px-3 py-1">Đình chỉ</button>
+               </div>
             </div>
             <div className="border border-gray rounded-lg ">
                 <h1 className="text-xl font-bold p-4">Khóa học</h1>
@@ -75,7 +79,7 @@ const TeacherInfor = () => {
                     <span className="text-sm ">Approved</span>
                     <span className="text-sm ">Suspended</span>
                 </div>
-                <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 border-t border-gray p-5">
+                <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 border-t border-gray p-5 justify-items-center">
                    <CourseCardAdmin/>
                    <CourseCardAdmin/>
                    <CourseCardAdmin/>

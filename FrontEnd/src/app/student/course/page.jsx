@@ -109,7 +109,7 @@ const CoursesPage = () => {
               </div>
             </div>
           </div>
-          <div className="flex justify-center space-x-2 my-10">
+          <div className="flex justify-center space-x-2 my-10 lg:text-base md:text-sm sm:text-xs text-xs">
             <button
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
