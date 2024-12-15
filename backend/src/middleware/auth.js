@@ -26,8 +26,30 @@ const studentPaths = [
   "/api/v1/complete-the-lesson",
   "/api/v1/get-current-lesson-id",
 ];
-const teacherPaths = ["/api/v1/get-all-course", "/api/v1/create-new-course"];
-const adminPaths = [];
+const teacherPaths = [
+  "/api/v1/create-new-course",
+  "/api/v1/get-all-course",
+  "/api/v1/delete-a-course",
+  "/api/v1/edit-a-course",
+  "/api/v1/get-my-course",
+  "/api/v1/post-a-lesson",
+  "/api/v1/put-a-lesson",
+  "/api/v1/delete-a-lesson",
+  "/api/v1/get-ide-use",
+  "/api/v1/post-ide-use",
+  "/api/v1/get-my-account",
+  "/api/v1/get-all-student-of-course",
+  "/api/v1/post-a-chapter",
+  "/api/v1/get-all-chapter",
+  "/api/v1/put-a-chapter",
+  "/api/v1/delete-a-chapter",
+];
+const adminPaths = [
+  "/api/v1/get-all-teacher",
+  "/api/v1/get-popular-teacher",
+  "/api/v1/get-popular-course",
+  "/api/v1/get-analysis-information",
+];
 const commonPaths = [
   "/api/v1/update-user-info",
   "/api/v1/change-password",

@@ -363,7 +363,7 @@ let buyCourse = (data) => {
     }
   });
 };
-let getDetailCourseInfo = (id) => {
+let getDetailCourseInfo = (id, userId) => {
   return new Promise(async (resolve, reject) => {
     try {
       let result = {};
@@ -373,7 +373,7 @@ let getDetailCourseInfo = (id) => {
           {
             model: db.User,
             as: "teacher",
-            attributes: ["id", "firstName", "lastName"],
+            attributes: ["id", "firstName", "lastName", "avatar"],
           },
           {
             model: db.CourseCategory,
@@ -412,6 +412,9 @@ let getDetailCourseInfo = (id) => {
         ],
         nest: true,
         raw: true,
+      });
+      result.mycourse = await db.MyCourse.findOne({
+        where: { courseId: id, userId: userId },
       });
       if (result) {
         resolve({
