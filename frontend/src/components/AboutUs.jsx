@@ -13,20 +13,20 @@ const AboutUs = () => {
             </div>
         </div>
       <div className='relative'>
-           <Image src="/assets/images/bg_aboutus.png " className='w-full h-[500px]' width={1400} height={100}>
+           <Image src="/assets/images/bg_aboutus.png" className='w-full h-[500px]' width={1400} height={100}>
            </Image>
-           <div className='space-y-5 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 '>
+           <div className='space-y-5 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>
             <div className='flex justify-center'>
                 <h1 className='text-white text-7xl font-extrabold font-serif'>About Us
                 </h1>
             </div>
-           <div className='flex justify-center '>
+           <div className='flex justify-center'>
                 <p className='w-[600px] text-white text-xl text-center'>
                     From preschool to pre-tertiary, our students enjoy fun, interactive and relevant 
                     lessons and are empowered to think beyond the confines of the classroom.
                 </p>
            </div>
-                <div className='flex justify-center '>
+                <div className='flex justify-center'>
                     <Button className='bg-orange px-7'>See more</Button>
                 </div>
                

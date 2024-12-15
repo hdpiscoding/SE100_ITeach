@@ -9,6 +9,9 @@ const config: Config = {
   ],
   theme: {
   	extend: {
+  		fontFamily: {
+  			sans: ["Poppins", "sans-serif"]
+  		},
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
@@ -18,6 +21,23 @@ const config: Config = {
 			filter:'#3DCBB1',
 			gray:'#DDDDDD',
 			xanhface:'#1877F2',
+			process:'#00FFCB',
+			stroke:'#44AB96',
+			stroke1:'#00DDC0',
+			textfilter:'#8c8c8c',
+			strokeswap:'#3DCBB1',
+			certificate:'#6E6E6E',
+  			DarkGreen: '#0B7077',
+  			DarkGreen_Hover: '#1C8A91',
+  			White: '#FFFFFF',
+  			Lime: '#00DDC0',
+  			DarkGray: '#A7A7A7',
+			DarkerGray: '#808080',
+  			LightGray: '#EEEEEE',
+			LighterGray: '#F5F5F5',
+  			Red: '#D85B5B',
+  			Orange_Hover: '#FF823C',
+			Yellow: '#FFD700',
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'
@@ -61,6 +81,28 @@ const config: Config = {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
+  		},
+  		keyframes: {
+  			'accordion-down': {
+  				from: {
+  					height: '0'
+  				},
+  				to: {
+  					height: 'var(--radix-accordion-content-height)'
+  				}
+  			},
+  			'accordion-up': {
+  				from: {
+  					height: 'var(--radix-accordion-content-height)'
+  				},
+  				to: {
+  					height: '0'
+  				}
+  			}
+  		},
+  		animation: {
+  			'accordion-down': 'accordion-down 0.2s ease-out',
+  			'accordion-up': 'accordion-up 0.2s ease-out'
   		}
   	}
   },
