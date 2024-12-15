@@ -12,7 +12,7 @@ const CourseTeacher = () => {
   const [activeTab, setActiveTab] = useState("registered");
   const router = useRouter();
   return (
-    <div className="space-y-3 md:space-y-5 lg:space-y-7">
+    <div className="space-y-3 md:space-y-5 lg:space-y-7 p-3">
       <div className="relative w-full h-[30vh] md:h-[50vh] lg:h-[70vh]">
         <Image
           src="/assets/images/bg_aboutus.png"
@@ -45,7 +45,7 @@ const CourseTeacher = () => {
               Khóa học của tôi
             </div>
             <Button
-              onClick={() => router.push("/step1")}
+              onClick={() => router.push("/teacher/step1")}
               className="bg-orange text-white h-[30px] w-[100px] text-[10px] sm:h-[35px] sm:w-[120px] sm:text-xs md:h-[40px] md:w-[140px] md:text-sm lg:h-[45px] lg:w-[160px] lg:text-base"
             >
               Tạo khóa học

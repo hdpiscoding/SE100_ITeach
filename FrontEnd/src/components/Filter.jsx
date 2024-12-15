@@ -4,6 +4,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import Image from "next/image";
 import { useState } from "react";
 import { Poppins } from "next/font/google";
+import Rating from "@mui/material/Rating";
 
 const Filter = () => {
   const [checkedrate, setCheckedrate] = useState(true);
@@ -64,43 +65,51 @@ const Filter = () => {
     }));
   };
   const handleLevelChange = (value) => {
-   setSelectedLevel(value);
- };
+    setSelectedLevel(value);
+  };
   return (
-    <div className="font-poppins drop-shadow-lg border border-gray-200 rounded-lg bg-white text-textfilter h-fit lg:text-xl md:text-lg sm:text-sm text-xs">
-      <div className="w-fit p-3">
-        <div className="space-y-6 sm:space-y-4">
-          <div className="flex justify-between">
-            <button className="text-filter select-none lg:text-xl md:text-lg sm:text-sm text-xs">
+    <div className="font-poppins drop-shadow-lg
+     border border-gray-200 rounded-lg bg-white text-textfilter
+      h-fit ">
+      <div className="w-full p-3">
+        <div className="space-y-6 sm:space-y-4 w-full">
+          <div className="flex justify-between lg:text-xl md:text-lg sm:text-sm text-sm">
+            <button className="text-filter select-none ">
               Filter
             </button>
             <button
-              className="text-filter bg-transparent select-none lg:text-xl md:text-lg sm:text-sm text-xs"
+              className="text-filter bg-transparent select-none "
               onClick={Clear}
             >
               Clear
             </button>
           </div>
-          <div className="flex justify-between">
-            <h1 className="font-bold">Rating</h1>
+          <div className="flex justify-between lg:text-base md:text-sm sm:text-sm text-sm">
+            <h1 className="font-bold flex items-center">Rating</h1>
             {checkedrate ? (
-              <Image
-                src="/assets/images/arrow_up.png"
-                width={20}
-                height={20}
-                onClick={() => setCheckedrate(!checkedrate)}
-              />
+             <div className="flex items-center">
+                <Image
+                  className="cursor-pointer sm:w-[15px] sm:h-[15px] lg:w-[20px] lg:h-[20px] w-[15px] h-[15px] "
+                  src="/assets/images/arrow_up.png "
+                  width={20}
+                  height={20}
+                  onClick={() => setCheckedrate(!checkedrate)}
+                />
+             </div>
             ) : (
-              <Image
-                src="/assets/images/arrow_down.png"
-                width={20}
-                height={20}
-                onClick={() => setCheckedrate(!checkedrate)}
-              />
+              <div className="flex items-center">
+                <Image
+                  className="cursor-pointer sm:w-[15px] sm:h-[15px] lg:w-[20px] lg:h-[20px] w-[15px] h-[15px] "
+                  src="/assets/images/arrow_down.png"
+                  width={20}
+                  height={20}
+                  onClick={() => setCheckedrate(!checkedrate)}
+                />
+             </div>
             )}
           </div>
           {checkedrate && (
-            <div className="flex justify-between ">
+            <div className="flex justify-between lg:text-base md:text-sm sm:text-xs text-xs ">
               <div>
                 <RadioGroup
                   value={ratevalue}
@@ -113,126 +122,62 @@ const Filter = () => {
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem
                       value="option-one"
-                      id="option-one"
-                      className="text-filter border-filter"
+                      id="option-one"className="text-filter border-filter w-[15px] h-[15px] sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px] lg:w-[18px] lg:h-[18px]"
+                      
                     />
-                    <Image
-                      className="inline-block"
-                      src="/assets/images/fstar.png"
-                      width={20}
-                      height={20}
-                    />
-                    <Image
-                      className="inline-block"
-                      src="/assets/images/fstar.png"
-                      width={20}
-                      height={20}
-                    />
-                    <Image
-                      className="inline-block"
-                      src="/assets/images/fstar.png"
-                      width={20}
-                      height={20}
-                    />
-                    <Image
-                      className="inline-block"
-                      src="/assets/images/fstar.png"
-                      width={20}
-                      height={20}
-                    />
-                    <Image
-                      className="inline-block"
-                      src="/assets/images/hstar.png"
-                      width={20}
-                      height={20}
-                    />
+                    <Rating value={4.5} precision={0.5} readOnly size="small" />
+                    <span>(5.8K)</span>
                   </div>
+
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem
                       value="option-two"
                       id="option-two"
-                      className="text-filter border-filter"
+                     className="text-filter border-filter w-[15px] h-[15px] sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px] lg:w-[18px] lg:h-[18px]"
                     />
-                    <Image
-                      className="inline-block"
-                      src="/assets/images/fstar.png"
-                      width={20}
-                      height={20}
-                    />
-                    <Image
-                      className="inline-block"
-                      src="/assets/images/fstar.png"
-                      width={20}
-                      height={20}
-                    />
-                    <Image
-                      className="inline-block"
-                      src="/assets/images/fstar.png"
-                      width={20}
-                      height={20}
-                    />
-                    <Image
-                      className="inline-block"
-                      src="/assets/images/hstar.png"
-                      width={20}
-                      height={20}
-                    />
+                    <Rating value={3.5} precision={0.5} size="small" readOnly />
+                    <span>(1.2K)</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem
                       value="option-three"
                       id="option-three"
-                      className="text-filter border-filter"
+                     className="text-filter border-filter w-[15px] h-[15px] sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px] lg:w-[18px] lg:h-[18px]"
                     />
-                    <Image
-                      className="inline-block"
-                      src="/assets/images/fstar.png"
-                      width={20}
-                      height={20}
-                    />
-                    <Image
-                      className="inline-block"
-                      src="/assets/images/fstar.png"
-                      width={20}
-                      height={20}
-                    />
-                    <Image
-                      className="inline-block"
-                      src="/assets/images/fstar.png"
-                      width={20}
-                      height={20}
-                    />
+                    <Rating value={3} size="small" readOnly />
+                    <span>(867)</span>
                   </div>
                 </RadioGroup>
-              </div>
-              <div className="space-y-2 md:text-base sm:text-sm">
-                <h1>(5.8K)</h1>
-                <h1>(1.2K)</h1>
-                <h1>(867)</h1>
               </div>
             </div>
           )}
 
-          <div className="flex justify-between">
-            <h1 className="font-bold">Video Duration</h1>
+          <div className="flex justify-between ">
+            <h1 className="font-bold lg:text-base md:text-sm sm:text-sm text-sm">Video Duration</h1>
             {checkedduration ? (
-              <Image
-                src="/assets/images/arrow_up.png"
-                width={20}
-                height={20}
-                onClick={() => setCheckedduration(!checkedduration)}
-              />
+              <div className="flex items-center">
+                <Image
+                  className="cursor-pointer sm:w-[15px] sm:h-[15px] lg:w-[20px] lg:h-[20px] w-[15px] h-[15px] "
+                  src="/assets/images/arrow_up.png"
+                  width={20}
+                  height={20}
+                  onClick={() => setCheckedduration(!checkedduration)}
+                />
+              </div>
             ) : (
-              <Image
-                src="/assets/images/arrow_down.png"
-                width={20}
-                height={20}
-                onClick={() => setCheckedduration(!checkedduration)}
-              />
+              <div className="flex items-center">
+                <Image
+                  className="cursor-pointer sm:w-[15px] sm:h-[15px] lg:w-[20px] lg:h-[20px] w-[15px] h-[15px] "
+                  src="/assets/images/arrow_down.png"
+                  width={20}
+                  height={20}
+                  onClick={() => setCheckedduration(!checkedduration)}
+                />
+              </div>
             )}
           </div>
           {checkedduration && (
-            <div className="space-y-3">
+            <div className="space-y-3 lg:text-base md:text-sm sm:text-xs text-xs">
               <div className="space-x-2">
                 <input
                   type="checkbox"
@@ -280,26 +225,32 @@ const Filter = () => {
             </div>
           )}
 
-          <div className="flex justify-between">
+          <div className="flex justify-between lg:text-base md:text-sm sm:text-sm text-sm ">
             <h1 className="font-bold">Categories</h1>
             {checkedcategories ? (
-              <Image
-                src="/assets/images/arrow_up.png"
-                width={20}
-                height={20}
-                onClick={() => setCheckedcategories(!checkedcategories)}
-              />
+              <div className="flex items-center">
+                <Image
+                  className="cursor-pointer sm:w-[15px] sm:h-[15px] lg:w-[20px] lg:h-[20px] w-[15px] h-[15px] "
+                  src="/assets/images/arrow_up.png"
+                  width={20}
+                  height={20}
+                  onClick={() => setCheckedcategories(!checkedcategories)}
+                />
+              </div>
             ) : (
-              <Image
-                src="/assets/images/arrow_down.png"
-                width={20}
-                height={20}
-                onClick={() => setCheckedcategories(!checkedcategories)}
-              />
+              <div className="flex items-center">
+                <Image
+                  className="cursor-pointer sm:w-[15px] sm:h-[15px] lg:w-[20px] lg:h-[20px] w-[15px] h-[15px] "
+                  src="/assets/images/arrow_down.png"
+                  width={20}
+                  height={20}
+                  onClick={() => setCheckedcategories(!checkedcategories)}
+                />
+              </div>
             )}
           </div>
           {checkedcategories && (
-            <div className="space-y-3">
+            <div className="space-y-3 lg:text-base md:text-sm sm:text-xs text-xs">
               <div className="space-x-2">
                 <input
                   type="checkbox"
@@ -381,56 +332,68 @@ const Filter = () => {
           )}
 
           <div className="flex justify-between">
-            <h1 className="font-bold">Software</h1>
+            <h1 className="font-bold lg:text-base md:text-sm sm:text-sm text-sm">Software</h1>
             {checkedsoftware ? (
-              <Image
-                src="/assets/images/arrow_up.png"
-                width={20}
-                height={20}
-                onClick={() => setCheckedsoftware(!checkedsoftware)}
-              />
-            ) : (
-              <Image
-                src="/assets/images/arrow_down.png"
-                width={20}
-                height={20}
-                onClick={() => setCheckedsoftware(!checkedsoftware)}
-              />
+             <div className="flex items-center">
+                <Image
+                  className="cursor-pointer sm:w-[15px] sm:h-[15px] lg:w-[20px] lg:h-[20px] w-[15px] h-[15px] "
+                  src="/assets/images/arrow_up.png"
+                  width={20}
+                  height={20}
+                  onClick={() => setCheckedsoftware(!checkedsoftware)}
+                />
+              </div>
+              ) : (
+              <div className="flex items-center">
+                <Image
+                  className="cursor-pointer sm:w-[15px] sm:h-[15px] lg:w-[20px] lg:h-[20px] w-[15px] h-[15px] "
+                  src="/assets/images/arrow_down.png"
+                  width={20}
+                  height={20}
+                  onClick={() => setCheckedsoftware(!checkedsoftware)}
+                />
+              </div>
             )}
           </div>
           <div className="flex justify-between">
-            <h1 className="font-bold">Level</h1>
+            <h1 className="font-bold lg:text-base md:text-sm sm:text-sm text-sm">Level</h1>
             {checkedlevel ? (
-              <Image
-                src="/assets/images/arrow_up.png"
-                width={20}
-                height={20}
-                onClick={() => setCheckedlevel(!checkedlevel)}
-              />
+              <div className="flex items-center">
+                <Image
+                  className="cursor-pointer sm:w-[15px] sm:h-[15px] lg:w-[20px] lg:h-[20px] w-[15px] h-[15px] "
+                  src="/assets/images/arrow_up.png"
+                  width={20}
+                  height={20}
+                  onClick={() => setCheckedlevel(!checkedlevel)}
+                />
+              </div>
             ) : (
-              <Image
-                src="/assets/images/arrow_down.png"
-                width={20}
-                height={20}
-                onClick={() => setCheckedlevel(!checkedlevel)}
-              />
+              <div className="flex items-center">
+                <Image
+                  className="cursor-pointer sm:w-[15px] sm:h-[15px] lg:w-[20px] lg:h-[20px] w-[15px] h-[15px] "
+                  src="/assets/images/arrow_down.png"
+                  width={20}
+                  height={20}
+                  onClick={() => setCheckedlevel(!checkedlevel)}
+                />
+              </div>
             )}
           </div>
           {checkedlevel && (
-            <RadioGroup value={selectedLevel} onValueChange={handleLevelChange}>
-              <div className="flex items-center space-x-2">
+            <RadioGroup value={selectedLevel} onValueChange={handleLevelChange} className="lg:text-base md:text-sm sm:text-xs text-xs">
+              <div className="flex items-center space-x-2 lg:text-base md:text-sm sm:text-xs text-xs">
                 <RadioGroupItem
                   value="All"
                   id="All"
-                  className="text-filter border-filter"
+               className="text-filter border-filter w-[15px] h-[15px] sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px] lg:w-[18px] lg:h-[18px]"
                 />
                 <label htmlFor="All">All Levels</label>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 ">
                 <RadioGroupItem
                   value="Beginner"
                   id="Beginner"
-                  className="text-filter border-filter"
+                  className="text-filter border-filter w-[15px] h-[15px] sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px] lg:w-[18px] lg:h-[18px]"
                 />
                 <label htmlFor="Beginner">Beginner</label>
               </div>
@@ -438,7 +401,7 @@ const Filter = () => {
                 <RadioGroupItem
                   value="Intermediate"
                   id="Intermediate"
-                  className="text-filter border-filter"
+                 className="text-filter border-filter w-[15px] h-[15px] sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px] lg:w-[18px] lg:h-[18px]"
                 />
                 <label htmlFor="Intermediate">Intermediate</label>
               </div>
@@ -446,7 +409,7 @@ const Filter = () => {
                 <RadioGroupItem
                   value="Advanced"
                   id="Advanced"
-                  className="text-filter border-filter"
+                  className="text-filter border-filter w-[15px] h-[15px] sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px] lg:w-[18px] lg:h-[18px]"
                 />
                 <label htmlFor="Advanced">Advanced</label>
               </div>
@@ -454,21 +417,27 @@ const Filter = () => {
           )}
 
           <div className="flex justify-between">
-            <h1 className="font-bold">Language</h1>
+            <h1 className="font-bold lg:text-base md:text-sm sm:text-sm text-sm">Language</h1>
             {checkedlanguage ? (
-              <Image
-                src="/assets/images/arrow_up.png"
-                width={20}
-                height={20}
-                onClick={() => setCheckedlanguage(!checkedlanguage)}
-              />
+              <div className="flex items-center">
+                <Image
+                  className="cursor-pointer sm:w-[15px] sm:h-[15px] lg:w-[20px] lg:h-[20px] w-[15px] h-[15px] "
+                  src="/assets/images/arrow_up.png"
+                  width={20}
+                  height={20}
+                  onClick={() => setCheckedlanguage(!checkedlanguage)}
+                />
+             </div>
             ) : (
-              <Image
-                src="/assets/images/arrow_down.png"
-                width={20}
-                height={20}
-                onClick={() => setCheckedlanguage(!checkedlanguage)}
-              />
+              <div className="flex items-center">
+                <Image
+                  className="cursor-pointer sm:w-[15px] sm:h-[15px] lg:w-[20px] lg:h-[20px] w-[15px] h-[15px] "
+                  src="/assets/images/arrow_down.png"
+                  width={20}
+                  height={20}
+                  onClick={() => setCheckedlanguage(!checkedlanguage)}
+                />
+              </div>
             )}
           </div>
         </div>

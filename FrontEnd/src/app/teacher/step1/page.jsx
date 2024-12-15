@@ -29,9 +29,9 @@ const Step1 = () => {
       <div className="space-y-3 md:space-y-5 lg:space-y-7 grid grid-cols-[0.5fr_11fr_0.5fr]">
         <div></div>
         <div className="space-y-3 md:space-y-5 lg:space-y-7">
-          <div className="flex items-center space-x-5">
+          <div className="flex items-center ">
             <Image
-              onClick={() => router.push("/courseTeacher")}
+              onClick={() => router.push("/teacher/course")}
               className="inline-block cursor-pointer"
               src="/assets/images/vector.png"
               alt="step1"
@@ -120,7 +120,7 @@ const Step1 = () => {
                     alt="image"
                     width={40}
                     height={30}
-                    className="lg:w-[40px] lg:h-[30px] md:w-[30px] md:h-[20px] w-[20px] h-[15px]"
+                    className="lg:w-[40px] lg:h-[35px] md:w-[30px] md:h-[20px] w-[20px] h-[18px]"
                   />
                 )}
               </div>
@@ -141,7 +141,7 @@ const Step1 = () => {
             <button className="bg-white text-orange px-5 py-2 rounded-md border border-orange">
               Xóa khóa học
             </button>
-            <button onClick={()=>router.push("/step2")} className="bg-orange text-white px-10 py-2 rounded-md">
+            <button onClick={()=>router.push("/teacher/step2")} className="bg-orange text-white px-10 py-2 rounded-md">
               Tiếp tục
             </button>
           </div>
