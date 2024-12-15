@@ -117,11 +117,33 @@ let getStudentsOrdersItems = async (orderId) => {
     try {
       let orderItems = await db.OrderItem.findAll({
         where: { orderId: orderId },
+        raw: true,
+        include: [
+          {
+            model: db.Course,
+            as: "course",
+            attributes: ["id", "courseName", "cost", "discount", "anhBia"],
+          },
+        ],
       });
       if (orderItems && orderItems.length > 0) {
+        let formattedOrderItems = orderItems.map((item) => {
+          let {
+            "course.id": id,
+            "course.courseName": courseName,
+            "course.cost": cost,
+            "course.discount": discount,
+            "course.anhBia": anhBia,
+            ...rest
+          } = item;
+          return {
+            ...rest,
+            course: { id, courseName, cost, discount, anhBia },
+          };
+        });
         resolve({
           errCode: 0,
-          data: orderItems,
+          data: formattedOrderItems,
         });
       } else {
         resolve({
@@ -530,6 +552,21 @@ let addToCart = (data) => {
     }
   });
 };
+let deleteCartItem = (id) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await db.CartItem.destroy({
+        where: { id: id },
+      });
+      resolve({
+        errCode: 0,
+        errMessage: "OK",
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 let completeLesson = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -596,4 +633,5 @@ module.exports = {
   addToCart,
   completeLesson,
   getCurrentLessonId,
+  deleteCartItem,
 };

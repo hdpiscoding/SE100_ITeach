@@ -157,6 +157,17 @@ const handleAddToCart = async (req, res) => {
   let response = await studentService.addToCart(req.body);
   return res.status(200).json(response);
 };
+
+const handleDeleteCartItem = async (req, res) => {
+  if (!req.query.id) {
+    return res.status(500).json({
+      errCode: 1,
+      errMessage: "Missing required parameter",
+    });
+  }
+  let response = await studentService.deleteCartItem(req.query.id);
+  return res.status(200).json(response);
+};
 const handleCompleteLesson = async (req, res) => {
   if (!req.body.studentId || !req.body.lessonId || !req.body.courseId) {
     return res.status(500).json({
@@ -199,4 +210,5 @@ module.exports = {
   handleAddToCart,
   handleCompleteLesson,
   handleGetCurrentLessonId,
+  handleDeleteCartItem,
 };
