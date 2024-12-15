@@ -62,6 +62,10 @@ const initWebRoutes = (app) => {
     studentController.handleGetLessonContent
   );
   router.post("/api/v1/add-to-cart", studentController.handleAddToCart);
+  router.delete(
+    "/api/v1/delete-cart-item",
+    studentController.handleDeleteCartItem
+  );
   router.put(
     "/api/v1/complete-the-lesson",
     studentController.handleCompleteLesson
