@@ -31,9 +31,18 @@ export default function Profile(props: any) {
     const [firstName, setFirstName] = React.useState("");
     const [lastName, setLastName] = React.useState("");
     const [phone, setPhone] = React.useState("");
-    const [email, setEmail] = React.useState("abc@gmail.com");
+    const [email, setEmail] = React.useState(" ");
     const [dob, setDob] = React.useState<Date | undefined>(new Date("2004-07-11"));
     const [avatar, setAvatar] = React.useState<File | null>(null);
+    const [isEditing, setIsEditing] = React.useState(false);
+    const tempValues = {
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        dob: new Date("2004-07-11"),
+        avatar: null as File | null,
+    }
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
@@ -58,6 +67,30 @@ export default function Profile(props: any) {
         console.log(values);
     }
 
+    const handleEditClick = () => {
+        tempValues.firstName = firstName;
+        tempValues.lastName = lastName;
+        tempValues.email = email;
+        tempValues.phone = phone;
+        tempValues.dob = dob ?? new Date();
+        tempValues.avatar = avatar;
+        setIsEditing(true);
+        
+    }
+    const handleCancelClick = () => {
+        setFirstName(tempValues.firstName);
+        setLastName(tempValues.lastName);
+        setEmail(tempValues.email);
+        setPhone(tempValues.phone);
+        setDob(tempValues.dob);
+        setAvatar(tempValues.avatar);
+        setIsEditing(false);
+
+    }
+    const handleSaveClick = () => {
+        setIsEditing(false);
+    }
+
   return (
       <>
           <div className="border rounded-md bg-white flex flex-col mx-4">
@@ -80,7 +113,7 @@ export default function Profile(props: any) {
                                               <FormItem>
                                                   <FormLabel>Họ</FormLabel>
                                                   <FormControl>
-                                                      <Input {...field}/>
+                                                      <Input {...field} disabled={!isEditing} />
                                                   </FormControl>
                                                   <FormMessage/>
                                               </FormItem>
@@ -94,7 +127,7 @@ export default function Profile(props: any) {
                                               <FormItem>
                                                   <FormLabel>Tên</FormLabel>
                                                   <FormControl>
-                                                      <Input {...field}/>
+                                                      <Input {...field} disabled={!isEditing}/>
                                                   </FormControl>
                                                   <FormMessage/>
                                               </FormItem>
@@ -108,7 +141,7 @@ export default function Profile(props: any) {
                                               <FormItem>
                                                   <FormLabel>Email</FormLabel>
                                                   <FormControl>
-                                                      <Input {...field}/>
+                                                      <Input {...field} disabled={!isEditing}/>
                                                   </FormControl>
                                                   <FormMessage/>
                                               </FormItem>
@@ -123,7 +156,7 @@ export default function Profile(props: any) {
                                                   <FormItem className="relative">
                                                       <FormLabel>Số điện thoại</FormLabel>
                                                       <FormControl>
-                                                          <Input {...field} className="lg:w-[35rem]"/>
+                                                          <Input {...field} className="lg:w-[35rem]" disabled={!isEditing}/>
                                                       </FormControl>
                                                       <FormMessage className="absolute left-0 mt-1"/>
                                                   </FormItem>
@@ -150,9 +183,17 @@ export default function Profile(props: any) {
                                   </div>
 
                                   <div className="mt-10">
-                                      <Button type="submit"
-                                              className="bg-DarkGreen hover:bg-DarkGreen_Hover rounded-xl">Lưu thay
-                                          đổi</Button>
+                                      
+                                      {
+                                          isEditing ?
+                                              <div><Button type="submit" onClick={handleSaveClick}
+                                              className="mr-4 bg-DarkGreen hover:bg-DarkGreen_Hover rounded-xl">Lưu thay
+                                          đổi</Button>                                       <Button type="submit" onClick={handleCancelClick} className="mr-4 bg-Red hover:bg-DarkRed_Hover rounded-xl">Hủy</Button>
+</div>
+                                              
+                                              : <Button type="button" onClick={handleEditClick} className="mr-4 bg-DarkGreen hover:bg-DarkGreen_Hover rounded-xl">Thay đổi</Button>
+
+}
                                   </div>
 
                               </form>
