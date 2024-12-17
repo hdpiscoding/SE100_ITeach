@@ -35,14 +35,14 @@ export default function Profile(props: any) {
     const [dob, setDob] = React.useState<Date | undefined>(new Date("2004-07-11"));
     const [avatar, setAvatar] = React.useState<File | null>(null);
     const [isEditing, setIsEditing] = React.useState(false);
-    const tempValues = {
+    let [tempValues, setTempValues] = React.useState({
         firstName: "",
         lastName: "",
         email: "",
         phone: "",
         dob: new Date("2004-07-11"),
         avatar: null as File | null,
-    }
+    });
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
@@ -64,31 +64,49 @@ export default function Profile(props: any) {
     const onSubmit = (values: z.infer<typeof formSchema>) => {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
-        console.log(values);
+        console.log("values", values);
     }
 
     const handleEditClick = () => {
-        tempValues.firstName = firstName;
-        tempValues.lastName = lastName;
-        tempValues.email = email;
-        tempValues.phone = phone;
-        tempValues.dob = dob ?? new Date();
-        tempValues.avatar = avatar;
+       
+        setTempValues(
+            {
+                firstName: form.getValues("firstName") || "",
+                lastName: form.getValues("lastName") || "",
+                email: form.getValues("email") || "",
+                phone: form.getValues("phone") || "",
+                dob: form.getValues("dob") || new Date("2004-07-11"),
+                avatar: avatar,
+            }
+        );
+
         setIsEditing(true);
         
     }
     const handleCancelClick = () => {
-        setFirstName(tempValues.firstName);
-        setLastName(tempValues.lastName);
-        setEmail(tempValues.email);
-        setPhone(tempValues.phone);
-        setDob(tempValues.dob);
+        form.setValue("firstName", tempValues.firstName);
+        form.setValue("lastName", tempValues.lastName);
+        form.setValue("email", tempValues.email);
+        form.setValue("phone", tempValues.phone);
+        form.setValue("dob", tempValues.dob);
         setAvatar(tempValues.avatar);
-        setIsEditing(false);
+
+        setIsEditing(false);        
+
 
     }
     const handleSaveClick = () => {
         setIsEditing(false);
+        console.log("Save");
+        const data = {
+            firstName: form.getValues("firstName"),
+            lastName: form.getValues("lastName"),
+            email: form.getValues("email"),
+            phoneNumber: form.getValues("phone"),
+            birthday: form.getValues("dob")?.toLocaleDateString("en-GB").replace(/\//g, "-") || "",
+            avatar: avatar,
+        }
+        console.log(data);
     }
 
   return (
@@ -113,7 +131,7 @@ export default function Profile(props: any) {
                                               <FormItem>
                                                   <FormLabel>Họ</FormLabel>
                                                   <FormControl>
-                                                      <Input {...field} disabled={!isEditing} />
+                                                      <Input {...field} disabled={!isEditing}  />
                                                   </FormControl>
                                                   <FormMessage/>
                                               </FormItem>
@@ -127,7 +145,7 @@ export default function Profile(props: any) {
                                               <FormItem>
                                                   <FormLabel>Tên</FormLabel>
                                                   <FormControl>
-                                                      <Input {...field} disabled={!isEditing}/>
+                                                      <Input {...field} disabled={!isEditing}  />
                                                   </FormControl>
                                                   <FormMessage/>
                                               </FormItem>
@@ -138,17 +156,17 @@ export default function Profile(props: any) {
                                           control={form.control}
                                           name="email"
                                           render={({field}) => (
-                                              <FormItem>
+                                              <FormItem >
                                                   <FormLabel>Email</FormLabel>
                                                   <FormControl>
-                                                      <Input {...field} disabled={!isEditing}/>
+                                                      <Input  {...field} disabled={!isEditing}/>
                                                   </FormControl>
                                                   <FormMessage/>
                                               </FormItem>
                                           )}
                                       />
 
-                                      <div className="flex flex-col-reverse gap-4 md:flex-col lg:flex lg:flex-row lg:items-center lg:justify-between">
+                                      <div  className="flex flex-col-reverse gap-4 md:flex-col lg:flex lg:flex-row lg:items-center lg:justify-between">
                                           <FormField
                                               control={form.control}
                                               name="phone"
@@ -188,7 +206,7 @@ export default function Profile(props: any) {
                                           isEditing ?
                                               <div><Button type="submit" onClick={handleSaveClick}
                                               className="mr-4 bg-DarkGreen hover:bg-DarkGreen_Hover rounded-xl">Lưu thay
-                                          đổi</Button>                                       <Button type="submit" onClick={handleCancelClick} className="mr-4 bg-Red hover:bg-DarkRed_Hover rounded-xl">Hủy</Button>
+                                          đổi</Button>                                       <Button type="button" onClick={handleCancelClick} className="mr-4 bg-Red hover:bg-DarkRed_Hover rounded-xl">Hủy</Button>
 </div>
                                               
                                               : <Button type="button" onClick={handleEditClick} className="mr-4 bg-DarkGreen hover:bg-DarkGreen_Hover rounded-xl">Thay đổi</Button>
@@ -228,6 +246,7 @@ export default function Profile(props: any) {
                                       accept=".jpg, .jpeg, .png"
                                       onChange={handleImageUpload}
                                       className="hidden"
+                                      disabled={!isEditing}
                                   />
                               </div>
                           </div>
