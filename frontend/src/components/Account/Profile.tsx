@@ -5,6 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod";
 import { Button } from "@/components/ui/button"
+import { toast } from "react-toastify";
+
 import {
     Form,
     FormControl,
@@ -16,6 +18,8 @@ import {
 import { Input } from "@/components/ui/input"
 import Image from "next/image";
 import DatePicker from "@/components/ui/date-picker";
+import {editUserProfile} from "@/services/student";
+import { m } from "framer-motion";
 
 const formSchema = z.object({
     firstName: z.optional(z.string()),
@@ -93,13 +97,12 @@ export default function Profile(props: any) {
 
         setIsEditing(false);        
 
-
     }
-    const handleSaveClick = () => {
+    const handleSaveClick =async () => {
         setIsEditing(false);
         console.log("Save");
         const data = {
-            id:1, // id of user
+            id:7, // id of user
             firstName: form.getValues("firstName"),
             lastName: form.getValues("lastName"),
             email: form.getValues("email"),
@@ -107,7 +110,8 @@ export default function Profile(props: any) {
             birthday: form.getValues("dob")?.toLocaleDateString("en-GB").replace(/\//g, "-") || "",
             avatar: avatar,
         }
-        console.log(data);
+        const response = await editUserProfile(data);
+        toast.success("Cập nhật thông tin thành công");
     }
 
   return (

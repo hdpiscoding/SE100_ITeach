@@ -104,8 +104,8 @@ const SignIn = ({ isOpen, onClose, onSignIn }) => {
               <div className="border-2 p-2 flex justify-between bg-MoreLightGray">
   <select className="outline-none w-full bg-transparent" ref={roleRef}>
     <option value="" disabled selected hidden>Vai trò...</option>
-    <option value="R1">Giảng viên</option>
-    <option value="R2">Học viên</option>
+    <option value="R2">Giảng viên</option>
+    <option value="R1">Học viên</option>
   </select>
   
 </div>
