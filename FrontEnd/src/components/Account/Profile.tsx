@@ -1,5 +1,5 @@
 'use client';
-import React, {useEffect} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import { FaUser } from "react-icons/fa";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -16,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input"
 import Image from "next/image";
 import DatePicker from "@/components/ui/date-picker";
+import AlertModal from "@/components/AlertDialog/AlertModal";
 
 const formSchema = z.object({
     firstName: z.optional(z.string()),
@@ -52,11 +53,16 @@ export default function Profile(props: any) {
         },
     });
 
+    const triggerRef = useRef<HTMLButtonElement | null>(null);
+
     const onSubmit = (values: z.infer<typeof formSchema>) => {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        console.log(values);
+        triggerRef.current?.click();
     }
+
+    const handleConfirm = () => {
+        console.log("Form submitted successfully with data");
+        form.reset();
+    };
 
   return (
       <>
@@ -151,12 +157,25 @@ export default function Profile(props: any) {
 
                                   <div className="mt-10">
                                       <Button type="submit"
-                                              className="bg-DarkGreen hover:bg-DarkGreen_Hover rounded-xl">Lưu thay
-                                          đổi</Button>
+                                              className="bg-DarkGreen hover:bg-DarkGreen_Hover rounded-xl">
+                                          Lưu thay đổi
+                                      </Button>
                                   </div>
 
                               </form>
                           </Form>
+
+                          <AlertModal
+                              title="Confirm Submission"
+                              description="Are you sure you want to submit this form?"
+                              trigger={
+                                  <button
+                                      ref={triggerRef}
+                                      style={{ display: "none" }} // Ẩn trigger button
+                                  />
+                              }
+                              onConfirm={handleConfirm}
+                          />
                       </div>
 
                       <div className="lg:col-start-2 lg:mt-0 mt-4 flex items-center justify-center">
