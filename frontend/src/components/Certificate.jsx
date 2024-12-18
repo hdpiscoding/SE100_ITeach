@@ -33,7 +33,7 @@ const Certificate = () => {
                         </div>
                       </div>
                     </div>
-                    {/* QR code và logo section */}
+                   
                     <div className="col-span-1 flex flex-col justify-between">
                       <Image
                         className="w-full"
@@ -53,7 +53,7 @@ const Certificate = () => {
                       </div>
                     </div>
                   </div>
-                  {/* Footer section */}
+                 
                   <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                     <div className="text-sm md:text-base">
                       <div>Hà Nội,__/__/____</div>

@@ -33,7 +33,7 @@ const CertificateCard = () => {
                         </div>
                       </div>
                     </div>
-                    {/* QR code và logo section */}
+                    
                     <div className="col-span-1 flex flex-col justify-between">
                       <Image
                         className="w-full lg:w-[50px] lg:h-[20px]  h-[10px] "
@@ -53,7 +53,7 @@ const CertificateCard = () => {
                       </div>
                     </div>
                   </div>
-                  {/* Footer section */}
+                  
                   <div className="flex  justify-between items-center space-y-1 md:space-y-5">
                     <div className="text-[8px] md:text-sm lg:text-sm">
                       <div>Hà Nội,__/__/____</div>

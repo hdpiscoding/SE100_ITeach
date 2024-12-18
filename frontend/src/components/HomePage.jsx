@@ -1,8 +1,8 @@
 import React from "react";
 import Image from "next/image";
-import Coursecard from "@/components/Coursecard";
+import Coursecard from "@/components/Course/Coursecard";
 import { Button } from "@/components/ui/button";
-import Coursecardnoprice from "@/components/Coursecardnoprice";
+import Coursecardnoprice from "@/components/Course/Coursecardnoprice";
 import Package from "@/components/Package";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -166,7 +166,7 @@ const Home = () => {
           </h1>
         </div>
 
-        <div className="my-10 px-4 md:px-0">
+        <div className="my-10 lg:px-1 md:px-0 ">
           <Swiper
             slidesPerView={1}
             spaceBetween={30}
@@ -194,7 +194,7 @@ const Home = () => {
           <style jsx global>{`
             .swiper {
               padding-bottom: 50px !important;
-              overflow: visible !important;
+             
             }
             .swiper-wrapper {
               padding: 0 1px !important; /* Thêm dòng này */

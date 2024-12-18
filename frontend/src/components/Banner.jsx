@@ -32,6 +32,7 @@ const Banner = () => {
               width={400}
               height={400}
               className='w-2/3 '
+              
             />
           </div>
        </div>

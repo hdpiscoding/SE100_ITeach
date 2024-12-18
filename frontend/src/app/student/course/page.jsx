@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Filter from "@/components/Filter";
-import Coursecard from "@/components/Coursecard";
+import Coursecard from "@/components/Course/Coursecard";
 import {
   Select,
   SelectContent,

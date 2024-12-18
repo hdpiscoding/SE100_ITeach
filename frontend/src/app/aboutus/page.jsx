@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 const AboutUs = () => {
   return (
     <div>
-      {/* Header section */}
+     
       <div className="h-[120px] bg-bg grid grid-cols-[0.5fr_11fr_0.5fr]">
         <div></div>
         <div className="flex items-center">
@@ -30,7 +30,7 @@ const AboutUs = () => {
         <div></div>
       </div>
 
-      {/* Hero section */}
+      
       <div className="relative">
         <Image
           src="/assets/images/bg_aboutus.png"

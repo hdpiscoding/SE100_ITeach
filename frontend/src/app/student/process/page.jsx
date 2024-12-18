@@ -3,7 +3,7 @@ import React from "react";
 import Image from "next/image";
 import { useState } from "react";
 import FilterProcess from "@/components/filterProcess";
-import Coursecard from "@/components/Coursecard";
+import Coursecard from "@/components/Course/Coursecard";
 import CertificateCard from "@/components/certificateCard";
 const Process = () => {
   let username = "Username";

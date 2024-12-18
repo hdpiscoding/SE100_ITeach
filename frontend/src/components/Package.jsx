@@ -2,17 +2,17 @@ import React from 'react'
 import Image from 'next/image'
 const Package = () => {
   return (
-    <div className='flex justify-center'>
+    <div className='flex justify-center px-2'>
       <div className='grid grid-cols-7 rounded-xl border border-black w-full overflow-hidden'
-           style={{ minHeight: '200px' }}> {/* Thêm minHeight để đảm bảo chiều cao tối thiểu */}
+           style={{ minHeight: '200px' }}> 
         
-        {/* Phần hình ảnh */}
+       
         <div className='relative col-span-3'>
           <Image 
             className='rounded-l-xl object-cover' 
             src="/assets/images/course.webp"
             alt="Course Image"
-            fill  // Sử dụng fill thay vì width/height cố định
+            fill  
             style={{ objectFit: 'cover' }}
           />
           <div className='bg-white rounded-xl absolute bottom-4 right-4 p-2 shadow-sm'>
@@ -21,7 +21,7 @@ const Package = () => {
           </div>
         </div>
 
-        {/* Phần nội dung */}
+       
         <div className='col-span-4 p-4 md:p-6 lg:p-8 flex flex-col gap-3'>
           <p className='text-xs md:text-sm lg:text-lg text-gray-600'>
             1-28 July 2022
