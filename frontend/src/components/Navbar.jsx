@@ -12,7 +12,7 @@ import SignIn from "@/components/SignIn";
 const Navbar = () => {
   const pathname = usePathname();
   const router = useRouter();
-  const [login, setLogin] = useState(false);
+  const [login, setLogin] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [role, setRole] = useState("student");
   const [showLoginModal, setShowLoginModal] = useState(false);
