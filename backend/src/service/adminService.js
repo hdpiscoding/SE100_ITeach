@@ -216,9 +216,33 @@ let getAnalysisInformation = (data) => {
     }
   });
 };
+let getAllReviews = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let reviews = await db.Review.findAll({
+        attributes: { exclude: ["createdAt", "updatedAt"] },
+      });
+      if (!reviews) {
+        resolve({
+          errCode: 1,
+          errMessage: "No reviews found",
+        });
+      } else {
+        resolve({
+          errCode: 0,
+          errMessage: "OK",
+          reviews,
+        });
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 module.exports = {
   getAllTeacher,
   getPopularTeacher,
   getPopularCourse,
   getAnalysisInformation,
+  getAllReviews,
 };

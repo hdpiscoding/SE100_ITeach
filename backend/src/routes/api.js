@@ -52,6 +52,7 @@ const initARoutes = (app) => {
     "/api/v1/delete-a-chapter",
     teacherController.handleDeleteAChapter
   );
+  router.get("/api/v1/get-all-reviews", adminController.handleGetAllReivews);
   return app.use("/", router);
 };
 export default initARoutes;

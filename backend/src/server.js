@@ -8,11 +8,13 @@ import initWebRoutes from "./routes/web";
 import initApiRoutes from "./routes/api";
 import bodyParser from "body-parser";
 import { getDownloadURL } from "firebase/storage";
+import cors from "cors";
 const admin = require("firebase-admin");
 dotenv.config();
 const authRouter = require("./routes/auth");
 require("../passport");
 const app = express();
+app.use(cors());
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
