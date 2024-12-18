@@ -7,7 +7,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import Login from "@/components/login";
-import SignIn from "@/components/signin";
+import SignIn from "@/components/SignIn";
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -71,7 +71,8 @@ const Navbar = () => {
                     alt="logo"
                     width={150}
                     height={15}
-                    className="w-[100px] sm:w-[130px] md:w-[150px] lg:w-[200px]"
+                    className="w-[100px] sm:w-[130px] md:w-[150px] lg:w-[200px] cursor-pointer"
+                    onClick={() => router.push('/')}
                   />
 
                   <button
@@ -168,7 +169,7 @@ const Navbar = () => {
                     </li>
                   ))}
 
-                  {/* Thay đổi phần này */}
+                 
                   {login && (
                     <div className="pt-4 border-t space-y-4">
                       {role === "student" && (

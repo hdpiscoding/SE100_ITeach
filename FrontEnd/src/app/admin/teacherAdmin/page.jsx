@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+
 import Image from "next/image";
 import FilterTeacher from "@/components/filterTeacher";
 import TeacherCard from "@/components/teacherCard";
@@ -11,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { getTeachers } from "@/services/admin";
+
 const TeacherAdmin = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const coursesPerPage = 12;
@@ -57,12 +59,14 @@ const TeacherAdmin = () => {
         </div>
         <div></div>
       </div>
+
       <div className="grid grid-cols-[0.5fr_11fr_0.5fr] ">
         <div></div>
         <div className="space-y-7 my-10">
           <div className="flex justify-between">
             <div className="flex lg:flex-row flex-col lg:space-x-5 space-y-3 lg:space-y-0">
               <div className="rounded-3xl border-filter border-2 lg:w-[300px] md:w-[250px] sm:w-[230px] w-[200px] flex justify-between items-center p-1">
+
                 <input
                   className="outline-none lg:w-[270px] md:w-[220px] sm:w-[180px] w-[150px] lg:text-base md:text-sm sm:text-xs text-xs rounded-3xl"
                   type="text"
@@ -92,12 +96,14 @@ const TeacherAdmin = () => {
                   <SelectContent>
                     <SelectItem value="light">Light</SelectItem>
                     <SelectItem value="dark">Dark</SelectItem>
+
                     <SelectItem value="system">System</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
             <div className="space-x-1 md:text-base sm:text-sm lg:text-xl text-xs">
+
               <span>Showing {courses.length} results of</span>
               <span className="text-filter font-bold">Java</span>
             </div>
@@ -128,6 +134,7 @@ const TeacherAdmin = () => {
                   currentPage === number
                     ? "bg-white text-strokeswap border border-strokeswap"
                     : "bg-gray-200"
+
                 }`}
               >
                 {number}
@@ -137,6 +144,7 @@ const TeacherAdmin = () => {
               onClick={() =>
                 setCurrentPage((prev) => Math.min(prev + 1, totalPages))
               }
+
               disabled={currentPage === totalPages}
               className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
             >
@@ -151,3 +159,4 @@ const TeacherAdmin = () => {
 };
 
 export default TeacherAdmin;
+
