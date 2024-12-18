@@ -3,8 +3,9 @@ import React from 'react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { useRef } from 'react'
+import {createNewUser, login} from "@/services/auth";
 
-const SignIn = ({ isOpen, onClose, onSignIn }) => {
+const SignIn = ({ isOpen, onClose, onSignIn ,setLogin}) => {
   if (!isOpen) return null;
   const emailRef = useRef();
   const passwordRef = useRef();
@@ -18,7 +19,29 @@ const SignIn = ({ isOpen, onClose, onSignIn }) => {
       password,
       role
     };
-    console.log("data", data);
+    createNewUser(data).then((response) => {
+      console.log("response", response);
+      if (response?.errCode === 0) {
+        const loginData = {
+          email,
+          password
+        };
+        login(loginData).then((response) => {
+          console.log("response", response);
+          if (response?.errCode === 0) {
+            onClose();
+            setLogin(true);
+            localStorage.setItem("token", response.access_token);
+          }
+          else {
+            toast.error(response?.message);
+          }
+        });
+      }
+      else {
+        toast.error(response?.message);
+      }
+    });
   }
   
 

@@ -99,17 +99,17 @@ let login = (email, password) => {
           } else {
             userData.errCode = 3;
             userData.errMessage =
-              "Your password is incorrect. Please try again!";
+              "Mật khẩu không chính xác. Vui lòng nhập lại!";
           }
         } else {
           userData.errCode = 2;
           userData.errMessage =
-            "Your email isn`t exist in system. Please try again!";
+            "Email không tồn tại trong hệ thống. Vui lòng thử lại!";
         }
       } else {
         userData.errCode = 1;
         userData.errMessage =
-          "Your email isn`t exist in system. Please try again!";
+          "Email không tồn tại trong hệ thống. Vui lòng thử lại!";
       }
       resolve(userData);
     } catch (error) {

@@ -15,4 +15,17 @@ const editUserProfile = async (data) => {
     return null;
   }
 };
-export { editUserProfile };
+const changePassword = async (data) => {
+  try {
+    const response = await axios.put("api/v1/change-password", data, {
+      headers: {
+        Authorization: `Bearer ${studentToken}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error while changing password", error);
+    return null;
+  }
+};
+export { editUserProfile, changePassword };

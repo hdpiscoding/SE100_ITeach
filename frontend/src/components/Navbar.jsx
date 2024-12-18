@@ -229,11 +229,13 @@ const Navbar = () => {
         isOpen={showLoginModal} 
         onClose={() => setShowLoginModal(false)}
         onLogin={handleLoginIn}
+        setLogin={setLogin}
       />
       <SignIn 
         isOpen={showSignInModal} 
         onClose={()=> setShowSignInModal(false)}
         onSignIn={handleSignIn}
+        setLogin={setLogin}
       />
     </>
   );
