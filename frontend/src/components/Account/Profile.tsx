@@ -99,6 +99,7 @@ export default function Profile(props: any) {
         setIsEditing(false);
         console.log("Save");
         const data = {
+            id:1, // id of user
             firstName: form.getValues("firstName"),
             lastName: form.getValues("lastName"),
             email: form.getValues("email"),

@@ -3,10 +3,22 @@ import React from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { useRef } from "react";
 
 const Login = ({ isOpen, onClose, onLogin }) => {
   if (!isOpen) return null;
   const router = useRouter();
+  const emailRef = useRef();
+  const passwordRef = useRef();
+  const handleSubmit = () => {
+    const email = emailRef.current.value;
+    const password = passwordRef.current.value;
+    const data = {
+      email,
+      password,
+    };
+    console.log("data", data);
+  }
 
   return (
     
@@ -34,8 +46,7 @@ const Login = ({ isOpen, onClose, onLogin }) => {
            
             <Image src="/assets/images/logo.png" width={150} height={20} />
             <h1 className="text-sm md:text-base">
-              Join us and get more benefits. We promise to keep your data safely.{" "}
-            </h1>
+Tham gia với chúng tôi và nhận được nhiều lợi ích hơn.          </h1>
 
           
             <div className="space-y-2 mt-5">
@@ -43,7 +54,8 @@ const Login = ({ isOpen, onClose, onLogin }) => {
                 <input
                   className="outline-none w-full bg-transparent"
                   type="email"
-                  placeholder="Email Address"
+                  placeholder="Email"
+                  ref={emailRef}
                 />
                 <Image
                   className="inline-block"
@@ -56,7 +68,8 @@ const Login = ({ isOpen, onClose, onLogin }) => {
                 <input
                   className="outline-none w-full bg-transparent"
                   type="password"
-                  placeholder="Password"
+                  placeholder="Mật khẩu"
+                  ref={passwordRef}
                 />
                 <Image
                   className="inline-block"
@@ -68,13 +81,13 @@ const Login = ({ isOpen, onClose, onLogin }) => {
             </div>
 
           
-            <Button className="bg-filter w-full rounded-2xl font-bold text-white text-1xl my-3 hover:bg-SignUp">
-              Login
+            <Button onClick={handleSubmit} className="bg-filter w-full rounded-2xl font-bold text-white text-1xl my-3 hover:bg-SignUp">
+              Đăng nhập
             </Button>
 
           
             <div className="flex justify-center mt-2">
-              <h1 className="text-sm md:text-base">Or you can</h1>
+              <h1 className="text-sm md:text-base">Hoặc</h1>
             </div>
 
            
@@ -86,7 +99,7 @@ const Login = ({ isOpen, onClose, onLogin }) => {
                 height={20}
               />
               <h1 className="font-bold text-white text-sm md:text-base">
-                Sign Up with Facebook
+                Đăng nhập bằng Facebook
               </h1>
             </div>
 
@@ -99,18 +112,18 @@ const Login = ({ isOpen, onClose, onLogin }) => {
                 height={20}
               />
               <h1 className="font-bold text-black text-sm md:text-base">
-                Continue with Google
+                Đăng nhập bằng Google
               </h1>
             </div>
 
           
             <div className="flex justify-center mt-4 text-sm md:text-base gap-2">
-              <span>Need an Account?</span>
+              <span>Bạn chưa có tài khoản?</span>
               <span
                 onClick={onLogin}
                 className="font-bold text-filter hover:underline cursor-pointer"
               >
-                Sign Up
+                Đăng kí
               </span>
             </div>
           </div>

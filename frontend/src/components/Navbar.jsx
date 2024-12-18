@@ -119,16 +119,16 @@ const Navbar = () => {
                           <Link href="/student/cart">
                             <Image
                               src="/assets/images/Bag.png"
-                              width={20}
-                              height={20}
+                              width={27}
+                              height={27}
                               alt="bag"
                             />
                           </Link>
                           <Link href="/student/account">
                             <Image
                               src="/assets/images/user.png"
-                              width={20}
-                              height={20}
+                              width={27}
+                              height={27}
                               alt="user"
                             />
                           </Link>

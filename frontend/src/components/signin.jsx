@@ -1,10 +1,25 @@
 "use client"
 import React from 'react'
 import Image from 'next/image'
-import {Button} from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
+import { useRef } from 'react'
 
 const SignIn = ({ isOpen, onClose, onSignIn }) => {
-   if (!isOpen) return null;
+  if (!isOpen) return null;
+  const emailRef = useRef();
+  const passwordRef = useRef();
+  const roleRef = useRef();
+  const handleSubmit = () => {
+    const email = emailRef.current.value;
+    const password = passwordRef.current.value;
+    const role = roleRef.current.value;
+    const data = {
+      email,
+      password,
+      role
+    };
+    console.log("data", data);
+  }
   
 
   return (
@@ -34,7 +49,7 @@ const SignIn = ({ isOpen, onClose, onSignIn }) => {
           
             <Image alt="logo" src="/assets/images/logo.png" width={150} height={20} />
             <h1 className="text-sm md:text-base">
-              Join us and get more benefits. We promise to keep your data safely.
+              Tham gia với chúng tôi và nhận được nhiều lợi ích hơn.
             </h1>
 
           
@@ -47,7 +62,7 @@ const SignIn = ({ isOpen, onClose, onSignIn }) => {
                 height={20}
               />
               <h1 className="font-bold text-white text-sm md:text-base">
-                Sign Up with Facebook
+                Đăng nhập bằng Facebook
               </h1>
             </div>
 
@@ -60,12 +75,12 @@ const SignIn = ({ isOpen, onClose, onSignIn }) => {
                 height={20}
               />
               <h1 className="font-bold text-black text-sm md:text-base">
-                Continue with Google
+                Đăng nhập bằng Google
               </h1>
             </div>
 
             <div className="flex justify-center mt-2">
-              <h1 className="text-sm md:text-base">Or you can</h1>
+              <h1 className="text-sm md:text-base">Hoặc</h1>
             </div>
 
           
@@ -74,45 +89,41 @@ const SignIn = ({ isOpen, onClose, onSignIn }) => {
                 <input 
                   className="outline-none w-full bg-transparent" 
                   type="email" 
-                  placeholder="Email Address" 
+                  placeholder="Email" 
+                  ref={emailRef}
                 />
               </div>
               <div className="border-2 p-2 flex justify-between bg-MoreLightGray"> 
                 <input 
                   className="outline-none w-full bg-transparent" 
                   type="password" 
-                  placeholder="Password" 
+                  placeholder="Mật khẩu" 
+                  ref={passwordRef}
                 />
               </div>
-              <div className="border-2 p-2 flex justify-between bg-MoreLightGray"> 
-                <input 
-                  className="outline-none w-full bg-transparent" 
-                  type="email" 
-                  placeholder="Sign up as..." 
-                />
-                <Image 
-                  alt="arrow down" 
-                  className="inline-block" 
-                  src="/assets/images/arrow_down.png" 
-                  width={25} 
-                  height={20} 
-                />
-              </div>
+              <div className="border-2 p-2 flex justify-between bg-MoreLightGray">
+  <select className="outline-none w-full bg-transparent" ref={roleRef}>
+    <option value="" disabled selected hidden>Vai trò...</option>
+    <option value="R1">Giảng viên</option>
+    <option value="R2">Học viên</option>
+  </select>
+  
+</div>
             </div>
 
            
-            <Button className="bg-filter w-full rounded-2xl font-bold text-white text-1xl my-3 hover:bg-SignUp">
-              Create Account
+            <Button onClick={handleSubmit} className="bg-filter w-full rounded-2xl font-bold text-white text-1xl my-3 hover:bg-SignUp">
+              Đăng kí
             </Button>
 
            
             <div className="flex justify-center mt-4 text-sm md:text-base gap-2">
-              <span>Already have an Account?</span>
+              <span>Bạn đã có tài khoản ?</span>
               <span 
                 onClick={onSignIn} 
                 className="font-bold text-filter hover:underline cursor-pointer"
               >
-                Sign up
+                Đăng nhập
               </span>
             </div>
           </div>
