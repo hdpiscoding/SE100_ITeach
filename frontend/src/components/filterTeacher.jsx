@@ -77,12 +77,12 @@ const Filter = () => {
       <div className="w-full p-3">
         <div className="space-y-6 sm:space-y-4 w-full">
           <div className="flex justify-between lg:text-xl md:text-lg sm:text-sm text-sm">
-            <button className="text-filter select-none ">Filter</button>
+            <button className="text-filter select-none ">Bộ lọc</button>
             <button
               className="text-filter bg-transparent select-none "
               onClick={Clear}
             >
-              Clear
+              Làm mới
             </button>
           </div>
           <div className="flex justify-between lg:text-base md:text-sm sm:text-sm text-sm">
@@ -127,7 +127,6 @@ const Filter = () => {
                       className="text-filter border-filter w-[15px] h-[15px] sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px] lg:w-[18px] lg:h-[18px]"
                     />
                     <Rating value={4.5} precision={0.5} readOnly size="small" />
-                    <span>(5.8K)</span>
                   </div>
 
                   <div className="flex items-center space-x-2">
@@ -137,7 +136,6 @@ const Filter = () => {
                       className="text-filter border-filter w-[15px] h-[15px] sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px] lg:w-[18px] lg:h-[18px]"
                     />
                     <Rating value={3.5} precision={0.5} size="small" readOnly />
-                    <span>(1.2K)</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem
@@ -146,7 +144,6 @@ const Filter = () => {
                       className="text-filter border-filter w-[15px] h-[15px] sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px] lg:w-[18px] lg:h-[18px]"
                     />
                     <Rating value={3} size="small" readOnly />
-                    <span>(867)</span>
                   </div>
                 </RadioGroup>
               </div>
@@ -180,55 +177,47 @@ const Filter = () => {
             )}
           </div>
           {checkedduration && (
-            <div className="space-y-3 lg:text-base md:text-sm sm:text-xs text-xs">
-              <div className="space-x-2">
-                <input
-                  type="checkbox"
-                  className="accent-filter"
-                  name="0-2"
-                  id="0-2"
-                  checked={durationChecked["0-2"]}
-                  onChange={handleDurationChange}
-                />
-                <label htmlFor="0-2">0-2 hours(9.4K)</label>
-              </div>
-              <div className="space-x-2">
-                <input
-                  type="checkbox"
-                  className="accent-filter"
-                  name="3-5"
-                  id="3-5"
-                  checked={durationChecked["3-5"]}
-                  onChange={handleDurationChange}
-                />
-                <label htmlFor="3-5">3-5 Hours (4.1K)</label>
-              </div>
-              <div className="space-x-2">
-                <input
-                  type="checkbox"
-                  className="accent-filter"
-                  name="6-12"
-                  id="6-12"
-                  checked={durationChecked["6-12"]}
-                  onChange={handleDurationChange}
-                />
-                <label htmlFor="6-12">6-12 Hours (3.8K)</label>
-              </div>
-              <div className="space-x-2">
-                <input
-                  type="checkbox"
-                  className="accent-filter"
-                  name="12+"
-                  id="12+"
-                  checked={durationChecked["12+"]}
-                  onChange={handleDurationChange}
-                />
-                <label htmlFor="12+">12+ Hours (1K)</label>
+            <div className="flex justify-between lg:text-base md:text-sm sm:text-xs text-xs ">
+              <div>
+                <RadioGroup
+                  value={ratevalue}
+                  onClick={(e) => {
+                    console.log(1);
+                    console.log(e.target.value);
+                    setRatevalue(e.target.value);
+                  }}
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem
+                      value="option-one"
+                      id="option-one"
+                      className="text-filter border-filter w-[15px] h-[15px] sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px] lg:w-[18px] lg:h-[18px]"
+                    />
+                    <Rating value={4.5} precision={0.5} readOnly size="small" />
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem
+                      value="option-two"
+                      id="option-two"
+                      className="text-filter border-filter w-[15px] h-[15px] sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px] lg:w-[18px] lg:h-[18px]"
+                    />
+                    <Rating value={3.5} precision={0.5} size="small" readOnly />
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem
+                      value="option-three"
+                      id="option-three"
+                      className="text-filter border-filter w-[15px] h-[15px] sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px] lg:w-[18px] lg:h-[18px]"
+                    />
+                    <Rating value={3} size="small" readOnly />
+                  </div>
+                </RadioGroup>
               </div>
             </div>
           )}
 
-          <div className="flex justify-between lg:text-base md:text-sm sm:text-sm text-sm ">
+          {/* <div className="flex justify-between lg:text-base md:text-sm sm:text-sm text-sm ">
             <h1 className="font-bold">Categories</h1>
             {checkedcategories ? (
               <div className="flex items-center">
@@ -332,8 +321,8 @@ const Filter = () => {
                 <label htmlFor="Writing">Writing (753)</label>
               </div>
             </div>
-          )}
-
+          )} */}
+          {/* 
           <div className="flex justify-between">
             <h1 className="font-bold lg:text-base md:text-sm sm:text-sm text-sm">
               Software
@@ -430,8 +419,8 @@ const Filter = () => {
           <div className="flex justify-between">
             <h1 className="font-bold lg:text-base md:text-sm sm:text-sm text-sm">
               Số lượng học sinh
-            </h1>
-            {checkednumber ? (
+            </h1> */}
+          {/* {checkednumber ? (
               <div className="flex items-center">
                 <Image
                   className="cursor-pointer sm:w-[15px] sm:h-[15px] lg:w-[20px] lg:h-[20px] w-[15px] h-[15px] "
@@ -451,8 +440,7 @@ const Filter = () => {
                   onClick={() => setCheckednumber(!checkednumber)}
                 />
               </div>
-            )}
-          </div>
+            )} */}
         </div>
       </div>
     </div>

@@ -118,17 +118,17 @@ const TeacherAdmin = () => {
                 <span className="md:text-base sm:text-sm lg:text-xl text-xs flex items-center">
                   Sắp xếp theo:
                 </span>
-                <Select className="md:text-base sm:text-sm lg:text-xl text-xs">
-                  <SelectTrigger className="lg:w-[180px] md:w-[150px] sm:w-[120px] w-[100px]">
+                <Select className="md:text-base sm:text-sm lg:text-2xl text-xs">
+                  <SelectTrigger className="lg:w-[180px] md:w-[180px] sm:w-[120px] w-[100px]">
                     <SelectValue
                       className="lg:text-xl md:text-lg sm:text-sm text-xs"
-                      placeholder="Most popular"
+                      placeholder="Đánh giá"
                     />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="light">Light</SelectItem>
-                    <SelectItem value="dark">Dark</SelectItem>
-                    <SelectItem value="system">System</SelectItem>
+                    <SelectItem value="dg">Đánh giá</SelectItem>
+                    <SelectItem value="light">Số lượng học sinh</SelectItem>
+                    <SelectItem value="dark">Số lượng bài học</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
