@@ -60,6 +60,7 @@ export default function Profile(props: any) {
     }
 
     const handleConfirm = () => {
+        // Call API here
         console.log("Form submitted successfully with data");
         form.reset();
     };
@@ -166,8 +167,8 @@ export default function Profile(props: any) {
                           </Form>
 
                           <AlertModal
-                              title="Confirm Submission"
-                              description="Are you sure you want to submit this form?"
+                              title="Xác nhận lưu thay đổi"
+                              description="Bạn có chắc chắn muốn thay đổi thông tin trên?"
                               trigger={
                                   <button
                                       ref={triggerRef}
