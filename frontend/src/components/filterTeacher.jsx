@@ -8,66 +8,16 @@ import Rating from "@mui/material/Rating";
 
 const Filter = () => {
   const [checkedrate, setCheckedrate] = useState(true);
-  const [checkedduration, setCheckedduration] = useState(true);
-  const [checkedcategories, setCheckedcategories] = useState(true);
-  const [checkedsoftware, setCheckedsoftware] = useState(true);
-  const [checkedlevel, setCheckedlevel] = useState(true);
-  const [durationChecked, setDurationChecked] = useState({
-    "0-2": false,
-    "3-5": false,
-    "6-12": false,
-    "12+": false,
-  });
-
-  const [categoriesChecked, setCategoriesChecked] = useState({
-    Design: false,
-    Programming: false,
-    Business: false,
-    Finance: false,
-    "Music & Film": false,
-    "Photo & Video": false,
-    Writing: false,
-  });
-
-  const [checkednumber, setCheckednumber] = useState(true);
   const [ratevalue, setRatevalue] = useState("");
-  const [selectedLevel, setSelectedLevel] = useState("");
+  const [Number, setNumber] = useState(true);
+  const[numvalue,setnumvalue]=useState("")
+
   const Clear = () => {
     setRatevalue("");
-    setDurationChecked({
-      "0-2": false,
-      "3-5": false,
-      "6-12": false,
-      "12+": false,
-    });
-    setCategoriesChecked({
-      Design: false,
-      Programming: false,
-      Business: false,
-      Finance: false,
-      "Music & Film": false,
-      "Photo & Video": false,
-      Writing: false,
-    });
-    setSelectedLevel("");
+    setnumvalue("");
   };
-  const handleDurationChange = (e) => {
-    const { id, checked } = e.target;
-    setDurationChecked((prev) => ({
-      ...prev,
-      [id]: checked,
-    }));
-  };
-  const handleCategoriesChange = (e) => {
-    const { id, checked } = e.target;
-    setCategoriesChecked((prev) => ({
-      ...prev,
-      [id]: checked,
-    }));
-  };
-  const handleLevelChange = (value) => {
-    setSelectedLevel(value);
-  };
+ 
+  
   return (
     <div
       className="font-poppins drop-shadow-lg
@@ -154,14 +104,14 @@ const Filter = () => {
             <h1 className="font-bold lg:text-base md:text-sm sm:text-sm text-sm">
               Số lượng học sinh
             </h1>
-            {checkedduration ? (
+            {Number ? (
               <div className="flex items-center">
                 <Image
                   className="cursor-pointer sm:w-[15px] sm:h-[15px] lg:w-[20px] lg:h-[20px] w-[15px] h-[15px] "
                   src="/assets/images/arrow_up.png"
                   width={20}
                   height={20}
-                  onClick={() => setCheckedduration(!checkedduration)}
+                  onClick={() => setNumber(!Number)}
                 />
               </div>
             ) : (
@@ -171,276 +121,60 @@ const Filter = () => {
                   src="/assets/images/arrow_down.png"
                   width={20}
                   height={20}
-                  onClick={() => setCheckedduration(!checkedduration)}
+                  onClick={() => setNumber(!Number)}
                 />
               </div>
             )}
           </div>
-          {checkedduration && (
+          {Number && (
             <div className="flex justify-between lg:text-base md:text-sm sm:text-xs text-xs ">
               <div>
                 <RadioGroup
-                  value={ratevalue}
+                  value={numvalue}
                   onClick={(e) => {
-                    console.log(1);
+              
                     console.log(e.target.value);
-                    setRatevalue(e.target.value);
+                    setnumvalue(e.target.value);
                   }}
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem
-                      value="option-one"
-                      id="option-one"
+                      value="100"
+                      id="100"
                       className="text-filter border-filter w-[15px] h-[15px] sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px] lg:w-[18px] lg:h-[18px]"
+                      
                     />
-                    <Rating value={4.5} precision={0.5} readOnly size="small" />
+                  <label htmlFor="100">100</label>
                   </div>
 
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem
-                      value="option-two"
-                      id="option-two"
+                      value="1000"
+                      id="1000"
                       className="text-filter border-filter w-[15px] h-[15px] sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px] lg:w-[18px] lg:h-[18px]"
                     />
-                    <Rating value={3.5} precision={0.5} size="small" readOnly />
+                    <label htmlFor="1000">1000</label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem
-                      value="option-three"
-                      id="option-three"
+                      value="10000"
+                      id="10000"
                       className="text-filter border-filter w-[15px] h-[15px] sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px] lg:w-[18px] lg:h-[18px]"
                     />
-                    <Rating value={3} size="small" readOnly />
+                    <label htmlFor="10000">10000</label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem
+                      value="Trên 10000"
+                      id="10000+"
+                      className="text-filter border-filter w-[15px] h-[15px] sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px] lg:w-[18px] lg:h-[18px]"
+                    />
+                    <label htmlFor="10000+">Trên 10000</label>
                   </div>
                 </RadioGroup>
               </div>
             </div>
           )}
-
-          {/* <div className="flex justify-between lg:text-base md:text-sm sm:text-sm text-sm ">
-            <h1 className="font-bold">Categories</h1>
-            {checkedcategories ? (
-              <div className="flex items-center">
-                <Image
-                  className="cursor-pointer sm:w-[15px] sm:h-[15px] lg:w-[20px] lg:h-[20px] w-[15px] h-[15px] "
-                  src="/assets/images/arrow_up.png"
-                  width={20}
-                  height={20}
-                  onClick={() => setCheckedcategories(!checkedcategories)}
-                />
-              </div>
-            ) : (
-              <div className="flex items-center">
-                <Image
-                  className="cursor-pointer sm:w-[15px] sm:h-[15px] lg:w-[20px] lg:h-[20px] w-[15px] h-[15px] "
-                  src="/assets/images/arrow_down.png"
-                  width={20}
-                  height={20}
-                  onClick={() => setCheckedcategories(!checkedcategories)}
-                />
-              </div>
-            )}
-          </div>
-          {checkedcategories && (
-            <div className="space-y-3 lg:text-base md:text-sm sm:text-xs text-xs">
-              <div className="space-x-2">
-                <input
-                  type="checkbox"
-                  name="Design"
-                  className="accent-filter"
-                  id="Design"
-                  checked={categoriesChecked["Design"]}
-                  onChange={handleCategoriesChange}
-                />
-                <label htmlFor="Design">Design (3.2K)</label>
-              </div>
-              <div className="space-x-2">
-                <input
-                  type="checkbox"
-                  name="Programming"
-                  className="accent-filter"
-                  id="Programming"
-                  checked={categoriesChecked["Programming"]}
-                  onChange={handleCategoriesChange}
-                />
-                <label htmlFor="Programming">Programming (1.4K)</label>
-              </div>
-              <div className="space-x-2">
-                <input
-                  type="checkbox"
-                  name="Business"
-                  className="accent-filter"
-                  id="Business"
-                  checked={categoriesChecked["Business"]}
-                  onChange={handleCategoriesChange}
-                />
-                <label htmlFor="Business">Business & Marketing (809)</label>
-              </div>
-              <div className="space-x-2">
-                <input
-                  type="checkbox"
-                  name="Finance"
-                  className="accent-filter"
-                  id="Finance"
-                  checked={categoriesChecked["Finance"]}
-                  onChange={handleCategoriesChange}
-                />
-                <label htmlFor="Finance">Finance (548)</label>
-              </div>
-              <div className="space-x-2">
-                <input
-                  type="checkbox"
-                  name="Music & Film"
-                  className="accent-filter"
-                  id="Music & Film"
-                  checked={categoriesChecked["Music & Film"]}
-                  onChange={handleCategoriesChange}
-                />
-                <label htmlFor="Music & Film">Music & Film (1.9K)</label>
-              </div>
-              <div className="space-x-2">
-                <input
-                  type="checkbox"
-                  name="Photo & Video"
-                  className="accent-filter"
-                  id="Photo & Video"
-                  checked={categoriesChecked["Photo & Video"]}
-                  onChange={handleCategoriesChange}
-                />
-                <label htmlFor="Photo & Video">Photo & Video (2.3K)</label>
-              </div>
-              <div className="space-x-2">
-                <input
-                  type="checkbox"
-                  name="Writing"
-                  className="accent-filter"
-                  id="Writing"
-                  checked={categoriesChecked["Writing"]}
-                  onChange={handleCategoriesChange}
-                />
-                <label htmlFor="Writing">Writing (753)</label>
-              </div>
-            </div>
-          )} */}
-          {/* 
-          <div className="flex justify-between">
-            <h1 className="font-bold lg:text-base md:text-sm sm:text-sm text-sm">
-              Software
-            </h1>
-            {checkedsoftware ? (
-              <div className="flex items-center">
-                <Image
-                  className="cursor-pointer sm:w-[15px] sm:h-[15px] lg:w-[20px] lg:h-[20px] w-[15px] h-[15px] "
-                  src="/assets/images/arrow_up.png"
-                  width={20}
-                  height={20}
-                  onClick={() => setCheckedsoftware(!checkedsoftware)}
-                />
-              </div>
-            ) : (
-              <div className="flex items-center">
-                <Image
-                  className="cursor-pointer sm:w-[15px] sm:h-[15px] lg:w-[20px] lg:h-[20px] w-[15px] h-[15px] "
-                  src="/assets/images/arrow_down.png"
-                  width={20}
-                  height={20}
-                  onClick={() => setCheckedsoftware(!checkedsoftware)}
-                />
-              </div>
-            )}
-          </div>
-          <div className="flex justify-between">
-            <h1 className="font-bold lg:text-base md:text-sm sm:text-sm text-sm">
-              Level
-            </h1>
-            {checkedlevel ? (
-              <div className="flex items-center">
-                <Image
-                  className="cursor-pointer sm:w-[15px] sm:h-[15px] lg:w-[20px] lg:h-[20px] w-[15px] h-[15px] "
-                  src="/assets/images/arrow_up.png"
-                  width={20}
-                  height={20}
-                  onClick={() => setCheckedlevel(!checkedlevel)}
-                />
-              </div>
-            ) : (
-              <div className="flex items-center">
-                <Image
-                  className="cursor-pointer sm:w-[15px] sm:h-[15px] lg:w-[20px] lg:h-[20px] w-[15px] h-[15px] "
-                  src="/assets/images/arrow_down.png"
-                  width={20}
-                  height={20}
-                  onClick={() => setCheckedlevel(!checkedlevel)}
-                />
-              </div>
-            )}
-          </div>
-          {checkedlevel && (
-            <RadioGroup
-              value={selectedLevel}
-              onValueChange={handleLevelChange}
-              className="lg:text-base md:text-sm sm:text-xs text-xs"
-            >
-              <div className="flex items-center space-x-2 lg:text-base md:text-sm sm:text-xs text-xs">
-                <RadioGroupItem
-                  value="All"
-                  id="All"
-                  className="text-filter border-filter w-[15px] h-[15px] sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px] lg:w-[18px] lg:h-[18px]"
-                />
-                <label htmlFor="All">All Levels</label>
-              </div>
-              <div className="flex items-center space-x-2 ">
-                <RadioGroupItem
-                  value="Beginner"
-                  id="Beginner"
-                  className="text-filter border-filter w-[15px] h-[15px] sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px] lg:w-[18px] lg:h-[18px]"
-                />
-                <label htmlFor="Beginner">Beginner</label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem
-                  value="Intermediate"
-                  id="Intermediate"
-                  className="text-filter border-filter w-[15px] h-[15px] sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px] lg:w-[18px] lg:h-[18px]"
-                />
-                <label htmlFor="Intermediate">Intermediate</label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem
-                  value="Advanced"
-                  id="Advanced"
-                  className="text-filter border-filter w-[15px] h-[15px] sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px] lg:w-[18px] lg:h-[18px]"
-                />
-                <label htmlFor="Advanced">Advanced</label>
-              </div>
-            </RadioGroup>
-          )}
-
-          <div className="flex justify-between">
-            <h1 className="font-bold lg:text-base md:text-sm sm:text-sm text-sm">
-              Số lượng học sinh
-            </h1> */}
-          {/* {checkednumber ? (
-              <div className="flex items-center">
-                <Image
-                  className="cursor-pointer sm:w-[15px] sm:h-[15px] lg:w-[20px] lg:h-[20px] w-[15px] h-[15px] "
-                  src="/assets/images/arrow_up.png"
-                  width={20}
-                  height={20}
-                  onClick={() => setCheckednumber(!checkednumber)}
-                />
-              </div>
-            ) : (
-              <div className="flex items-center">
-                <Image
-                  className="cursor-pointer sm:w-[15px] sm:h-[15px] lg:w-[20px] lg:h-[20px] w-[15px] h-[15px] "
-                  src="/assets/images/arrow_down.png"
-                  width={20}
-                  height={20}
-                  onClick={() => setCheckednumber(!checkednumber)}
-                />
-              </div>
-            )} */}
         </div>
       </div>
     </div>
