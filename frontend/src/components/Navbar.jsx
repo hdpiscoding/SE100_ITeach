@@ -14,9 +14,13 @@ const Navbar = () => {
   const router = useRouter();
   const [login, setLogin] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+<<<<<<< HEAD
   const [role, setRole] = useState("student");
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignInModal, setShowSignInModal] = useState(false);
+=======
+  const [role, setRole] = useState("admin");
+>>>>>>> 7d2cad5 ( axioscustomized)
   const getNavLinks = (role) => {
     switch (role) {
       case "student":

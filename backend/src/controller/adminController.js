@@ -21,9 +21,14 @@ let handleGetAnalysisInformation = async (req, res) => {
   let data = await adminService.getAnalysisInformation(req.body);
   return res.status(200).json(data);
 };
+let handleGetAllReivews = async (req, res) => {
+  let data = await adminService.getAllReviews();
+  return res.status(200).json(data);
+};
 module.exports = {
   handleGetAllTeacher,
   handleGetPopularTeacher,
   handleGetPopularCourse,
   handleGetAnalysisInformation,
+  handleGetAllReivews,
 };
