@@ -14,13 +14,11 @@ const Navbar = () => {
   const router = useRouter();
   const [login, setLogin] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-<<<<<<< HEAD
-  const [role, setRole] = useState("student");
+
+  const [role, setRole] = useState("admin");
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignInModal, setShowSignInModal] = useState(false);
-=======
-  const [role, setRole] = useState("admin");
->>>>>>> 7d2cad5 ( axioscustomized)
+
   const getNavLinks = (role) => {
     switch (role) {
       case "student":
@@ -104,7 +102,7 @@ const Navbar = () => {
                   {!login ? (
                     <div className=" grid grid-cols-2 lg:gap-x-2 sm:gap-x-1 md:gap-x-2">
                       <Button
-                         onClick={() => setShowLoginModal(true)}
+                        onClick={() => setShowLoginModal(true)}
                         className="bg-white text-SignUp lg:text-sm sm:text-sm md:text-sm text-xs col-span-1 hover:bg-SignUp hover:text-white"
                       >
                         LOG IN
@@ -228,14 +226,14 @@ const Navbar = () => {
           <div></div>
         </div>
       </div>
-      <Login 
-        isOpen={showLoginModal} 
+      <Login
+        isOpen={showLoginModal}
         onClose={() => setShowLoginModal(false)}
         onLogin={handleLoginIn}
       />
-      <SignIn 
-        isOpen={showSignInModal} 
-        onClose={()=> setShowSignInModal(false)}
+      <SignIn
+        isOpen={showSignInModal}
+        onClose={() => setShowSignInModal(false)}
         onSignIn={handleSignIn}
       />
     </>

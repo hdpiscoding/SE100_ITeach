@@ -16,4 +16,17 @@ const getTeachers = async () => {
     throw error;
   }
 };
-export { getTeachers };
+const getAllReviews = async () => {
+  try {
+    const response = await axios.get("api/v1/get-all-reviews", {
+      headers: {
+        Authorization: admintoken,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error("Error fetching reviews:", error);
+    throw error;
+  }
+};
+export { getTeachers, getAllReviews };
