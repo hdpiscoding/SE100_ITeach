@@ -54,4 +54,26 @@ const deleteCartItem = async (id) => {
     return null;
   }
 };
-export { editUserProfile, changePassword, getCartItems, deleteCartItem };
+const deleteAllCartItems = async (userId) => {
+  try {
+    const response = await axios.delete(
+      `api/v1/delete-all-cart-items?userId=${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${studentToken}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error while deleting all cart items", error);
+    return null;
+  }
+};
+export {
+  editUserProfile,
+  changePassword,
+  getCartItems,
+  deleteCartItem,
+  deleteAllCartItems,
+};

@@ -6,7 +6,8 @@ import {DataTable} from "@/components/ui/data-table";
 import {columns} from "@/components/Cart/columns";
 import { Button } from "@/components/ui/button";
 import {getCartItems} from "@/services/student";
-
+import { toast } from "react-toastify";
+import {deleteAllCartItems} from "@/services/student";
 interface OrderItem {
     id: string;
     name: string;
@@ -66,8 +67,14 @@ export default function Cart() {
         setTotal(orderItems.reduce((acc, item) => acc + item.price, 0));
     }, [orderItems]);
 
-    const handleClick = async() => {
-         
+    const handleClick = async () => {
+        
+        window.location.href = "/";
+
+        await deleteAllCartItems(7);
+        toast.success("Thanh toán thành công");
+
+
     };
     return (
         <div>
