@@ -166,7 +166,7 @@ let changePassword = (data) => {
       if (!data.id || !data.oldPassword || !data.newPassword) {
         resolve({
           errCode: 1,
-          errMessage: "Missing required fields",
+          errMessage: "Vui lòng nhập đầy đủ thông tin",
         });
       }
       let user = await db.User.findOne({ where: { id: data.id }, raw: false });
@@ -175,19 +175,19 @@ let changePassword = (data) => {
         if (!check) {
           resolve({
             errCode: 3,
-            errMessage: "Your old password is incorrect. Please try again!",
+            errMessage: "Mật khẩu hiện tại không chính xác",
           });
         }
         user.password = bcrypt.hashSync(data.newPassword, salt);
         await user.save();
         resolve({
           errCode: 0,
-          errMessage: "Change password successfully",
+          errMessage: "Đổi mật khẩu thành công",
         });
       } else {
         resolve({
           errCode: 2,
-          errMessage: "User is not found",
+          errMessage: "Không tìm thấy người dùng",
         });
       }
     } catch (error) {

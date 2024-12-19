@@ -28,10 +28,15 @@ const SignIn = ({ isOpen, onClose, onSignIn ,setLogin}) => {
           return;
         }
     
-        if (!password || password.length < 6) {
-          toast.error("Mật khẩu phải có ít nhất 6 ký tự");
-          return;
-        }
+        // if (!password || password.length < 6) {
+        //   toast.error("Mật khẩu phải có ít nhất 6 ký tự");
+        //   return;
+    // }
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
+    if (!password || !passwordRegex.test(password)) {
+      toast.error("Mật khẩu phải có ít nhất 6 ký tự và bao gồm cả chữ và số");
+      return;
+    }
     let data = {};
     if (role === "R2") {
       if (!firstNameRef.current.value || !lastNameRef.current.value) {
