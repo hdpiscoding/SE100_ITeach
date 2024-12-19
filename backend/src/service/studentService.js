@@ -395,7 +395,7 @@ let getDetailCourseInfo = (id, userId) => {
           {
             model: db.User,
             as: "teacher",
-            attributes: ["id", "firstName", "lastName", "avatar"],
+            attributes: ["id", "firstName", "lastName", "email", "avatar"],
           },
           {
             model: db.CourseCategory,
@@ -429,7 +429,7 @@ let getDetailCourseInfo = (id, userId) => {
           {
             model: db.User,
             as: "user",
-            attributes: ["id", "firstName", "lastName", "avatar"],
+            attributes: ["id", "firstName", "lastName", "email", "avatar"],
           },
         ],
         nest: true,
