@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// noinspection JSUnusedLocalSymbols
+
 'use client';
 import React, {useState, useRef, useEffect, ChangeEvent} from "react";
 import {Button} from "@/components/ui/button";
@@ -19,12 +22,14 @@ import {FaUser} from "react-icons/fa";
 import { Textarea } from "@/components/ui/textarea"
 import {useParams, useRouter} from "next/navigation";
 import Markdown from "react-markdown";
+import {getCourses} from "@/services/course";
 
 
 interface Teacher {
     id: string;
-    name: string;
-    avatar: string;
+    firstName: string;
+    lastName: string;
+    avatar: string | null;
 }
 
 interface Chapter {
@@ -39,23 +44,38 @@ interface Chapter {
     }[];
 }
 
-interface Review {
-    id: number;
-    email: string;
-    avatar: string;
-    rating: number;
-    comment: string;
-}
-
 interface User {
     id: number;
-    email: string;
-    avatar: string;
+    firstname: string | null;
+    lastname: string | null;
+    avatar: string | null;
+}
+
+interface Review {
+    star: number;
+    content: string;
+    user: User;
+}
+
+const isUserInReviews = (userId: number, reviews: Review[]): boolean => {
+    return reviews.some((review) => review.user.id === userId);
+}
+
+const convertMinutes = (minutes: number): string => {
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+    if (hours === 0) {
+        return `${remainingMinutes} phút`;
+    }
+    else if (remainingMinutes === 0) {
+        return `${hours} giờ`;
+    }
+    return `${hours} giờ ${remainingMinutes} phút`;
 }
 
 export default function CourseDetail(props: any) {
-    //const {courseId} = useParams();
-    const courseId = 1;
+    const {courseId} = useParams();
+    const userId = 1;
     const router = useRouter();
 
     // Refs for scrolling
@@ -95,7 +115,8 @@ export default function CourseDetail(props: any) {
     // State for rating
     const [user, setUser] = useState<User>({
         id: 1,
-        email: "hdp@gmail.com",
+        firstname: "Huy",
+        lastname: "Nguyễn",
         avatar: ""
     });
     const [averageRating, setAverageRating] = useState<number>(4.2);
@@ -103,90 +124,17 @@ export default function CourseDetail(props: any) {
     const [comment, setComment] = useState<string>("");
     const [ratingCount, setRatingCount] = useState<number>(100);
     const [ratingValueList, setRatingValueList] = useState<number[]>([48, 30, 17, 4, 1]);
-    const [reviews, setReviews] = useState<Array<Review>>(
-        [
-            {
-                id: 1,
-                email: "user1@example.com",
-                avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
-                rating: 5,
-                comment: "Khóa học tuyệt vời, giảng viên rất nhiệt tình và dễ hiểu. Tôi đã học được rất nhiều kiến thức mới!"
-            },
-            {
-                id: 2,
-                email: "user2@example.com",
-                avatar: "",
-                rating: 4,
-                comment: "Khóa học cung cấp rất nhiều thông tin hữu ích, nhưng tôi hy vọng có thêm ví dụ thực tế để áp dụng ngay vào công việc."
-            },
-            {
-                id: 3,
-                email: "user3@example.com",
-                avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
-                rating: 5,
-                comment: "Tuyệt vời! Nội dung chi tiết, dễ theo dõi, và hỗ trợ rất tốt. Tôi cảm thấy tự tin hơn khi viết mã."
-            },
-            {
-                id: 4,
-                email: "user4@example.com",
-                avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
-                rating: 3,
-                comment: "Khóa học khá ổn, nhưng một số phần hơi dài dòng và khó hiểu. Cần cải thiện về phần giải thích."
-            },
-            {
-                id: 5,
-                email: "user5@example.com",
-                avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
-                rating: 2,
-                comment: "Tôi cảm thấy khóa học thiếu sự tương tác. Nhiều khái niệm chưa rõ ràng và ví dụ còn thiếu thực tế."
-            },
-            {
-                id: 6,
-                email: "user6@example.com",
-                avatar: "",
-                rating: 4,
-                comment: "Khóa học rất chất lượng, giảng viên giải thích rõ ràng, nhưng một số bài tập thực hành vẫn chưa đủ để người học nắm vững kiến thức."
-            },
-            {
-                id: 7,
-                email: "user7@example.com",
-                avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
-                rating: 1,
-                comment: "Rất thất vọng! Nội dung quá sơ sài, không đủ để giúp tôi hiểu được các khái niệm cơ bản. Tôi không học được gì từ khóa học này."
-            },
-            {
-                id: 8,
-                email: "user8@example.com",
-                avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
-                rating: 5,
-                comment: "Khóa học cực kỳ bổ ích! Các bài giảng rất dễ hiểu và thực hành cũng rất thực tế, giúp tôi áp dụng được ngay vào dự án của mình."
-            },
-            {
-                id: 9,
-                email: "user9@example.com",
-                avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
-                rating: 3,
-                comment: "Khóa học ổn, nhưng vẫn thiếu một số phần nâng cao. Tôi mong muốn có thêm các chủ đề về tối ưu hóa mã và làm việc với dự án thực tế."
-            },
-            {
-                id: 10,
-                email: "user10@example.com",
-                avatar: "",
-                rating: 2,
-                comment: "Khóa học chưa đáp ứng được kỳ vọng. Các bài giảng chưa được cập nhật, có nhiều lỗi trong các bài tập thực hành."
-            }
-        ]
-    );
+    const [isReviewed, setIsReviewed] = useState<boolean>(false);
+    const [reviews, setReviews] = useState<Array<Review>>();
 
     // set up pagination
     const [page, setPage] = React.useState<number>(1);
 
     const [itemsPerPage, setItemsPerPage] = useState<number>(3);
-    const [totalPages, setTotalPages] = useState<number>(Math.ceil(reviews.length / itemsPerPage));
-    const indexOfLastItem = page * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentReviews = reviews.slice(indexOfFirstItem, indexOfLastItem);
-
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    const [totalPages, setTotalPages] = useState<number>(Math.ceil(reviews?.length / itemsPerPage));
+    const [currentReviews, setCurrentReviews] = useState<Review[] | undefined>();
     const handlePageChange = (event: ChangeEvent<unknown>, page: number) => {
         setPage(page);
     }
@@ -194,9 +142,9 @@ export default function CourseDetail(props: any) {
 
     // State for course information
     const [name, setName] = useState<string>("Khóa học JavaScript cơ bản cho người mới bắt đầu");
-    const [description, setDescription] = useState<String>("Đây là khóa học JavaScript cơ bản dành cho người mới bắt đầu. Trong khóa học này, bạn sẽ học cách sử dụng JavaScript để xây dựng các ứng dụng web cơ bản.");
+    const [description, setDescription] = useState<string>("Đây là khóa học JavaScript cơ bản dành cho người mới bắt đầu. Trong khóa học này, bạn sẽ học cách sử dụng JavaScript để xây dựng các ứng dụng web cơ bản.");
     const [price, setPrice] = useState<number>(400000);
-    const [image, setImage] = useState<string>("https://f.howkteam.vn/Upload/cke/images/1_LOGO%20SHOW%20WEB/7_JavaScript/Javascript%20c%C6%A1%20ba%CC%89n/00_%20Javascript%20basic_Kteam.png");
+    const [image, setImage] = useState<string | null>("https://f.howkteam.vn/Upload/cke/images/1_LOGO%20SHOW%20WEB/7_JavaScript/Javascript%20c%C6%A1%20ba%CC%89n/00_%20Javascript%20basic_Kteam.png");
     const [totalTime, setTotalTime] = useState<number>(30);
     const [totalChapter, setTotalChapter] = useState<number>(12);
     const [totalLecture, setTotalLecture] = useState<number>(108);
@@ -204,10 +152,12 @@ export default function CourseDetail(props: any) {
     const [students, setStudents] = useState<number>(1000);
     const [teacher, setTeacher] = useState<Teacher>({
         id: "1",
-        name: "Cristiano Ronaldo",
+        firstName: "Cristiano",
+        lastName: "Ronaldo",
         avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp"
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [chapters, setChapters] = useState<Array<Chapter>>(
         [
             {
@@ -442,6 +392,50 @@ Khóa học này dành cho:
 Hãy tham gia ngay hôm nay và bắt đầu hành trình chinh phục JavaScript của bạn!
 `);
 
+    useEffect(() => {
+        const fetchData = async () => {
+            const data = await getCourses(String(courseId), String(userId));
+            setName(data.course.courseName);
+            setDescription(data.course.intro);
+            setIntro(data.course.gioiThieu);
+            setPrice(data.course.cost);
+            setImage(data.course.anhBia);
+            setTotalTime(data.course.finishTime);
+            setTotalChapter(data.chapters?.length);
+            setTotalLecture(data.course.totalLesson);
+            setDiscount(data.course.discount);
+            setStudents(data.course.totalStudent);
+            //setTeacher(course.teacher);
+            //setChapters(course.chapters);
+            setAverageRating(data.course.totalStars);
+            setRatingCount(data.reviews?.length);
+            if (data.reviews?.length > 0) {
+                setRatingValueList(data.reviews.reduce((counts: number[], review: Review) => {
+                    const index = 5 - review.star; // Tính index tương ứng (5 sao = index 0)
+                    counts[index] += 1;
+                    return counts;
+                }, [0, 0, 0, 0, 0]))
+            }
+            setReviews(data.reviews);
+            setIsReviewed(isUserInReviews(userId, data.reviews));
+        }
+
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        setItemsPerPage(3);
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        setTotalPages(Math.ceil(reviews?.length / itemsPerPage));
+        const indexOfLastItem = page * itemsPerPage;
+        const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+        setCurrentReviews(reviews?.slice(indexOfFirstItem, indexOfLastItem));
+    }, [reviews]);
+
+    useEffect(() => {
+        console.log(currentReviews);
+    }, [currentReviews, reviews]);
     return (
         <div>
             <div className="bg-bg grid grid-cols-[0.5fr_11fr_0.5fr] py-6">
@@ -482,7 +476,7 @@ Hãy tham gia ngay hôm nay và bắt đầu hành trình chinh phục JavaScrip
                                     </div>}
 
                                 <span className="text-Lime font-semibold">
-                                    {teacher.name}
+                                    {teacher.firstName + " " + teacher.lastName}
                                 </span>
                             </div>
 
@@ -503,7 +497,7 @@ Hãy tham gia ngay hôm nay và bắt đầu hành trình chinh phục JavaScrip
                             <div className="bg-white px-2 py-1 flex items-center w-fit gap-2 rounded-lg">
                                 <Clock className="h-5 w-5 text-DarkGreen"/>
                                 <span className="text-DarkGreen font-semibold">
-                                {String(totalTime)} giờ
+                                {convertMinutes(totalTime)}
                             </span>
                             </div>
 
@@ -611,7 +605,7 @@ Hãy tham gia ngay hôm nay và bắt đầu hành trình chinh phục JavaScrip
                         className="lg:col-start-3 order-1 lg:order-none flex flex-col items-center justify-center mb-2 lg:mb-0">
                         <div className="relative rounded-lg overflow-hidden h-[260px] w-full">
                             <Image
-                                src={image}
+                                src={String(image)}
                                 alt="course_image"
                                 className="object-cover"
                                 fill
@@ -652,6 +646,7 @@ Hãy tham gia ngay hôm nay và bắt đầu hành trình chinh phục JavaScrip
                                 GIỚI THIỆU
                             </span>
 
+                            {/* eslint-disable-next-line react/no-children-prop */}
                             <Markdown children={intro}
                                       className="space-y-4"
                                       components={{
@@ -736,33 +731,38 @@ Hãy tham gia ngay hôm nay và bắt đầu hành trình chinh phục JavaScrip
 
                                 <div className="lg:col-start-3 grid grid-cols-1 gap-4">
                                     {ratingValueList.map((rating, index) => (
-                                        <div key={index} className="grid grid-cols-[12%_78%_10%] items-center gap-2">
+                                        <div key={index} className="grid grid-cols-[15%_75%_10%] items-center gap-2">
                                             <span>
-                                                {5 - index} sao
+                                                {5 - index} sao ({rating})
                                             </span>
 
-                                            <Progress value={rating} indicatorColor="bg-Yellow"/>
+                                            <Progress value={Number((rating/ratingCount*100).toFixed(0))} indicatorColor="bg-Yellow"/>
 
                                             <span className="font-semibold">
-                                                {rating}%
+                                                {(rating/ratingCount*100).toFixed(0)}%
                                             </span>
                                         </div>
                                     ))}
                                 </div>
                             </div>
 
-                            <div key={page} className="fade-in">
-                                {currentReviews.map((review) => (
-                                    <RatingListItem
-                                        key={review.id}
-                                        avatar={review.avatar}
-                                        name={review.email}
-                                        rating={review.rating}
-                                        comment={review.comment}/>
-                                ))}
-                            </div>
+                            {reviews?.length === 0
+                                ?
+                                <div className="text-center">Hiện tại chưa có đánh giá nào 😞</div>
+                                :
+                                <div key={page} className="fade-in">
+                                    {currentReviews?.map((review, index) => (
+                                        <RatingListItem
+                                            key={index}
+                                            avatar={review.user.avatar}
+                                            name={review.user.firstname + " " + review.user.lastname}
+                                            rating={review.star}
+                                            comment={review.content}/>
+                                    ))}
+                                </div>
+                            }
 
-                            {(isBuy && props.role === "student")
+                            {(isBuy && props.role === "student" && !isReviewed)
                                 &&
                                 <div className="flex flex-col lg:flex-row lg:items-center gap-2">
                                     <div className="flex items-center gap-2">
@@ -784,7 +784,7 @@ Hãy tham gia ngay hôm nay và bắt đầu hành trình chinh phục JavaScrip
 
                                         <div className="flex flex-col justify-center">
                                         <span className="font-semibold">
-                                            {user.email}
+                                            {user.firstname + " " + user.lastname}
                                         </span>
 
                                             <Rating
