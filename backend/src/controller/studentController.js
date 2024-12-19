@@ -194,6 +194,16 @@ const handleGetCurrentLessonId = async (req, res) => {
   );
   return res.status(200).json(response);
 };
+const handleDeleteAllCartItems = async (req, res) => {
+  if (!req.query.userId) {
+    return res.status(500).json({
+      errCode: 1,
+      errMessage: "Missing required parameter",
+    });
+  }
+  let response = await studentService.deleteAllCartItems(req.query.userId);
+  return res.status(200).json(response);
+};
 module.exports = {
   handleGetAllCourses,
   handleGetAllCoursesCategories,
@@ -214,4 +224,5 @@ module.exports = {
   handleCompleteLesson,
   handleGetCurrentLessonId,
   handleDeleteCartItem,
+  handleDeleteAllCartItems,
 };

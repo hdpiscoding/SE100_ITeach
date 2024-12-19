@@ -617,6 +617,21 @@ let getCurrentLessonId = (courseId, studentId) => {
     }
   });
 };
+const deleteAllCartItems = async (userId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await db.CartItem.destroy({
+        where: { userId: userId },
+      });
+      resolve({
+        errCode: 0,
+        errMessage: "OK",
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 module.exports = {
   getAllCourses,
   getAllCoursesCategories,
@@ -637,4 +652,5 @@ module.exports = {
   completeLesson,
   getCurrentLessonId,
   deleteCartItem,
+  deleteAllCartItems,
 };

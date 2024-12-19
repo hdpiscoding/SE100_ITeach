@@ -25,6 +25,8 @@ const studentPaths = [
   "/api/v1/add-to-cart",
   "/api/v1/complete-the-lesson",
   "/api/v1/get-current-lesson-id",
+  "/api/v1/delete-cart-item",
+  "/api/v1/delete-all-cart-items",
 ];
 const teacherPaths = [
   "/api/v1/create-new-course",
@@ -59,6 +61,7 @@ const commonPaths = [
 ];
 
 const auth = (req, res, next) => {
+  console.log(">>>Path:", req.path);
   if (nonSecurePaths.includes(req.path)) {
     return next();
   }
