@@ -19,10 +19,16 @@ let createNewUser = (data) => {
   return new Promise(async (resolve, reject) => {
     let checkExistEmail = await checkUserEmail(data.email);
     let totalStudents;
+    let firstName;
+    let lastName;
     if (data.role === "R2") {
       totalStudents = 0;
+      firstName = data.firstName;
+      lastName = data.lastName;
     } else {
       totalStudents = null;
+      firstName = null;
+      lastName = null;
     }
     if (checkExistEmail === false) {
       let hashPassword = await hashUserPassword(data.password);
@@ -32,6 +38,8 @@ let createNewUser = (data) => {
           password: hashPassword,
           role: data.role,
           totalStudentNumber: totalStudents,
+          firstName: firstName,
+          lastName: lastName,
         });
         resolve({
           errCode: 0,

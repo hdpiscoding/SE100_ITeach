@@ -3,22 +3,59 @@ import React from 'react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { useRef } from 'react'
-import {createNewUser, login} from "@/services/auth";
+import { createNewUser, login } from "@/services/auth";
+import { toast } from 'react-toastify';
 
 const SignIn = ({ isOpen, onClose, onSignIn ,setLogin}) => {
   if (!isOpen) return null;
   const emailRef = useRef();
   const passwordRef = useRef();
   const roleRef = useRef();
+  const firstNameRef = useRef();
+  const lastNameRef = useRef();
+  const [isTeacher, setIsTeacher] = React.useState(false);
   const handleSubmit = () => {
+    if(!emailRef.current.value || !passwordRef.current.value || !roleRef.current.value) {
+      toast.error("Vui lòng nhập đầy đủ thông tin");
+      return;
+    }
     const email = emailRef.current.value;
     const password = passwordRef.current.value;
     const role = roleRef.current.value;
-    const data = {
-      email,
-      password,
-      role
-    };
+     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email || !emailRegex.test(email)) {
+          toast.error("Email không hợp lệ");
+          return;
+        }
+    
+        if (!password || password.length < 6) {
+          toast.error("Mật khẩu phải có ít nhất 6 ký tự");
+          return;
+        }
+    let data = {};
+    if (role === "R2") {
+      if (!firstNameRef.current.value || !lastNameRef.current.value) {
+        
+        toast.error("Vui lòng nhập đầy đủ thông tin");
+        return;
+      }
+      const firstName = firstNameRef.current.value;
+    const lastName = lastNameRef.current.value;
+      data = {
+        email,
+        password,
+        role,
+        firstName,
+        lastName
+      };
+    }
+    else {
+      data = {
+        email,
+        password,
+        role
+      }
+    }
     createNewUser(data).then((response) => {
       console.log("response", response);
       if (response?.errCode === 0) {
@@ -42,6 +79,14 @@ const SignIn = ({ isOpen, onClose, onSignIn ,setLogin}) => {
         toast.error(response?.message);
       }
     });
+  }
+  const handleSelectChange = (e) => {
+     if(e.target.value === "R2") {
+      setIsTeacher(true);
+    }
+     else {
+      setIsTeacher(false);
+    }
   }
   
 
@@ -124,8 +169,30 @@ const SignIn = ({ isOpen, onClose, onSignIn ,setLogin}) => {
                   ref={passwordRef}
                 />
               </div>
+             {
+                isTeacher && (
+                  <>
+                    <div className="border-2 p-2 flex justify-between bg-MoreLightGray"> 
+                      <input 
+                        className="outline-none w-full bg-transparent" 
+                        type="text" 
+                        placeholder="Họ" 
+                        ref={firstNameRef}
+                      />
+                    </div>
+                    <div className="border-2 p-2 flex justify-between bg-MoreLightGray"> 
+                      <input 
+                        className="outline-none w-full bg-transparent" 
+                        type="text" 
+                        placeholder="Tên" 
+                        ref={lastNameRef}
+                      />
+                    </div>
+                  </>
+                )
+              }
               <div className="border-2 p-2 flex justify-between bg-MoreLightGray">
-  <select className="outline-none w-full bg-transparent" ref={roleRef}>
+  <select className="outline-none w-full bg-transparent" ref={roleRef} onChange={(e) => handleSelectChange(e)}>
     <option value="" disabled selected hidden>Vai trò...</option>
     <option value="R2">Giảng viên</option>
     <option value="R1">Học viên</option>

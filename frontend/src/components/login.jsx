@@ -16,6 +16,18 @@ const Login = ({ isOpen, onClose, onLogin,setLogin }) => {
   const handleSubmit = () => {
     const email = emailRef.current.value;
     const password = passwordRef.current.value;
+    
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+      toast.error("Email không hợp lệ");
+      return;
+    }
+
+    if (!password || password.length < 6) {
+      toast.error("Mật khẩu phải có ít nhất 6 ký tự");
+      return;
+    }
     const data = {
       email,
       password,
