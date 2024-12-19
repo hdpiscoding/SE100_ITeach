@@ -17,6 +17,10 @@ let getAllCourses = async () => {
           "level",
           "totalStudent",
           "totalStars",
+          "createdAt",
+          "courseStatus",
+          "totalStudent",
+          "finishTime",
         ],
         include: [
           {

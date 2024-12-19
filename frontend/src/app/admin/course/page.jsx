@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Filter from "@/components/Filter";
 import CourseCardAdmin from "@/components/courseCardAdmin";
@@ -10,13 +10,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
+import { getAllCourses } from "@/services/admin";
 const CoursesAdmin = () => {
   const [activeTab, setActiveTab] = useState("public");
   const [currentPage, setCurrentPage] = useState(1);
   const coursesPerPage = 12;
 
-  const courses = new Array(17).fill(null);
+  const [courses, setCourses] = useState([]);
+  const [all, setAll] = useState([]);
 
   const indexOfLastCourse = currentPage * coursesPerPage;
   const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
@@ -25,6 +26,55 @@ const CoursesAdmin = () => {
   const totalPages = Math.ceil(courses.length / coursesPerPage);
 
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const response = await getAllCourses();
+        const allCourses = response.data.data;
+        setAll(allCourses);
+
+        const filterCourse = allCourses.filter((course) => {
+          return course.courseStatus === "CS1";
+        });
+        setCourses(filterCourse);
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      }
+    };
+    getData();
+  }, []);
+  const handleClick = (cs) => {
+    const searchInput = document
+      .querySelector('input[type="text"]')
+      .value.toLowerCase();
+    if (searchInput === "" || searchInput === null) {
+      const filterCourse = all.filter((course) => {
+        return course.courseStatus === cs;
+      });
+      setCourses(filterCourse);
+    } else {
+      const filterCourse = all.filter((course) => {
+        return (
+          course.courseStatus === cs &&
+          course.courseName.toLowerCase().includes(searchInput)
+        );
+      });
+
+      setCourses(filterCourse);
+    }
+  };
+  const handleSearch = () => {
+    if (activeTab === "public") {
+      handleClick("CS1");
+    }
+    if (activeTab === "pending") {
+      handleClick("CS2");
+    }
+    if (activeTab === "paused") {
+      handleClick("CS3");
+    }
+  };
 
   return (
     <div className="space-y-7">
@@ -60,7 +110,10 @@ const CoursesAdmin = () => {
               className={`cursor-pointer ${
                 activeTab === "public" ? "text-orange" : ""
               }`}
-              onClick={() => setActiveTab("public")}
+              onClick={() => {
+                setActiveTab("public");
+                handleClick("CS1");
+              }}
             >
               Khóa học công khai
             </span>
@@ -68,15 +121,21 @@ const CoursesAdmin = () => {
               className={`cursor-pointer ${
                 activeTab === "pending" ? "text-orange" : ""
               }`}
-              onClick={() => setActiveTab("pending")}
+              onClick={() => {
+                setActiveTab("pending");
+                handleClick("CS2");
+              }}
             >
-              Khóa học chờ duyệt(99)
+              Khóa học chờ duyệt
             </span>
             <span
               className={`cursor-pointer ${
                 activeTab === "paused" ? "text-orange" : ""
               }`}
-              onClick={() => setActiveTab("paused")}
+              onClick={() => {
+                setActiveTab("paused");
+                handleClick("CS3");
+              }}
             >
               Khóa học tạm ngưng
             </span>
@@ -87,7 +146,8 @@ const CoursesAdmin = () => {
                 <input
                   className="outline-none lg:w-[270px] md:w-[220px] sm:w-[180px] w-[150px] lg:text-base md:text-sm sm:text-xs text-xs rounded-3xl"
                   type="text"
-                  placeholder="Search courses..."
+                  placeholder="Tìm kiếm khóa học..."
+                  onChange={handleSearch}
                 />
                 <div className="lg:w-[20px] md:w-[18px] sm:w-[15px] w-[10px] lg:h-[20px] md:h-[18px] sm:h-[15px] h-[10px] flex items-center justify-center">
                   <Image
@@ -96,12 +156,13 @@ const CoursesAdmin = () => {
                     width={15}
                     height={0}
                     alt="search"
+                    onClick={handleSearch}
                   />
                 </div>
               </div>
               <div className="  grid grid-cols-[1fr_2fr] gap-6 ">
                 <span className="md:text-base sm:text-sm lg:text-xl text-xs flex items-center">
-                  Sort by:
+                  Sắp xếp theo:
                 </span>
                 <Select className="md:text-base sm:text-sm lg:text-xl text-xs">
                   <SelectTrigger className="lg:w-[180px] md:w-[150px] sm:w-[120px] w-[100px]">
@@ -127,7 +188,7 @@ const CoursesAdmin = () => {
               <Filter />
               <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6">
                 {currentCourses.map((_, index) => (
-                  <CourseCardAdmin key={index} />
+                  <CourseCardAdmin key={index} course={currentCourses[index]} />
                 ))}
               </div>
             </div>

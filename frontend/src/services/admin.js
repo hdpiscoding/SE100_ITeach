@@ -29,4 +29,17 @@ const getAllReviews = async () => {
     throw error;
   }
 };
-export { getTeachers, getAllReviews };
+const getAllCourses = async () => {
+  try {
+    const response = await axios.get("api/v1/get-all-courses", {
+      headers: {
+        Authorization: admintoken,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error("Error fetching courses:", error);
+    throw error;
+  }
+};
+export { getTeachers, getAllReviews, getAllCourses };

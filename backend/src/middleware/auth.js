@@ -51,6 +51,7 @@ const adminPaths = [
   "/api/v1/get-popular-course",
   "/api/v1/get-analysis-information",
   "/api/v1/get-all-reviews",
+  "/api/v1/get-all-courses",
 ];
 const commonPaths = [
   "/api/v1/update-user-info",
