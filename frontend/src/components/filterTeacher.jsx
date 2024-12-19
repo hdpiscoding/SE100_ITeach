@@ -6,18 +6,48 @@ import { useState } from "react";
 import { Poppins } from "next/font/google";
 import Rating from "@mui/material/Rating";
 
-const Filter = () => {
+const Filter = ({ filterTeachers }) => {
   const [checkedrate, setCheckedrate] = useState(true);
   const [ratevalue, setRatevalue] = useState("");
   const [Number, setNumber] = useState(true);
-  const[numvalue,setnumvalue]=useState("")
+  const [numvalue, setnumvalue] = useState("");
 
   const Clear = () => {
     setRatevalue("");
     setnumvalue("");
+    filterTeachers(0, 0);
   };
- 
-  
+  const handleFilter = (op, value) => {
+    if (op === 1) {
+      if (value === "option-one") {
+        filterTeachers(0, numvalue);
+      } else if (value === "option-two") {
+        filterTeachers(2, numvalue);
+      } else {
+        filterTeachers(4, numvalue);
+      }
+    } else {
+      var ratingnum = 0;
+      if (ratevalue === "option-one") {
+        ratingnum = 0;
+      } else if (ratevalue === "option-two") {
+        ratingnum = 2;
+      } else {
+        ratingnum = 4;
+      }
+
+      if (value === "0") {
+        filterTeachers(ratingnum, 0);
+      } else if (value === "100") {
+        filterTeachers(ratingnum, 100);
+      } else if (value === "1000") {
+        filterTeachers(ratingnum, 1000);
+      } else {
+        filterTeachers(ratingnum, 10000);
+      }
+    }
+  };
+
   return (
     <div
       className="font-poppins drop-shadow-lg
@@ -44,7 +74,9 @@ const Filter = () => {
                   src="/assets/images/arrow_up.png "
                   width={20}
                   height={20}
-                  onClick={() => setCheckedrate(!checkedrate)}
+                  onClick={async () => {
+                    await setCheckedrate(!checkedrate);
+                  }}
                 />
               </div>
             ) : (
@@ -54,7 +86,9 @@ const Filter = () => {
                   src="/assets/images/arrow_down.png"
                   width={20}
                   height={20}
-                  onClick={() => setCheckedrate(!checkedrate)}
+                  onClick={async () => {
+                    await setCheckedrate(!checkedrate);
+                  }}
                 />
               </div>
             )}
@@ -64,10 +98,11 @@ const Filter = () => {
               <div>
                 <RadioGroup
                   value={ratevalue}
-                  onClick={(e) => {
+                  onClick={async (e) => {
                     console.log(1);
                     console.log(e.target.value);
-                    setRatevalue(e.target.value);
+                    await setRatevalue(e.target.value);
+                    handleFilter(1, e.target.value);
                   }}
                 >
                   <div className="flex items-center space-x-2">
@@ -76,7 +111,7 @@ const Filter = () => {
                       id="option-one"
                       className="text-filter border-filter w-[15px] h-[15px] sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px] lg:w-[18px] lg:h-[18px]"
                     />
-                    <Rating value={4.5} precision={0.5} readOnly size="small" />
+                    <p>{"Tất cả"}</p>
                   </div>
 
                   <div className="flex items-center space-x-2">
@@ -85,7 +120,8 @@ const Filter = () => {
                       id="option-two"
                       className="text-filter border-filter w-[15px] h-[15px] sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px] lg:w-[18px] lg:h-[18px]"
                     />
-                    <Rating value={3.5} precision={0.5} size="small" readOnly />
+                    <p>{"Trên"}</p>
+                    <Rating value={2} precision={0.5} size="small" readOnly />
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem
@@ -93,7 +129,8 @@ const Filter = () => {
                       id="option-three"
                       className="text-filter border-filter w-[15px] h-[15px] sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px] lg:w-[18px] lg:h-[18px]"
                     />
-                    <Rating value={3} size="small" readOnly />
+                    <p>{"Trên"}</p>
+                    <Rating value={4} size="small" readOnly />
                   </div>
                 </RadioGroup>
               </div>
@@ -111,7 +148,9 @@ const Filter = () => {
                   src="/assets/images/arrow_up.png"
                   width={20}
                   height={20}
-                  onClick={() => setNumber(!Number)}
+                  onClick={async () => {
+                    await setNumber(!Number);
+                  }}
                 />
               </div>
             ) : (
@@ -121,7 +160,9 @@ const Filter = () => {
                   src="/assets/images/arrow_down.png"
                   width={20}
                   height={20}
-                  onClick={() => setNumber(!Number)}
+                  onClick={async () => {
+                    await setNumber(!Number);
+                  }}
                 />
               </div>
             )}
@@ -132,40 +173,39 @@ const Filter = () => {
                 <RadioGroup
                   value={numvalue}
                   onClick={(e) => {
-              
                     console.log(e.target.value);
                     setnumvalue(e.target.value);
+                    handleFilter(2, e.target.value);
                   }}
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem
-                      value="100"
+                      value="0"
                       id="100"
                       className="text-filter border-filter w-[15px] h-[15px] sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px] lg:w-[18px] lg:h-[18px]"
-                      
                     />
-                  <label htmlFor="100">100</label>
+                    <label htmlFor="100">Tất cả</label>
                   </div>
 
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem
-                      value="1000"
+                      value="100"
                       id="1000"
                       className="text-filter border-filter w-[15px] h-[15px] sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px] lg:w-[18px] lg:h-[18px]"
                     />
-                    <label htmlFor="1000">1000</label>
+                    <label htmlFor="1000">Trên 100</label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem
+                      value="1000"
+                      id="10000"
+                      className="text-filter border-filter w-[15px] h-[15px] sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px] lg:w-[18px] lg:h-[18px]"
+                    />
+                    <label htmlFor="10000">Trên 1000</label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem
                       value="10000"
-                      id="10000"
-                      className="text-filter border-filter w-[15px] h-[15px] sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px] lg:w-[18px] lg:h-[18px]"
-                    />
-                    <label htmlFor="10000">10000</label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem
-                      value="Trên 10000"
                       id="10000+"
                       className="text-filter border-filter w-[15px] h-[15px] sm:w-[14px] sm:h-[14px] md:w-[16px] md:h-[16px] lg:w-[18px] lg:h-[18px]"
                     />

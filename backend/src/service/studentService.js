@@ -617,6 +617,41 @@ let getCurrentLessonId = (courseId, studentId) => {
     }
   });
 };
+let getStudentCertificates = (studentId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let certificates = await db.Certificate.findAll({
+        where: { userId: studentId },
+
+        raw: true,
+      });
+      for (let certificate of certificates) {
+        let course = await db.Course.findOne({
+          where: { id: certificate.courseId },
+          attributes: ["id", "courseName"],
+          raw: true,
+        });
+        let user = await db.User.findOne({
+          where: { id: certificate.userId },
+          attributes: ["id", "firstName", "lastName"],
+          raw: true,
+        });
+        if (course) {
+          certificate.course = course;
+        }
+        certificate.user = user;
+      }
+      if (certificates) {
+        resolve({
+          errCode: 0,
+          certificates: certificates,
+        });
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 module.exports = {
   getAllCourses,
   getAllCoursesCategories,
@@ -637,4 +672,5 @@ module.exports = {
   completeLesson,
   getCurrentLessonId,
   deleteCartItem,
+  getStudentCertificates,
 };

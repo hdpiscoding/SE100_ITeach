@@ -3,6 +3,7 @@ import React, { use, useEffect, useState } from "react";
 import Image from "next/image";
 import FilterTeacher from "@/components/filterTeacher";
 import TeacherCard from "@/components/teacherCard";
+
 import {
   Select,
   SelectContent,
@@ -41,6 +42,21 @@ const TeacherAdmin = () => {
     };
     getData();
   }, [currentPage]);
+  const filterTeachers = (rating, studentCount) => {
+    const filteredTeachers = allteachers.filter((teacher) => {
+      var averageRating =
+        teacher.reviews.reduce((acc, review) => acc + review.star, 0) /
+        teacher.reviews.length;
+      if (teacher.reviews.length === 0) {
+        averageRating = 0;
+      }
+
+      return (
+        averageRating >= rating && teacher.totalStudentNumber >= studentCount
+      );
+    });
+    setCourses(filteredTeachers);
+  };
   const handleSearch = () => {
     const searchInput = document
       .querySelector('input[type="text"]')
@@ -139,7 +155,7 @@ const TeacherAdmin = () => {
           </div>
           <div>
             <div className="grid grid-cols-[1fr_4fr] gap-6">
-              <FilterTeacher />
+              <FilterTeacher filterTeachers={filterTeachers} />
               <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-2 lg:gap-6 md:gap-4 sm:gap-3 gap-2">
                 {currentCourses.map((_, index) => (
                   <TeacherCard key={index} teacher={currentCourses[index]} />

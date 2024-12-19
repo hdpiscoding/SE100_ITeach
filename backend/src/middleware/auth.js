@@ -25,6 +25,7 @@ const studentPaths = [
   "/api/v1/add-to-cart",
   "/api/v1/complete-the-lesson",
   "/api/v1/get-current-lesson-id",
+  "/api/v1/get-student-certificates",
 ];
 const teacherPaths = [
   "/api/v1/create-new-course",

@@ -1,6 +1,7 @@
 import express from "express";
 import teacherController from "../controller/teacherController";
 import adminController from "../controller/adminController";
+import studentController from "../controller/studentController";
 
 const router = express.Router();
 
@@ -53,6 +54,10 @@ const initARoutes = (app) => {
     teacherController.handleDeleteAChapter
   );
   router.get("/api/v1/get-all-reviews", adminController.handleGetAllReivews);
+  router.get(
+    "/api/v1/get-student-certificates",
+    studentController.handleGetStudentCertificates
+  );
   return app.use("/", router);
 };
 export default initARoutes;
