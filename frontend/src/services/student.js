@@ -1,7 +1,7 @@
 import axios from "../utils/AxiosCustomized";
 
 const studentToken =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImVtYWlsIjoiaHVuZzA3MDkyMDA0QGdtYWlsLmNvbSIsInJvbGUiOiJSMSIsImV4cGlyZXNJbiI6IjMwZCIsImlhdCI6MTczNDQ4OTMzMn0.tQgwfeQOTs0adWu70z1i5VAQQr6jXWtDfy4GVcifsFA";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiaHVuZzA3MDkyMDA0QGdtYWlsLmNvbSIsInJvbGUiOiJSMSIsImV4cGlyZXNJbiI6IjMwZCIsImlhdCI6MTcyNzU4MTM5Mn0.PjbiIFpTmHEswozHTdC246gXYYk8X8flQYvmOdSLlW8";
 const editUserProfile = async (data) => {
   try {
     const response = await axios.put("api/v1/update-user-info", data, {
@@ -28,4 +28,30 @@ const changePassword = async (data) => {
     return null;
   }
 };
-export { editUserProfile, changePassword };
+const getCartItems = async (userId) => {
+  try {
+    const response = await axios.get(`api/v1/get-cart-items?id=${userId}`, {
+      headers: {
+        Authorization: `Bearer ${studentToken}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error while getting cart items", error);
+    return null;
+  }
+};
+const deleteCartItem = async (id) => {
+  try {
+    const response = await axios.delete(`api/v1/delete-cart-item?id=${id}`, {
+      headers: {
+        Authorization: `Bearer ${studentToken}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error while deleting cart item", error);
+    return null;
+  }
+};
+export { editUserProfile, changePassword, getCartItems, deleteCartItem };
