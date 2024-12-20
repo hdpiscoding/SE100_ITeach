@@ -239,10 +239,79 @@ let getAllReviews = () => {
     }
   });
 };
+let approveCourse = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!data.courseId) {
+        resolve({
+          errCode: 1,
+          errMessage: "Missing required parameters",
+        });
+      } else {
+        let course = await db.Course.update(
+          { courseStatus: "CS1" },
+          { where: { id: data.courseId } }
+        );
+        resolve({
+          errCode: 0,
+          errMessage: "OK",
+        });
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+let stopCourse = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!data.courseId) {
+        resolve({
+          errCode: 1,
+          errMessage: "Missing required parameters",
+        });
+      } else {
+        let course = await db.Course.update(
+          { courseStatus: "CS3" },
+          { where: { id: data.courseId } }
+        );
+        resolve({
+          errCode: 0,
+          errMessage: "OK",
+        });
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+let deleteCourse = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!data.courseId) {
+        resolve({
+          errCode: 1,
+          errMessage: "Missing required parameters",
+        });
+      } else {
+        let course = await db.Course.destroy({ where: { id: data.courseId } });
+        resolve({
+          errCode: 0,
+          errMessage: "OK",
+        });
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 module.exports = {
   getAllTeacher,
   getPopularTeacher,
   getPopularCourse,
   getAnalysisInformation,
   getAllReviews,
+  approveCourse,
+  stopCourse,
+  deleteCourse,
 };

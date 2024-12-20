@@ -5,19 +5,49 @@ import { useState } from "react";
 import FilterProcess from "@/components/filterProcess";
 import Coursecard from "@/components/Coursecard";
 import CertificateCard from "@/components/certificateCard";
-import { getStudentCertificates } from "@/services/student";
+import { getStudentCertificates, getMyCourses } from "@/services/student";
+import { getAllCourses } from "@/services/admin";
 
 const Process = () => {
   const [certificates, setCertificates] = useState([]);
+  const [registeredCourses, setRegisteredCourses] = useState([]);
+  const [suggestedCourses, setSuggestedCourses] = useState([]);
+  const [allCourses, setAllCourses] = useState([]);
+
   let username = "Username";
-  let khoahoc = 24;
+  let [khoahoc, setKhoahoc] = useState(0);
   let [chungchi, setChungchi] = useState(0);
   const [activeTab, setActiveTab] = useState("registered");
+  const studentId = 7;
   useEffect(() => {
     const getData = async () => {
       const response = await getStudentCertificates(7);
       setCertificates(response.data.certificates);
       setChungchi(response.data.certificates.length);
+
+      const rawcourses = await getMyCourses(7);
+      setRegisteredCourses(rawcourses.data.data);
+      setKhoahoc(rawcourses.data.data.length);
+      const responseAllCourses = await getAllCourses();
+      setAllCourses(responseAllCourses.data.data);
+
+      if (rawcourses.data.data.length > 0) {
+        const registeredCategories = rawcourses.data.data.map(
+          (course) => course.Course.category.id
+        );
+
+        let suggested = responseAllCourses.data.data
+          .filter((course) => registeredCategories.includes(course.category.id))
+          .slice(0, 5);
+        if (suggested.length === 0) {
+          suggested = responseAllCourses.data.data.slice(0, 5);
+        }
+
+        setSuggestedCourses(suggested);
+      } else {
+        const suggest = responseAllCourses.data.data.slice(0, 5);
+        setSuggestedCourses(suggest);
+      }
     };
     getData();
   }, []);
@@ -31,18 +61,24 @@ const Process = () => {
         </div>
       );
     }
-
-    return (
-      <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 grid-cols-1 lg:gap-6 md:gap-4 sm:gap-3 gap-2">
-        <Coursecard />
-        <Coursecard />
-        <Coursecard />
-        <Coursecard />
-        <Coursecard />
-        <Coursecard />
-        <Coursecard />
-      </div>
-    );
+    if (activeTab === "registered") {
+      return (
+        <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 grid-cols-1 lg:gap-6 md:gap-4 sm:gap-3 gap-2">
+          {registeredCourses.map((_, index) => (
+            <Coursecard course={registeredCourses[index]} type="1" />
+          ))}
+        </div>
+      );
+    }
+    if (activeTab === "suggested") {
+      return (
+        <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 grid-cols-1 lg:gap-6 md:gap-4 sm:gap-3 gap-2">
+          {suggestedCourses.map((_, index) => (
+            <Coursecard course={suggestedCourses[index]} type="0" />
+          ))}
+        </div>
+      );
+    }
   };
   return (
     <div className="">
@@ -100,9 +136,7 @@ const Process = () => {
             </span>
           </div>
           <div className="grid lg:grid-cols-[1fr_4fr] md:grid-cols-[1fr_3fr] sm:grid-cols-[1fr_2fr] grid-cols-[1fr_1fr] gap-6 p-3  ">
-            <div className="w-full ">
-              <FilterProcess />
-            </div>
+            <div className="w-full ">{/* <FilterProcess /> */}</div>
             <div className="w-full">{renderContent()}</div>
           </div>
         </div>

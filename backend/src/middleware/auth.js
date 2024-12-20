@@ -26,6 +26,7 @@ const studentPaths = [
   "/api/v1/complete-the-lesson",
   "/api/v1/get-current-lesson-id",
   "/api/v1/get-student-certificates",
+  "/api/v1/get-a-certificate",
 ];
 const teacherPaths = [
   "/api/v1/create-new-course",
@@ -52,6 +53,9 @@ const adminPaths = [
   "/api/v1/get-analysis-information",
   "/api/v1/get-all-reviews",
   "/api/v1/get-all-courses",
+  "/api/v1/approve-course",
+  "/api/v1/stop-course",
+  "/api/v1/delete-course",
 ];
 const commonPaths = [
   "/api/v1/update-user-info",

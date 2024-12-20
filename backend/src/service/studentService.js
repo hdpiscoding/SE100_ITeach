@@ -21,6 +21,7 @@ let getAllCourses = async () => {
           "courseStatus",
           "totalStudent",
           "finishTime",
+          "level",
         ],
         include: [
           {
@@ -206,6 +207,8 @@ let getBoughtCourses = (id) => {
               "anhBia",
               "intro",
               "level",
+              "createdAt",
+              "courseCategoryId",
 
               "totalStudent",
             ],
@@ -656,6 +659,45 @@ let getStudentCertificates = (studentId) => {
     }
   });
 };
+const getACertificate = (id) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let certificate = await db.Certificate.findOne({
+        where: { id: id },
+        raw: true,
+      });
+
+      let course = await db.Course.findOne({
+        where: { id: certificate.courseId },
+        attributes: ["id", "courseName"],
+        raw: true,
+      });
+      let user = await db.User.findOne({
+        where: { id: certificate.userId },
+        attributes: ["id", "firstName", "lastName"],
+        raw: true,
+      });
+      if (course) {
+        certificate.course = course;
+      }
+      certificate.user = user;
+
+      if (certificate) {
+        resolve({
+          errCode: 0,
+          certificate: certificate,
+        });
+      } else {
+        resolve({
+          errCode: 1,
+          errMessage: "No certificate found",
+        });
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 module.exports = {
   getAllCourses,
   getAllCoursesCategories,
@@ -677,4 +719,5 @@ module.exports = {
   getCurrentLessonId,
   deleteCartItem,
   getStudentCertificates,
+  getACertificate,
 };

@@ -20,5 +20,49 @@ const getStudentCertificates = async (studentId) => {
     throw error;
   }
 };
+const getMyCourses = async (studentId) => {
+  try {
+    const response = await axios.get("api/v1/get-my-courses?id=" + studentId, {
+      headers: {
+        Authorization: studenttoken,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error("Error fetching my courses:", error);
+    throw error;
+  }
+};
+const getACertificate = async (id) => {
+  try {
+    const response = await axios.get("api/v1/get-a-certificate?id=" + id, {
+      headers: {
+        Authorization: studenttoken,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error("Error fetching certificate:", error);
+    throw error;
+  }
+};
+const getAllCoursesCategories = async () => {
+  try {
+    const response = await axios.get("api/v1/get-all-courses-categories", {
+      headers: {
+        Authorization: studenttoken,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error("Error fetching courses categories:", error);
+    throw error;
+  }
+};
 
-export { getStudentCertificates };
+export {
+  getStudentCertificates,
+  getMyCourses,
+  getACertificate,
+  getAllCoursesCategories,
+};

@@ -42,4 +42,51 @@ const getAllCourses = async () => {
     throw error;
   }
 };
-export { getTeachers, getAllReviews, getAllCourses };
+const ApproveCourse = async (body) => {
+  try {
+    const response = await axios.put(`api/v1/approve-course`, body, {
+      headers: {
+        Authorization: admintoken,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error("Error approving course:", error);
+    throw error;
+  }
+};
+const StopCourse = async (body) => {
+  try {
+    const response = await axios.put(`api/v1/stop-course`, body, {
+      headers: {
+        Authorization: admintoken,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error("Error stopping course:", error);
+    throw error;
+  }
+};
+const delteCourse = async (body) => {
+  try {
+    const response = await axios.put(`api/v1/delete-course`, body, {
+      headers: {
+        Authorization: admintoken,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error("Error deleting course:", error);
+    throw error;
+  }
+};
+
+export {
+  getTeachers,
+  getAllReviews,
+  getAllCourses,
+  ApproveCourse,
+  StopCourse,
+  delteCourse,
+};

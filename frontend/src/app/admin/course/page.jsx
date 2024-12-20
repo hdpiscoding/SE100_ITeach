@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { getAllCourses } from "@/services/admin";
+import { parse } from "path";
 const CoursesAdmin = () => {
   const [activeTab, setActiveTab] = useState("public");
   const [currentPage, setCurrentPage] = useState(1);
@@ -18,6 +19,7 @@ const CoursesAdmin = () => {
 
   const [courses, setCourses] = useState([]);
   const [all, setAll] = useState([]);
+  const [filteredCourses, setFilteredCourses] = useState([]);
 
   const indexOfLastCourse = currentPage * coursesPerPage;
   const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
@@ -33,11 +35,6 @@ const CoursesAdmin = () => {
         const response = await getAllCourses();
         const allCourses = response.data.data;
         setAll(allCourses);
-
-        const filterCourse = allCourses.filter((course) => {
-          return course.courseStatus === "CS1";
-        });
-        setCourses(filterCourse);
       } catch (error) {
         console.error("Error fetching courses:", error);
       }
@@ -49,12 +46,12 @@ const CoursesAdmin = () => {
       .querySelector('input[type="text"]')
       .value.toLowerCase();
     if (searchInput === "" || searchInput === null) {
-      const filterCourse = all.filter((course) => {
+      const filterCourse = filteredCourses.filter((course) => {
         return course.courseStatus === cs;
       });
       setCourses(filterCourse);
     } else {
-      const filterCourse = all.filter((course) => {
+      const filterCourse = filteredCourses.filter((course) => {
         return (
           course.courseStatus === cs &&
           course.courseName.toLowerCase().includes(searchInput)
@@ -75,7 +72,71 @@ const CoursesAdmin = () => {
       handleClick("CS3");
     }
   };
+  const handleFilter = async (
+    selectedCategories,
+    selectedDurations,
+    rateValue
+  ) => {
+    if (
+      selectedCategories.length === 0 &&
+      selectedDurations.length === 0 &&
+      rateValue === ""
+    ) {
+      setFilteredCourses(all);
+      return;
+    }
+    const response = await getAllCourses();
+    const allCourses = response.data.data;
+    const filter = allCourses.filter((course) => {
+      var abovecost = 0;
+      const courseCost = parseInt(course.cost);
+      if (rateValue === "1") {
+        abovecost = 0;
+      }
+      if (rateValue === "2") {
+        abovecost = 100000;
+      }
+      if (rateValue === "3") {
+        abovecost = 10000000;
+      }
+      const costCondition = courseCost >= abovecost;
 
+      const categoryCondition = selectedCategories.includes(
+        course.category?.id?.toString()
+      );
+
+      const durationCondition = selectedDurations.includes(course.level);
+      return categoryCondition && durationCondition && costCondition;
+    });
+
+    setFilteredCourses(filter);
+  };
+  const handleSort = (criteria) => {
+    if (criteria === "light") {
+      const sortedCourses = [...courses].sort((a, b) => {
+        return a.cost - b.cost;
+      });
+      setCourses(sortedCourses);
+    }
+    if (criteria === "high") {
+      const sortedCourses = [...courses].sort((a, b) => {
+        return b.cost - a.cost;
+      });
+      setCourses(sortedCourses);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "public") {
+      handleClick("CS1");
+    }
+    if (activeTab === "pending") {
+      handleClick("CS2");
+    }
+    if (activeTab === "paused") {
+      handleClick("CS3");
+    }
+  }, [filteredCourses]);
   return (
     <div className="space-y-7">
       <div className="h-[120px] bg-bg grid grid-cols-[0.5fr_11fr_0.5fr]">
@@ -164,31 +225,37 @@ const CoursesAdmin = () => {
                 <span className="md:text-base sm:text-sm lg:text-xl text-xs flex items-center">
                   Sắp xếp theo:
                 </span>
-                <Select className="md:text-base sm:text-sm lg:text-xl text-xs">
+                <Select
+                  className="md:text-base sm:text-sm lg:text-xl text-xs "
+                  onValueChange={(value) => handleSort(value)}
+                >
                   <SelectTrigger className="lg:w-[180px] md:w-[150px] sm:w-[120px] w-[100px]">
                     <SelectValue
                       className="lg:text-xl md:text-lg sm:text-sm text-xs"
-                      placeholder="Most popular"
+                      placeholder="Sắp xếp"
                     />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="light">Light</SelectItem>
-                    <SelectItem value="dark">Dark</SelectItem>
-                    <SelectItem value="system">System</SelectItem>
+                    <SelectItem value="light">Giá thấp nhất</SelectItem>
+                    <SelectItem value="high">Giá cao nhất</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
             <div className="space-x-1 lg:text-xl md:text-lg sm:text-sm text-xs">
-              <span>2900 kết quả tìm kiếm</span>
+              <span>{courses.length} kết quả </span>
             </div>
           </div>
           <div>
             <div className="grid grid-cols-[1fr_4fr] gap-6">
-              <Filter />
+              <Filter parentFilter={handleFilter} />
               <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6">
                 {currentCourses.map((_, index) => (
-                  <CourseCardAdmin key={index} course={currentCourses[index]} />
+                  <CourseCardAdmin
+                    key={index}
+                    course={currentCourses[index]}
+                    type={activeTab}
+                  />
                 ))}
               </div>
             </div>

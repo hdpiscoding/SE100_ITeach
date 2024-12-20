@@ -2,15 +2,21 @@
 import { React, useState, useEffect, use } from "react";
 import Image from "next/image";
 import { QRCodeSVG } from "qrcode.react";
-
+import { useRouter } from "next/navigation";
 const CertificateCard = ({ certificate }) => {
+  const router = useRouter();
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "2-digit", day: "2-digit" };
     return new Date(dateString).toLocaleDateString("en-US", options);
   };
 
   return (
-    <div className="w-max-[500px] p-4 ">
+    <div
+      className="w-max-[500px] p-4 "
+      onClick={() => {
+        router.push(`/student/certificates?id=${certificate.id}`);
+      }}
+    >
       <div className="grid grid-cols-[0.5fr_11fr_0.5fr]">
         <div></div>
         <div className="border-4 md:border-8 border-certificate text-certificate p-1">
@@ -69,8 +75,8 @@ const CertificateCard = ({ certificate }) => {
                 {/* Footer section */}
                 <div className="flex  justify-between items-center space-y-1 md:space-y-5">
                   <div className="text-[8px] md:text-sm lg:text-sm">
-                    <div>Hà Nội, {certificate.createAt}</div>
-                    <div>Ha Noi, {certificate.createAt}</div>
+                    <div>Hà Nội,__/__/____</div>
+                    <div>Ha Noi,__/__/____</div>
                   </div>
                   <Image
                     className="hidden sm:block w-full lg:w-[50px] lg:h-[20px] h-[15px]"

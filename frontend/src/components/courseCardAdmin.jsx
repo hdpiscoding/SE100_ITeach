@@ -1,7 +1,24 @@
 import React from "react";
 import Image from "next/image";
+import { ApproveCourse, StopCourse, delteCourse } from "@/services/admin";
 
-const CourseCardAdmin = ({ course }) => {
+const CourseCardAdmin = ({ course, type }) => {
+  const handelApprove = async () => {
+    await ApproveCourse({ courseId: course.id });
+    window.location.reload();
+  };
+
+  const handleStop = async () => {
+    await StopCourse({ courseId: course.id });
+    window.location.reload();
+  };
+  const handleDelete = async () => {
+    await delteCourse({ courseId: course.id });
+    if (window.confirm("Are you sure you want to delete this course?")) {
+      await delteCourse({ courseId: course.id });
+    }
+    window.location.reload();
+  };
   return (
     <div className=" max-h-[300px] rounded-md overflow-hidden bg-slate-100 lg:w-[300px] md:w-[250px] sm:w-[200px] w-[200px] space-y-2 sm:space-y-3 hover:shadow-lg transition-all duration-300">
       <div className="relative">
@@ -42,20 +59,33 @@ const CourseCardAdmin = ({ course }) => {
               </span>
             )}
           </div>
-          <Image
-            className="lg:w-[30px] lg:h-[30px] md:w-[20px] md:h-[20px] sm:w-[15px] sm:h-[15px] w-[15px] h-[15px]"
-            src="/assets/images/check.png"
-            alt="check"
-            width={30}
-            height={30}
-          />
-          <Image
-            className="lg:w-[30px] lg:h-[30px] md:w-[20px] md:h-[20px] sm:w-[15px] sm:h-[15px] w-[15px] h-[15px]"
-            src="/assets/images/deny.png"
-            alt="delete"
-            width={30}
-            height={30}
-          />
+          {type !== "public" && (
+            <div className="flex gap-2">
+              <Image
+                className="lg:w-[30px] lg:h-[30px] md:w-[20px] md:h-[20px] sm:w-[15px] sm:h-[15px] w-[15px] h-[15px]"
+                src="/assets/images/check.png"
+                alt="check"
+                width={30}
+                height={30}
+                onClick={handelApprove}
+              />
+              <Image
+                className="lg:w-[30px] lg:h-[30px] md:w-[20px] md:h-[20px] sm:w-[15px] sm:h-[15px] w-[15px] h-[15px]"
+                src="/assets/images/deny.png"
+                alt="delete"
+                width={30}
+                height={30}
+                onClick={handleDelete}
+              />
+            </div>
+          )}
+          {type === "public" && (
+            <div className="flex gap-2">
+              <p onClick={handleStop} className="text-amber-500 font-bold">
+                Dừng
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -58,6 +58,14 @@ const initARoutes = (app) => {
     "/api/v1/get-student-certificates",
     studentController.handleGetStudentCertificates
   );
+  router.get(
+    "/api/v1/get-a-certificate",
+    studentController.handleGetACertificate
+  );
+  router.put("/api/v1/approve-course", adminController.handleApproveCourse);
+  router.put("/api/v1/stop-course", adminController.handleStopCourse);
+
+  router.put("/api/v1/delete-course", adminController.handleDeleteCourse);
   return app.use("/", router);
 };
 export default initARoutes;

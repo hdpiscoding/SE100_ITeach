@@ -76,6 +76,25 @@ const TeacherAdmin = () => {
       return;
     }
   };
+  const handleSort = (criteria) => {
+    const sortedTeachers = [...allteachers].sort((a, b) => {
+      if (criteria === "rating") {
+        const avgRatingA =
+          a.reviews.reduce((acc, review) => acc + review.star, 0) /
+            a.reviews.length || 0;
+        const avgRatingB =
+          b.reviews.reduce((acc, review) => acc + review.star, 0) /
+            b.reviews.length || 0;
+        return avgRatingB - avgRatingA;
+      } else if (criteria === "students") {
+        return b.totalStudentNumber - a.totalStudentNumber;
+      } else if (criteria === "courses") {
+        return b.totalCourseNumber - a.totalCourseNumber;
+      }
+      return 0;
+    });
+    setCourses(sortedTeachers);
+  };
 
   return (
     <div className="space-y-7">
@@ -134,17 +153,20 @@ const TeacherAdmin = () => {
                 <span className="md:text-base sm:text-sm lg:text-xl text-xs flex items-center">
                   Sắp xếp theo:
                 </span>
-                <Select className="md:text-base sm:text-sm lg:text-2xl text-xs">
+                <Select
+                  className="md:text-base sm:text-sm lg:text-2xl text-xs"
+                  onValueChange={handleSort}
+                >
                   <SelectTrigger className="lg:w-[180px] md:w-[180px] sm:w-[120px] w-[100px]">
                     <SelectValue
                       className="lg:text-xl md:text-lg sm:text-sm text-xs"
-                      placeholder="Đánh giá"
+                      placeholder="Sắp xếp"
                     />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="dg">Đánh giá</SelectItem>
-                    <SelectItem value="light">Số lượng học sinh</SelectItem>
-                    <SelectItem value="dark">Số lượng bài học</SelectItem>
+                    <SelectItem value="rating">Đánh giá</SelectItem>
+                    <SelectItem value="students">Số lượng học sinh</SelectItem>
+                    <SelectItem value="courses">Số lượng bài học</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
