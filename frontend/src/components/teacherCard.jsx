@@ -18,8 +18,12 @@ const TeacherCard = ({ teacher }) => {
     setCourse(teacher.totalCourseNumber ? teacher.totalCourseNumber : "0");
     setStudent(teacher.totalStudentNumber ? teacher.totalStudentNumber : "0");
   }, [teacher]);
+  const handleClick = () => {};
   return (
-    <div className="relative  rounded-2xl overflow-hidden lg:w-[300px] lg:h-[400px] md:w-[200px] md:h-[300px] w-[100px] h-[150px] ">
+    <div
+      className="relative  rounded-2xl overflow-hidden lg:w-[300px] lg:h-[400px] md:w-[200px] md:h-[300px] w-[100px] h-[150px] "
+      onClick={handleClick}
+    >
       <div className=" h-full w-full">
         <Image
           src="/assets/images/teacher.png"
