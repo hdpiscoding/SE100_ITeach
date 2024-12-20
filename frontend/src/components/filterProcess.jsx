@@ -1,112 +1,91 @@
 "use client";
-import React from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import { getAllCoursesCategories } from "@/services/student";
 
 const FilterProcess = () => {
-  const [checkedcategories, setCheckedcategories] = useState(false);
+  const [checkedCategories, setCheckedCategories] = useState(true);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [categories, setCategories] = useState([]);
+
+  const handleFilter = (categoryName) => {
+    setSelectedCategories((prev) => {
+      const isSelected = prev.includes(categoryName);
+      const updatedCategories = isSelected
+        ? prev.filter((name) => name !== categoryName)
+        : [...prev, categoryName];
+      alert(`Selected categories: ${updatedCategories.join(", ")}`);
+      return updatedCategories;
+    });
+  };
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const response = await getAllCoursesCategories();
+        const fetchedCategories = response.data.data;
+        setCategories(fetchedCategories);
+        setSelectedCategories(fetchedCategories.map((cat) => cat.categoryName));
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+    getData();
+  }, []);
+
   return (
     <div
       className="border border-stroke lg:rounded-2xl md:rounded-xl rounded-lg
-          lg:text-xl md:text-lg text-xs  lg:px-5 lg:py-3 md:p-3 sm:p-2 p-2 text-textfilter font-poppins w-full h-fit "
+          lg:text-xl md:text-lg text-xs lg:px-5 lg:py-3 md:p-3 sm:p-2 p-2 text-textfilter font-poppins w-full h-fit"
     >
       <div className="lg:space-y-4 md:space-y-5 sm:space-y-3 space-y-2">
-        <div className="text-SignUp font-bold cursor-pointer ">Lọc</div>
+        <div className="text-SignUp font-bold cursor-pointer">Lọc</div>
         <div className="flex justify-between">
           <h1 className="font-bold lg:text-xl md:text-lg sm:text-xs text-xs">
-            Categories
+            Danh mục
           </h1>
-          {checkedcategories ? (
-           <div className="flex items-center">
-               <Image
-                 className="cursor-pointer sm:w-[15px] sm:h-[15px] lg:w-[20px] lg:h-[20px] w-[15px] h-[15px] "
-                 src="/assets/images/arrow_up.png"
-                 width={20}
-                 height={20}
-                 onClick={() => setCheckedcategories(!checkedcategories)}
-               />
-           </div>
+          {checkedCategories ? (
+            <div className="flex items-center">
+              <Image
+                className="cursor-pointer sm:w-[15px] sm:h-[15px] lg:w-[20px] lg:h-[20px] w-[15px] h-[15px]"
+                src="/assets/images/arrow_up.png"
+                width={20}
+                height={20}
+                onClick={() => setCheckedCategories(!checkedCategories)}
+              />
+            </div>
           ) : (
             <div className="flex items-center">
               <Image
-                className="cursor-pointer sm:w-[15px] sm:h-[15px] lg:w-[20px] lg:h-[20px] w-[15px] h-[15px] "
+                className="cursor-pointer sm:w-[15px] sm:h-[15px] lg:w-[20px] lg:h-[20px] w-[15px] h-[15px]"
                 src="/assets/images/arrow_down.png"
                 width={20}
                 height={20}
-                onClick={() => setCheckedcategories(!checkedcategories)}
+                onClick={() => setCheckedCategories(!checkedCategories)}
               />
             </div>
           )}
         </div>
-        {checkedcategories && (
+        {checkedCategories && (
           <div className="space-y-3">
-            <div className="space-x-2">
-              <input
-                type="checkbox"
-                name="Design"
-                className="accent-filter"
-                id="Design"
-              />
-              <label htmlFor="Design">Design (3.2K)</label>
-            </div>
-            <div className="space-x-2">
-              <input
-                type="checkbox"
-                name="Programming"
-                className="accent-filter"
-                id="Programming"
-              />
-              <label htmlFor="Programming">Programming (1.4K)</label>
-            </div>
-            <div className="space-x-2">
-              <input
-                type="checkbox"
-                name="Business"
-                className="accent-filter"
-                id="Business"
-              />
-              <label htmlFor="Business">Business & Marketing (809)</label>
-            </div>
-            <div className="space-x-2">
-              <input
-                type="checkbox"
-                name="Finance"
-                className="accent-filter"
-                id="Finance"
-              />
-              <label htmlFor="Finance">Finance (548)</label>
-            </div>
-            <div className="space-x-2">
-              <input
-                type="checkbox"
-                name="Music & Film"
-                className="accent-filter"
-                id="Music & Film"
-              />
-              <label htmlFor="Music & Film">Music & Film (1.9K)</label>
-            </div>
-            <div className="space-x-2">
-              <input
-                type="checkbox"
-                name="Photo & Video"
-                className="accent-filter"
-                id="Photo & Video"
-              />
-              <label htmlFor="Photo & Video">Photo & Video (2.3K)</label>
-            </div>
-            <div className="space-x-2">
-              <input
-                type="checkbox"
-                name="Writing"
-                className="accent-filter"
-                id="Writing"
-              />
-              <label htmlFor="Writing">Writing (753)</label>
-            </div>
+            {categories.map((category) => (
+              <div className="space-x-2" key={category.id}>
+                <input
+                  type="checkbox"
+                  name={category.categoryName}
+                  className="accent-filter"
+                  id={category.id}
+                  checked={selectedCategories.includes(category.categoryName)}
+                  onChange={() => handleFilter(category.categoryName)}
+                />
+                <label htmlFor={category.id}>{category.categoryName}</label>
+              </div>
+            ))}
           </div>
         )}
       </div>
     </div>
   );
 };
+
 export default FilterProcess;
