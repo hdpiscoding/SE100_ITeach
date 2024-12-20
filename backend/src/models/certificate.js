@@ -12,7 +12,7 @@ The models/index file will call this method automatically.*/
   Certificate.init(
     {
       userId: DataTypes.INTEGER,
-      courseId: DataTypes.STRING,
+      courseId: DataTypes.INTEGER,
       qr: DataTypes.STRING,
     },
     {
@@ -20,5 +20,6 @@ The models/index file will call this method automatically.*/
       modelName: "Certificate",
     }
   );
+
   return Certificate;
 };

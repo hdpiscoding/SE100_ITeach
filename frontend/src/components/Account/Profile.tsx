@@ -1,12 +1,10 @@
 'use client';
-import React, {useEffect} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import { FaUser } from "react-icons/fa";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod";
 import { Button } from "@/components/ui/button"
-import { toast } from "react-toastify";
-
 import {
     Form,
     FormControl,
@@ -18,8 +16,10 @@ import {
 import { Input } from "@/components/ui/input"
 import Image from "next/image";
 import DatePicker from "@/components/ui/date-picker";
+import AlertModal from "@/components/AlertDialog2/AlertModal";
 import {editUserProfile} from "@/services/student";
-import { m } from "framer-motion";
+import { toast } from "react-toastify";
+
 
 const formSchema = z.object({
     firstName: z.optional(z.string()),
@@ -35,18 +35,9 @@ export default function Profile(props: any) {
     const [firstName, setFirstName] = React.useState("");
     const [lastName, setLastName] = React.useState("");
     const [phone, setPhone] = React.useState("");
-    const [email, setEmail] = React.useState(" ");
+    const [email, setEmail] = React.useState("abc@gmail.com");
     const [dob, setDob] = React.useState<Date | undefined>(new Date("2004-07-11"));
     const [avatar, setAvatar] = React.useState<File | null>(null);
-    const [isEditing, setIsEditing] = React.useState(false);
-    let [tempValues, setTempValues] = React.useState({
-        firstName: "",
-        lastName: "",
-        email: "",
-        phone: "",
-        dob: new Date("2004-07-11"),
-        avatar: null as File | null,
-    });
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
@@ -65,42 +56,14 @@ export default function Profile(props: any) {
         },
     });
 
+    const triggerRef = useRef<HTMLButtonElement | null>(null);
+
     const onSubmit = (values: z.infer<typeof formSchema>) => {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        console.log("values", values);
+        triggerRef.current?.click();
     }
 
-    const handleEditClick = () => {
-       
-        setTempValues(
-            {
-                firstName: form.getValues("firstName") || "",
-                lastName: form.getValues("lastName") || "",
-                email: form.getValues("email") || "",
-                phone: form.getValues("phone") || "",
-                dob: form.getValues("dob") || new Date("2004-07-11"),
-                avatar: avatar,
-            }
-        );
-
-        setIsEditing(true);
-        
-    }
-    const handleCancelClick = () => {
-        form.setValue("firstName", tempValues.firstName);
-        form.setValue("lastName", tempValues.lastName);
-        form.setValue("email", tempValues.email);
-        form.setValue("phone", tempValues.phone);
-        form.setValue("dob", tempValues.dob);
-        setAvatar(tempValues.avatar);
-
-        setIsEditing(false);        
-
-    }
-    const handleSaveClick =async () => {
-        setIsEditing(false);
-        console.log("Save");
+    const handleConfirm =async () => {
+        // Call API here
         const data = {
             id:7, // id of user
             firstName: form.getValues("firstName"),
@@ -111,8 +74,13 @@ export default function Profile(props: any) {
             avatar: avatar,
         }
         const response = await editUserProfile(data);
-        toast.success("Cập nhật thông tin thành công");
-    }
+        if (response.errCode === 0) {
+            toast.success("Cập nhật thông tin thành công");
+        }
+        else {
+            toast.error("Cập nhật thông tin thất bại");
+        }
+    };
 
   return (
       <>
@@ -136,7 +104,7 @@ export default function Profile(props: any) {
                                               <FormItem>
                                                   <FormLabel>Họ</FormLabel>
                                                   <FormControl>
-                                                      <Input {...field} disabled={!isEditing}  />
+                                                      <Input {...field}/>
                                                   </FormControl>
                                                   <FormMessage/>
                                               </FormItem>
@@ -150,7 +118,7 @@ export default function Profile(props: any) {
                                               <FormItem>
                                                   <FormLabel>Tên</FormLabel>
                                                   <FormControl>
-                                                      <Input {...field} disabled={!isEditing}  />
+                                                      <Input {...field}/>
                                                   </FormControl>
                                                   <FormMessage/>
                                               </FormItem>
@@ -161,17 +129,17 @@ export default function Profile(props: any) {
                                           control={form.control}
                                           name="email"
                                           render={({field}) => (
-                                              <FormItem >
+                                              <FormItem>
                                                   <FormLabel>Email</FormLabel>
                                                   <FormControl>
-                                                      <Input  {...field} disabled={!isEditing}/>
+                                                      <Input {...field}/>
                                                   </FormControl>
                                                   <FormMessage/>
                                               </FormItem>
                                           )}
                                       />
 
-                                      <div  className="flex flex-col-reverse gap-4 md:flex-col lg:flex lg:flex-row lg:items-center lg:justify-between">
+                                      <div className="flex flex-col-reverse gap-4 md:flex-col lg:flex lg:flex-row lg:items-center lg:justify-between">
                                           <FormField
                                               control={form.control}
                                               name="phone"
@@ -179,7 +147,7 @@ export default function Profile(props: any) {
                                                   <FormItem className="relative">
                                                       <FormLabel>Số điện thoại</FormLabel>
                                                       <FormControl>
-                                                          <Input {...field} className="lg:w-[35rem]" disabled={!isEditing}/>
+                                                          <Input {...field} className="lg:w-[35rem]"/>
                                                       </FormControl>
                                                       <FormMessage className="absolute left-0 mt-1"/>
                                                   </FormItem>
@@ -206,21 +174,26 @@ export default function Profile(props: any) {
                                   </div>
 
                                   <div className="mt-10">
-                                      
-                                      {
-                                          isEditing ?
-                                              <div><Button type="submit" onClick={handleSaveClick}
-                                              className="mr-4 bg-DarkGreen hover:bg-DarkGreen_Hover rounded-xl">Lưu thay
-                                          đổi</Button>                                       <Button type="button" onClick={handleCancelClick} className="mr-4 bg-Red hover:bg-DarkRed_Hover rounded-xl">Hủy</Button>
-</div>
-                                              
-                                              : <Button type="button" onClick={handleEditClick} className="mr-4 bg-DarkGreen hover:bg-DarkGreen_Hover rounded-xl">Thay đổi</Button>
-
-}
+                                      <Button type="submit"
+                                              className="bg-DarkGreen hover:bg-DarkGreen_Hover rounded-xl">
+                                          Lưu thay đổi
+                                      </Button>
                                   </div>
 
                               </form>
                           </Form>
+
+                          <AlertModal
+                              title="Xác nhận lưu thay đổi"
+                              description="Bạn có chắc chắn muốn thay đổi thông tin trên?"
+                              trigger={
+                                  <button
+                                      ref={triggerRef}
+                                      style={{ display: "none" }} // Ẩn trigger button
+                                  />
+                              }
+                              onConfirm={handleConfirm}
+                          />
                       </div>
 
                       <div className="lg:col-start-2 lg:mt-0 mt-4 flex items-center justify-center">
@@ -251,7 +224,6 @@ export default function Profile(props: any) {
                                       accept=".jpg, .jpeg, .png"
                                       onChange={handleImageUpload}
                                       className="hidden"
-                                      disabled={!isEditing}
                                   />
                               </div>
                           </div>
