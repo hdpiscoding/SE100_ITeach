@@ -10,7 +10,8 @@ import {
     DialogTrigger
 } from "@/components/ui/dialog";
 import {DataTable} from "@/components/ui/data-table";
-import {dialogColumns} from "@/components/Account/DialogColumns";
+import { dialogColumns } from "@/components/Account/DialogColumns";
+import {getOrderItems} from "@/services/student";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -84,28 +85,34 @@ export const columns: ColumnDef<Order>[] = [
     },
     {
         id: "actions",
-        cell: ({ row }) => {
+        cell: async ({ row }) => {
             const order = row.original
-            const orderItems = [
-                {
-                    id: "1",
-                    name: "Java cơ bản",
-                    price: 100000,
-                    image: "https://cdn.codegym.vn/wp-content/uploads/2022/01/khoa-hoc-lap-trinh-java-online-9.jpg"
-                },
-                {
-                    id: "2",
-                    name: "Nhập môn lập trình web",
-                    price: 200000,
-                    image: "https://hoclaptrinhonline.asia/pluginfile.php/2137/course/overviewfiles/la%CC%A3%CC%82p-tri%CC%80nh-web-min.png",
-                },
-                {
-                    id: "3",
-                    name: "JavaScript cơ bản",
-                    price: 300000,
-                    image: "https://f.howkteam.vn/Upload/cke/images/1_LOGO%20SHOW%20WEB/7_JavaScript/Javascript%20c%C6%A1%20ba%CC%89n/00_%20Javascript%20basic_Kteam.png",
-                },
-            ]
+            const data = await getOrderItems(row.getValue("id"))
+            console.log("dataaaaaa", data)
+            let orderItems: any[] = []
+            if (Array.isArray(data.data)) {
+                data.data.map((item: any) => {
+                    orderItems.push({
+                        id: item.id,
+                        name: item.course.courseName,
+                        price: item.course.cost,
+                        image: "https://cdn.codegym.vn/wp-content/uploads/2022/01/khoa-hoc-lap-trinh-java-online-9.jpg",
+                    });
+                });
+            } else {
+                console.error("Expected data to be an array, but got:", data);
+            }
+
+            // const orderItems = [
+            //     {
+            //         id: "1",
+            //         name: "Java cơ bản",
+            //         price: 100000,
+            //         image: "https://cdn.codegym.vn/wp-content/uploads/2022/01/khoa-hoc-lap-trinh-java-online-9.jpg"
+            //     },
+                
+            // ]
+             
 
             return (
                 <Dialog>

@@ -70,10 +70,58 @@ const deleteAllCartItems = async (userId) => {
     return null;
   }
 };
+const postPayment = async (data) => {
+  try {
+    const response = await axios.post("api/v1/post-payment", data, {
+      headers: {
+        Authorization: `Bearer ${studentToken}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error while posting payment", error);
+    return null;
+  }
+};
+const getOrders = async (userId) => {
+  try {
+    const response = await axios.get(
+      `api/v1/get-students-orders?id=${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${studentToken}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error while getting orders", error);
+    return null;
+  }
+};
+const getOrderItems = async (orderId) => {
+  try {
+    const response = await axios.get(
+      `api/v1/get-students-orders-items?orderId=${orderId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${studentToken}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error while getting order items", error);
+    return null;
+  }
+};
 export {
   editUserProfile,
   changePassword,
   getCartItems,
   deleteCartItem,
   deleteAllCartItems,
+  postPayment,
+  getOrders,
+  getOrderItems,
 };

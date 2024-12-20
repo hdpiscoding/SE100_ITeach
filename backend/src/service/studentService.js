@@ -67,7 +67,16 @@ let getAllCoursesCategories = async () => {
 let getStudentsOrders = async (userId) => {
   return new Promise(async (resolve, reject) => {
     try {
-      let courses = await db.Order.findAll();
+      let courses = await db.Order.findAll({
+        where: { userId: userId },
+        raw: true,
+      });
+      for (let course of courses) {
+        const orderItemsCount = await db.OrderItem.count({
+          where: { orderId: course.id },
+        });
+        course.orderItemsCount = orderItemsCount;
+      }
       if (courses && courses.length > 0) {
         resolve({
           errCode: 0,
@@ -632,6 +641,54 @@ const deleteAllCartItems = async (userId) => {
     }
   });
 };
+const postPayment = async (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const order = await db.Order.create({
+        userId: data.userId,
+        totalCost: data.totalCost,
+      });
+      const orderId = order.id;
+      for (const item of data.cartItems) {
+        await db.OrderItem.create({
+          orderId: orderId,
+          courseId: item.courseId,
+        });
+        const course = await db.Course.findOne({
+          where: { id: item.courseId },
+          raw: false,
+        });
+        if (course) {
+          course.totalStudent += 1;
+          await course.save();
+
+          // Tìm Teacher tương ứng
+          const teacher = await db.User.findOne({
+            where: { id: course.teacherId },
+            raw: false,
+          });
+          if (teacher) {
+            teacher.totalStudentNumber += 1;
+            await teacher.save();
+          }
+        }
+        await db.MyCourse.create({
+          userId: data.userId,
+          courseId: item.courseId,
+          numberOfProcess: 0,
+        });
+      }
+
+      resolve({
+        errCode: 0,
+        errMessage: "OK",
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
 module.exports = {
   getAllCourses,
   getAllCoursesCategories,
@@ -653,4 +710,5 @@ module.exports = {
   getCurrentLessonId,
   deleteCartItem,
   deleteAllCartItems,
+  postPayment,
 };

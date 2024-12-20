@@ -78,6 +78,7 @@ const initWebRoutes = (app) => {
     "/api/v1/get-current-lesson-id",
     studentController.handleGetCurrentLessonId
   );
+  router.post("/api/v1/post-payment", studentController.handlePostPayment);
 
   return app.use("/", router);
 };

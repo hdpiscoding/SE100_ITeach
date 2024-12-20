@@ -2,6 +2,7 @@
 import React, {useEffect, useState} from "react";
 import {DataTable} from "@/components/ui/data-table";
 import {columns} from "@/components/Account/columns";
+import {getOrders} from "@/services/student";
 
 interface Order {
     id: string;
@@ -14,80 +15,25 @@ export default function OrderHistory() {
     const [orders, setOrders] = useState<Array<Order>>([]);
 
     useEffect(() => {
-        setOrders([
-            {
-                id: "1",
-                date: "2021-09-01",
-                total: 100000,
-                quantity: 1,
-            },
-            {
-                id: "2",
-                date: "2021-09-02",
-                total: 200000,
-                quantity: 5,
-            },
-            {
-                id: "3",
-                date: "2021-09-03",
-                total: 300000,
-                quantity: 12,
-            },
-            {
-                id: "4",
-                date: "2021-09-01",
-                total: 100000,
-                quantity: 11,
-            },
-            {
-                id: "5",
-                date: "2021-09-02",
-                total: 200000,
-                quantity: 8,
-            },
-            {
-                id: "6",
-                date: "2021-09-03",
-                total: 300000,
-                quantity: 2,
-            },
-            {
-                id: "7",
-                date: "2021-09-01",
-                total: 100000,
-                quantity: 1,
-            },
-            {
-                id: "8",
-                date: "2021-09-02",
-                total: 200000,
-                quantity: 2,
-            },
-            {
-                id: "9",
-                date: "2021-09-03",
-                total: 300000,
-                quantity: 4,
-            },
-            {
-                id: "10",
-                date: "2021-09-01",
-                total: 100000,
-                quantity: 5,
-            },
-            {
-                id: "11",
-                date: "2021-09-02",
-                total: 200000,
-                quantity: 7,
-            },
-            {
-                id: "12",
-                date: "2021-09-03",
-                total: 300000,
-                quantity: 4,
-            },
-        ])
+        const fetchData = async () => {
+            const data = await getOrders(7);
+            if (data.errCode === 0) { 
+                const orders = data.data.map((order: any) => {
+                    return {
+                        id: order.id,
+                        date: new Date(order.createdAt).toLocaleDateString('en-GB') ,
+                        total: order.totalCost,
+                        quantity: order.orderItemsCount
+                    };
+                });
+                setOrders(orders);
+            }
+            else {
+                setOrders([]);
+            }
+        };
+
+        fetchData();
     }, []);
 
     return (

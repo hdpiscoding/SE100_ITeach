@@ -7,12 +7,13 @@ import {columns} from "@/components/Cart/columns";
 import { Button } from "@/components/ui/button";
 import {getCartItems} from "@/services/student";
 import { toast } from "react-toastify";
-import {deleteAllCartItems} from "@/services/student";
+import {deleteAllCartItems, postPayment} from "@/services/student";
 interface OrderItem {
     id: string;
     name: string;
     price: number;
     image?: string;
+    courseId?: number;
 }
 
 export default function Cart() {
@@ -31,6 +32,7 @@ export default function Cart() {
                         name: item.Course.courseName,
                         price: item.Course.cost,
                         image: "https://cdn.codegym.vn/wp-content/uploads/2022/01/khoa-hoc-lap-trinh-java-online-9.jpg", //item.Course.anhBia
+                        courseId: item.courseId
                     });
                 });
                 setOrderItems(tempOrderItems);
@@ -69,9 +71,14 @@ export default function Cart() {
 
     const handleClick = async () => {
         
+        const data = {
+            userId: 7,
+            totalCost: total,
+            cartItems:orderItems
+        }
+        await postPayment(data);
         window.location.href = "/";
-
-        await deleteAllCartItems(7);
+        await deleteAllCartItems(7);       
         toast.success("Thanh toán thành công");
 
 
