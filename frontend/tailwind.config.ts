@@ -39,6 +39,7 @@ const config: Config = {
   			Orange_Hover: '#FF823C',
 			Yellow: '#FFD700',
 			MoreLightGray:'#F9F9F9',
+			MediumGray:'#C0C9C8',
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'
