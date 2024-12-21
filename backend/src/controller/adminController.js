@@ -55,6 +55,16 @@ let handleDeleteCourse = async (req, res) => {
   let data = await adminService.deleteCourse(req.body);
   return res.status(200).json(data);
 };
+const handleGetAllCourseOfTeacher = async (req, res) => {
+  if (!req.query.teacherId) {
+    return res.status(500).json({
+      errCode: 1,
+      message: "Missing required parameters",
+    });
+  }
+  let data = await adminService.getAllCourseOfTeacher(req.query.teacherId);
+  return res.status(200).json(data);
+};
 module.exports = {
   handleGetAllTeacher,
   handleGetPopularTeacher,
@@ -64,4 +74,5 @@ module.exports = {
   handleApproveCourse,
   handleStopCourse,
   handleDeleteCourse,
+  handleGetAllCourseOfTeacher,
 };

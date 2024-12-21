@@ -305,6 +305,43 @@ let deleteCourse = (data) => {
     }
   });
 };
+const getAllCourseOfTeacher = (teacherId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let courses = "";
+      courses = await db.Course.findAll(
+        {
+          where: { teacherId: teacherId },
+        },
+        { raw: true }
+      );
+      resolve({
+        errCode: 0,
+        errMessage: "OK",
+        courses,
+      });
+      if (data.id & (data.id !== "All")) {
+        courses = await db.Course.findOne({
+          where: { id: parseInt(data.id) },
+        });
+        if (!courses) {
+          resolve({
+            errCode: 1,
+            errMessage: "Invalid id",
+          });
+        } else {
+          resolve({
+            errCode: 0,
+            errMessage: "OK",
+            courses,
+          });
+        }
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 module.exports = {
   getAllTeacher,
   getPopularTeacher,
@@ -314,4 +351,5 @@ module.exports = {
   approveCourse,
   stopCourse,
   deleteCourse,
+  getAllCourseOfTeacher,
 };

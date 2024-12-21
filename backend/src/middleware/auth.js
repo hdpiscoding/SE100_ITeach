@@ -62,6 +62,7 @@ const adminPaths = [
   "/api/v1/approve-course",
   "/api/v1/stop-course",
   "/api/v1/delete-course",
+  "/api/v1/get-all-course-of-teacher",
 ];
 const commonPaths = [
   "/api/v1/update-user-info",
