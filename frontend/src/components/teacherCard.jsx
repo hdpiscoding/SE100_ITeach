@@ -1,24 +1,30 @@
+ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { use, useEffect, useState } from "react";
+
 
 const TeacherCard = ({ teacher }) => {
   const [teachername, setTeacherName] = useState("");
   const [course, setCourse] = useState("");
   const [student, setStudent] = useState("");
   const [rating, setRating] = useState(0);
+  const router = useRouter();
+
   useEffect(() => {
-    setTeacherName(teacher.firstName + " " + teacher.lastName);
+    setTeacherName(teacher?.firstName + " " + teacher?.lastName);
 
     setRating(
-      teacher.reviews && teacher.reviews.length > 0
-        ? teacher.reviews.reduce((sum, review) => sum + review.star, 0) /
-            teacher.reviews.length
+      teacher?.reviews && teacher?.reviews.length > 0
+        ? teacher?.reviews.reduce((sum, review) => sum + review.star, 0) /
+            teacher?.reviews.length
         : 0
     );
-    setCourse(teacher.totalCourseNumber ? teacher.totalCourseNumber : "0");
-    setStudent(teacher.totalStudentNumber ? teacher.totalStudentNumber : "0");
+    setCourse(teacher?.totalCourseNumber ? teacher?.totalCourseNumber : "0");
+    setStudent(teacher?.totalStudentNumber ? teacher?.totalStudentNumber : "0");
   }, [teacher]);
-  const handleClick = () => {};
+  const handleClick = () => {
+    router.push(`/admin/teacher/${teacher.id}`);
+  };
   return (
     <div
       className="relative  rounded-2xl overflow-hidden lg:w-[300px] lg:h-[400px] md:w-[200px] md:h-[300px] w-[100px] h-[150px] "

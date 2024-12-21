@@ -241,6 +241,17 @@ const handleGetACertificate = async (req, res) => {
 
   return res.status(200).json(response);
 };
+const handleGetATeacher = async (req, res) => {
+  if (!req.query.id) {
+    return res.status(500).json({
+      errCode: 1,
+      errMessage: "Missing required parameter",
+    });
+  }
+  let response = await studentService.getATeacher(req.query.id);
+
+  return res.status(200).json(response);
+};
 
 module.exports = {
   handleGetAllCourses,
@@ -267,4 +278,5 @@ module.exports = {
 
   handleGetStudentCertificates,
   handleGetACertificate,
+  handleGetATeacher,
 };

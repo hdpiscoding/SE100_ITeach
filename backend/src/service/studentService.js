@@ -771,6 +771,55 @@ const getACertificate = (id) => {
     }
   });
 };
+const getATeacher = (id) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let teacher = await db.User.findOne({
+        where: { id: id },
+        attributes: [
+          "id",
+          "firstName",
+          "lastName",
+          "email",
+          "phoneNumber",
+          "avatar",
+          "totalStudentNumber",
+          "totalCourseNumber",
+        ],
+        raw: true,
+      });
+
+      if (teacher) {
+        const reviews = await db.Review.findAll({
+          where: { teacherId: id },
+          attributes: ["star"],
+          raw: true,
+        });
+
+        const totalStars = reviews.reduce(
+          (sum, review) => sum + review.star,
+          0
+        );
+        const averageStars = reviews.length ? totalStars / reviews.length : 0;
+
+        resolve({
+          errCode: 0,
+          teacher: {
+            ...teacher,
+            averageStars: averageStars.toFixed(2),
+          },
+        });
+      } else {
+        resolve({
+          errCode: 1,
+          errMessage: "No teacher found",
+        });
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 
 module.exports = {
   getAllCourses,
@@ -796,4 +845,5 @@ module.exports = {
   getACertificate,
   deleteAllCartItems,
   postPayment,
+  getATeacher,
 };

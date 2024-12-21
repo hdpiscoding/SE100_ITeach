@@ -32,6 +32,7 @@ const studentPaths = [
 
   "/api/v1/get-student-certificates",
   "/api/v1/get-a-certificate",
+  "/api/v1/get-a-teacher-info",
 ];
 const teacherPaths = [
   "/api/v1/create-new-course",
