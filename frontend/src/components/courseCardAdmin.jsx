@@ -33,28 +33,28 @@ const CourseCardAdmin = ({ course, type }) => {
 
       <div>
         <h5 className="mx-3 sm:mx-4 text-gray-600 text-xs sm:text-sm">
-          {new Date(course.createdAt).toLocaleDateString()}
+          {new Date(course?.createdAt).toLocaleDateString()}
         </h5>
 
         <h3 className="font-bold text-SignUp mx-3 sm:mx-4 lg:text-xl md:text-base sm:text-sm text-sm">
-          {course.courseName}
+          {course?.courseName}
         </h3>
 
         <h4 className="mx-3 sm:mx-4 text-gray-700 lg:text-base md:text-sm sm:text-xs text-xs">
-          {course.instructor}
+          {course?.instructor}
         </h4>
 
         <div className="flex flex-wrap justify-between mx-3 sm:mx-4 items-center pb-3 sm:pb-4 gap-2">
           <div className="flex items-center">
             <span className="text-orange font-semibold lg:text-lg md:text-base sm:text-sm text-xs">
-              {course.discount && course.discount > 0
-                ? course.cost - course.discount
-                : course.cost}
+              {course?.discount && course?.discount > 0
+                ? course?.cost - course?.discount
+                : course?.cost}
               {" đ"}
             </span>
-            {course.discount && course.discount > 0 && (
+            {course?.discount && course?.discount > 0 && (
               <span className="line-through ml-2 text-gray-500 text-xs">
-                {course.cost}
+                {course?.cost}
                 {" đ"}
               </span>
             )}
