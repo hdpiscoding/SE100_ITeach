@@ -47,11 +47,11 @@
     "react-markdown": "^9.0.1",
     "react-markdown-editor-lite": "^1.3.4",
     "react-player": "^2.16.0",
-<<<<<<< HEAD
+
     "react-qr-code": "^2.0.15",
-=======
+
     "react-tabs": "^6.1.0",
->>>>>>> c903fcb46c8fa1461c5af1b7ce180ec9fa1af3f3
+
     "react-toastify": "^11.0.0",
     "recharts": "^2.14.1",
     "swiper": "^11.1.14",
