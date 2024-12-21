@@ -2,10 +2,9 @@
 import React, {useState} from "react";
 import Link from "next/link";
 import Image from "next/image";
-import dynamic from "next/dynamic";
-const Profile = dynamic(() => import('@/components/Account/Profile'));
-const Password = dynamic(() => import('@/components/Account/Password'));
-const OrderHistory = dynamic(() => import('@/components/Account/OrderHistory'));
+import Profile from "@/components/Account/Profile";
+import Password from "@/components/Account/Password";
+import OrderHistory from "@/components/Account/OrderHistory";
 
 const Account = (props: any) => {
     const [tab, setTab] = useState(0);

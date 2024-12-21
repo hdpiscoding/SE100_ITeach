@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 import React, {useEffect, useRef, useState} from 'react';
 import dynamic from 'next/dynamic';
@@ -395,7 +396,7 @@ export default function LessonDetail(props: any) {
                 <div className="grid lg:grid-cols-[68%_1%_31%] grid-cols-1 gap-4 lg:gap-0">
                     <div className="flex flex-col gap-4">
                         <div className="flex items-center gap-2">
-                            <ArrowLeft className="h-7 w-7 cursor-pointer text-DarkGreen" onClick={() => {router.push(`/${props.role}/course/${course.id}`)}}/>
+                            <ArrowLeft className="h-7 w-7 cursor-pointer text-DarkGreen" onClick={() => {router.push(`/${props.role}/course/${courseId}`)}}/>
                             <span className="font-bold text-DarkGreen text-3xl">
                                 {course.name}
                             </span>

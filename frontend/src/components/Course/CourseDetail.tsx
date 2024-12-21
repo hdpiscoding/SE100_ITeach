@@ -24,6 +24,7 @@ import {useParams, useRouter} from "next/navigation";
 import Markdown from "react-markdown";
 import { Skeleton } from "@/components/ui/skeleton"
 import {getCourses} from "@/services/course";
+import Loading from "@/app/loading";
 
 
 interface Teacher {
@@ -374,6 +375,7 @@ export default function CourseDetail(props: any) {
     const [chapters, setChapters] = useState<Array<Chapter>>();
 
     const [intro, setIntro] = useState<string>();
+    const [isPending, setIsPending] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -738,28 +740,35 @@ export default function CourseDetail(props: any) {
                             </span>
 
                             <div>
-                                {/*<Accordion type="multiple" className="w-full bg-LighterGray px-4 py-1 rounded-2xl">*/}
-                                {/*    {chapters?.map((chapter, index) => (*/}
-                                {/*        <AccordionItem value={String(index)} key={String(index)}>*/}
-                                {/*            <AccordionTrigger>*/}
-                                {/*                <ChapterListItem type="course" index={index + 1}*/}
-                                {/*                                 name={chapter.chapterName}*/}
-                                {/*                                 duration={0}*/}
-                                {/*                                //  duration={chapter.lessons?.reduce((acc, lesson) => {*/}
-                                {/*                                //     const duration = lesson.studyTime || 0;*/}
-                                {/*                                //     return acc + duration;*/}
-                                {/*                                // }, 0)}*/}
-                                {/*                                 videos={chapter.lessons.length}/>*/}
-                                {/*            </AccordionTrigger>*/}
+                                {chapters
+                                    ?
+                                    <Accordion type="multiple" className="w-full bg-LighterGray px-4 py-1 rounded-2xl">
+                                        {chapters?.map((chapter, index) => (
+                                            <AccordionItem value={String(index)} key={String(index)}>
+                                                <AccordionTrigger>
+                                                    <ChapterListItem type="course" index={index + 1}
+                                                                     name={chapter.chapterName}
+                                                                     duration={chapter.lessons?.reduce((acc, lesson) => {
+                                                                         const duration = lesson.studyTime || 0;
+                                                                         return acc + duration;
+                                                                     }, 0)}
+                                                                     videos={chapter.lessons.length}/>
+                                                </AccordionTrigger>
 
-                                {/*            {chapter.lessons?.map((lesson, index) => (*/}
-                                {/*                <AccordionContent key={String(lesson.id)} id={String(lesson.id)} onClick={() => {router.push(`/${props.role}/course/${courseId}/lesson/${lesson.id}`)}}>*/}
-                                {/*                    <LessonListItem type="course" index={index + 1} name={lesson.name} duration={lesson.studyTime}/>*/}
-                                {/*                </AccordionContent>*/}
-                                {/*            ))}*/}
-                                {/*        </AccordionItem>*/}
-                                {/*    ))}*/}
-                                {/*</Accordion>*/}
+                                                {chapter.lessons?.map((lesson, index) => (
+                                                    <AccordionContent key={String(lesson.id)} id={String(lesson.id)} onClick={() => {
+                                                            setIsPending(true);
+                                                            router.push(`/${props.role}/course/${courseId}/lesson/${lesson.id}`);
+                                                    }}>
+                                                        <LessonListItem type="course" index={index + 1} name={lesson.name} duration={lesson.studyTime}/>
+                                                    </AccordionContent>
+                                                ))}
+                                            </AccordionItem>
+                                        ))}
+                                    </Accordion>
+                                    :
+                                    <Skeleton className="bg-gray h-[300px] w-full rounded-2xl"/>
+                                }
                             </div>
                         </section>
 
@@ -973,6 +982,8 @@ export default function CourseDetail(props: any) {
                     </div>
                 </div>
             </div>
+
+            {isPending && <Loading/>}
         </div>
     );
 };

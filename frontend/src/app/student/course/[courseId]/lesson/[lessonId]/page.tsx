@@ -1,8 +1,5 @@
 'use client';
-import dynamic from "next/dynamic";
-const LessonDetail = dynamic(() => import('@/components/Lesson/LessonDetail'), {
-    ssr: false,
-});
+import LessonDetail from '@/components/Lesson/LessonDetail';
 
 export default function LessonPage() {
     return (
