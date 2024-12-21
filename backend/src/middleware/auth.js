@@ -51,6 +51,7 @@ const teacherPaths = [
   "/api/v1/get-all-chapter",
   "/api/v1/put-a-chapter",
   "/api/v1/delete-a-chapter",
+  "/api/v1/get-detail-course-info",
 ];
 const adminPaths = [
   "/api/v1/get-all-teacher",
@@ -62,6 +63,10 @@ const adminPaths = [
   "/api/v1/approve-course",
   "/api/v1/stop-course",
   "/api/v1/delete-course",
+  "/api/v1/get-all-course-of-teacher",
+  "/api/v1/get-ide-use",
+  "/api/v1/get-all-student-of-course",
+  "/api/v1/get-detail-course-info",
 ];
 const commonPaths = [
   "/api/v1/update-user-info",

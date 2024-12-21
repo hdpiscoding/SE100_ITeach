@@ -2,6 +2,7 @@ import express from "express";
 import { auth, checkPermission } from "../middleware/auth";
 import userController from "../controller/userController";
 import studentController from "../controller/studentController";
+import adminController from "../controller/adminController";
 const router = express.Router();
 const initWebRoutes = (app) => {
   ///////////////////////
@@ -80,6 +81,10 @@ const initWebRoutes = (app) => {
   );
   router.post("/api/v1/post-payment", studentController.handlePostPayment);
   router.get("/api/v1/get-a-teacher-info", studentController.handleGetATeacher);
+  router.get(
+    "/api/v1/get-all-course-of-teacher",
+    adminController.handleGetAllCourseOfTeacher
+  );
 
   return app.use("/", router);
 };

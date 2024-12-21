@@ -1,11 +1,12 @@
 "use client";
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { QRCodeSVG } from "qrcode.react";
+import QRCode from "react-qr-code";
 import { getACertificate } from "@/services/student";
 
 const Certificate = ({ id }) => {
   const [certificate, setCertificate] = useState(null);
+
   useEffect(() => {
     const getData = async () => {
       try {
@@ -16,7 +17,7 @@ const Certificate = ({ id }) => {
       }
     };
     getData();
-  }, []);
+  }, [id]);
 
   return (
     <div className="lg:w-full md:w-[500px] sm p-4 ">
@@ -55,7 +56,6 @@ const Certificate = ({ id }) => {
                       </div>
                     </div>
                   </div>
-                  {/* QR code và logo section */}
                   <div className="col-span-1 flex flex-col justify-between">
                     <Image
                       className="w-full"
@@ -66,16 +66,20 @@ const Certificate = ({ id }) => {
                     />
                     <div className="mt-4 flex justify-center">
                       <div className="border-2 border-black p-1 md:p-2">
-                        <QRCodeSVG
-                          value="https://www.google.com.vn/?hl=vi"
-                          size={80}
-                          level={"H"}
+                        <QRCode
+                          size={256}
+                          style={{
+                            height: "auto",
+                            maxWidth: "100%",
+                            width: "100%",
+                          }}
+                          value={window.location.href}
+                          viewBox={`0 0 256 256`}
                         />
                       </div>
                     </div>
                   </div>
                 </div>
-                {/* Footer section */}
                 <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                   <div className="text-sm md:text-base">
                     <div>Hà Nội,__/__/____</div>
@@ -94,6 +98,7 @@ const Certificate = ({ id }) => {
                     <div>ĐỖ VĂN KHẮC</div>
                   </div>
                 </div>
+                
               </div>
               <div></div>
             </div>
