@@ -422,10 +422,11 @@ let getDetailCourseInfo = (id, userId) => {
         nest: true,
         raw: true,
       });
-      result.chapters = await db.Chapter.findAll({
+
+      // Get all chapters with their lessons
+      const rawChapters = await db.Chapter.findAll({
         where: { courseId: id },
         attributes: ["id", "chapterName", "courseId"],
-
         include: [
           {
             model: db.Lesson,
@@ -433,14 +434,40 @@ let getDetailCourseInfo = (id, userId) => {
             attributes: ["id", "name", "studyTime"],
           },
         ],
-        nest: true,
+        nest: false,
         raw: true,
       });
+
+      // Group lessons by chapter
+      result.chapters = Object.values(
+        rawChapters.reduce((acc, curr) => {
+          const chapterId = curr.id;
+
+          if (!acc[chapterId]) {
+            acc[chapterId] = {
+              id: curr.id,
+              chapterName: curr.chapterName,
+              courseId: curr.courseId,
+              lessons: [], // Initialize with empty array
+            };
+          }
+
+          // Only add lesson if it has an id (not null)
+          if (curr["lessons.id"]) {
+            acc[chapterId].lessons.push({
+              id: curr["lessons.id"],
+              name: curr["lessons.name"],
+              studyTime: curr["lessons.studyTime"],
+            });
+          }
+
+          return acc;
+        }, {})
+      );
 
       result.reviews = await db.Review.findAll({
         where: { courseId: id },
         attributes: ["content", "star"],
-
         include: [
           {
             model: db.User,
@@ -451,9 +478,11 @@ let getDetailCourseInfo = (id, userId) => {
         nest: true,
         raw: true,
       });
+
       result.mycourse = await db.MyCourse.findOne({
         where: { courseId: id, userId: userId },
       });
+
       if (result) {
         resolve({
           errCode: 0,
