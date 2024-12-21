@@ -15,7 +15,7 @@ const Navbar = () => {
   const [login, setLogin] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const [role, setRole] = useState("student");
+  const [role, setRole] = useState("admin");
 
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignInModal, setShowSignInModal] = useState(false);

@@ -7,7 +7,9 @@ import TeacherCard from "@/components/teacherCard";
 import CourseCardAdmin from "@/components/courseCardAdmin";
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
-import {getATeacherInfo} from "@/services/student";
+import { getATeacherInfo } from "@/services/student";
+import { getAllCourseOfATeacher } from "@/services/admin";
+
 import { toast } from "react-toastify";
 import AlertModal from "@/components/AlertDialog2/AlertModal";
 

@@ -81,6 +81,22 @@ const delteCourse = async (body) => {
     throw error;
   }
 };
+const getAllCourseOfATeacher = async (teacherId) => {
+  try {
+    const response = await axios.get(
+      `api/v1/get-all-courses-of-teacher?teacherId=${teacherId}`,
+      {
+        headers: {
+          Authorization: admintoken,
+        },
+      }
+    );
+    return response;
+  } catch (error) {
+    console.error("Error fetching courses of teacher:", error);
+    throw error;
+  }
+};
 
 export {
   getTeachers,
@@ -89,4 +105,5 @@ export {
   ApproveCourse,
   StopCourse,
   delteCourse,
+  getAllCourseOfATeacher,
 };
