@@ -196,12 +196,25 @@ let PutALesson = (data) => {
 let PostALesson = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
-      await db.Lesson.create({
-        name: data.name,
-        courseId: data.courseId,
-        chapter: data.chapter,
-        studyTime: data.studyTime,
-      });
+      await db.Lesson.create(
+        {
+          name: data.name,
+          courseId: data.courseId,
+          chapter: data.chapter,
+          studyTime: data.studyTime,
+        },
+        {
+          returning: [
+            "id",
+            "courseId",
+            "name",
+            "chapter",
+            "studyTime",
+            "createdAt",
+            "updatedAt",
+          ], // Exclude "course"
+        }
+      );
       let latestLesson = await db.Lesson.findOne({
         where: { courseId: data.courseId },
         order: [["id", "DESC"]],
