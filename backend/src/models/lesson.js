@@ -9,7 +9,7 @@ This method is not a part of Sequelize lifecycle.
 The models/index file will call this method automatically.*/
     static associate(models) {
       Lesson.belongsTo(models.Chapter, {
-        foreignKey: "course",
+        foreignKey: "chapter",
         as: "lessons",
       });
     }
