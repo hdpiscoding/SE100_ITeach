@@ -171,6 +171,19 @@ const getAllCoursesCategories = async () => {
     throw error;
   }
 };
+const getATeacherInfo = async (id) => {
+  try {
+    const response = await axios.get("api/v1/get-a-teacher-info?id=" + id, {
+      headers: {
+        Authorization: studenttoken,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching teacher info:", error);
+    throw error;
+  }
+};
 
 export {
   editUserProfile,
@@ -185,4 +198,5 @@ export {
   getMyCourses,
   getACertificate,
   getAllCoursesCategories,
+  getATeacherInfo,
 };
