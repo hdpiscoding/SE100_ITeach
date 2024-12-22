@@ -45,7 +45,7 @@ const TeacherInfor = () => {
     triggerRef.current?.click();
   };
   return (
-    <div className="space-y-10 mb-20">
+     <div className="space-y-10 mb-20">
       <div className="h-[120px] bg-bg grid grid-cols-[0.5fr_11fr_0.5fr]">
         <div></div>
         <div className="flex items-center">
@@ -79,35 +79,35 @@ const TeacherInfor = () => {
       </div>
       <div className="grid grid-cols-[0.5fr_11fr_0.5fr] ">
         <div></div>
-        <div className="space-y-10">
-            <div className="border border-gray rounded-lg ">
+        <div className="space-y-10 w-full">
+            <div className="border border-gray rounded-lg w-full">
                 <h1 className="text-xl font-bold p-5">Thông tin giảng viên</h1>
               
-                <div className="grid lg:grid-cols-2 md:grid-cols-1 grid-cols-1 border-t border-gray p-5">
-                  <div className="space-y-5">
-                      <div className="space-y-2">
+                <div className="grid lg:grid-cols-2 md:grid-cols-1 grid-cols-1 border-t border-gray px-5 w-full">
+                  <div className="space-y-5 w-full">
+                      <div className="space-y-2 w-full">
                         <label className="text-sm  mt-5">Họ </label><br/>
-                        <label className="border border-gray rounded-md p-1 mt-5 mb-2 w-full">{teacher ? teacher.firstName : '' }</label>
+                        <label className="border border-gray rounded-md p-2 mt-5 mb-2 inline-block w-full">{teacher ? teacher.firstName : '' }</label>
                       </div>
-                      <div className="space-y-2">
+                      <div className="space-y-2 w-full">
                         <label className="text-sm  mt-5">Tên</label><br/>
-                        <label className="border border-gray rounded-md p-1 mt-5 mb-2 w-full">{teacher ? teacher.lastName : ''} </label>
+                        <label className="border border-gray rounded-md p-2 mt-5 mb-2 inline-block w-full">{teacher ? teacher.lastName : ''} </label>
                       </div>
                       <div className="space-y-2">
                         <label className="text-sm  mt-5">Email</label><br/>
-                        <label className="border border-gray rounded-md p-1 mt-5 mb-2 w-full">{teacher ? teacher.email : ''} </label>
+                        <label className="border border-gray rounded-md p-2 mt-5 mb-2 inline-block w-full">{teacher ? teacher.email : ''} </label>
                       </div >
                       <div className="space-y-2">
                         <label htmlFor="phone" className="text-sm  mt-5">Số điện thoại</label>
                         <br/>
-                        <label className="border border-gray rounded-md p-1 mt-5 mb-2 w-full">{teacher ? teacher.phoneNumber : ''} </label>
+                        <label className="border border-gray rounded-md p-2 mt-5 mb-2 inline-block w-full">{teacher ? teacher.phoneNumber : ''}  </label>
                       </div>
                     </div>
                     <div className="flex lg:justify-center items-center sm:mt-5 sm:justify-start mt-5">
                        <TeacherCard teacher={teacher}/>
                     </div>
                 </div>
-               <div className="p-5">
+               <div className="pb-5 px-5 ">
                   <button className="bg-SignUp text-white lg:rounded-3xl md:rounded-2xl sm:rounded-2xl rounded-xl lg:text-sm md:text-xs
                           sm:text-xs text-xs lg:py-3 sm:py-0 md:py-1 lg:px-10 md:px-5 sm:px-3 px-3 py-1" onClick={handleOnClick}>Đình chỉ</button>
                </div>
@@ -131,6 +131,7 @@ const TeacherInfor = () => {
                                     onConfirm={handleConfirm}
                                 />
     </div>
+
   );
 };
 
