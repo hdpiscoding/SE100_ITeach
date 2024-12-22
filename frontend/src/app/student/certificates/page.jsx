@@ -1,6 +1,5 @@
 import React from "react";
 import Certificate from "@/components/Certificate";
-import Coursecard from "@/components/Coursecard";
 import Image from "next/image";
 const Certificates = () => {
   return (
