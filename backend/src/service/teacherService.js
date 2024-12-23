@@ -482,6 +482,38 @@ let deleteAChapter = (data) => {
   });
 };
 
+let getIDEUseByMonth = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let IDEUseds = await db.IDEUsed.findAll({
+        where: {
+          courseId: data.courseId,
+          [Op.and]: [
+            literal(`EXTRACT(YEAR FROM "date") = ${data.year}`),
+            literal(`EXTRACT(MONTH FROM "date") = ${data.month}`),
+          ],
+        },
+        order: [["date", "ASC"]],
+        attributes: { exclude: ["createdAt", "updatedAt"] },
+      });
+      if (!IDEUseds) {
+        resolve({
+          errCode: 1,
+          errMessage: "No IDE use found",
+        });
+      } else {
+        resolve({
+          errCode: 0,
+          errMessage: "OK",
+          IDEUseds,
+        });
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
 module.exports = {
   createNewCourse,
   getAllCourses,
@@ -499,4 +531,5 @@ module.exports = {
   getAllChapter,
   putAChapter,
   deleteAChapter,
+  getIDEUseByMonth,
 };

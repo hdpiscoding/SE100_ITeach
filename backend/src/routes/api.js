@@ -24,6 +24,10 @@ const initARoutes = (app) => {
     teacherController.handleDeleteALesson
   );
   router.get("/api/v1/get-ide-use", teacherController.handleGetIDEUse);
+  router.get(
+    "/api/v1/get-ide-use-by-month",
+    teacherController.handleGetIDEUseByMonth
+  );
   router.post("/api/v1/post-ide-use", teacherController.handlePostIDEUse);
   router.get("/api/v1/get-my-account", teacherController.handleGetMyAccount);
   router.get("/api/v1/get-all-teacher", adminController.handleGetAllTeacher);

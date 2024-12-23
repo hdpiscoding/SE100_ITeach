@@ -15,7 +15,7 @@ const Navbar = () => {
   const [login, setLogin] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const [role, setRole] = useState("admin");
+  const [role, setRole] = useState("student");
 
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignInModal, setShowSignInModal] = useState(false);
@@ -57,6 +57,10 @@ const Navbar = () => {
     setShowSignInModal(true);
     setShowLoginModal(false);
   };
+  const setRoleWhenLogin = (role) => { 
+    setRole(role);
+
+  }
 
   return (
     <>
@@ -89,7 +93,7 @@ const Navbar = () => {
                     <li key={link.href}>
                       <Link
                         href={link.href}
-                        className={`hover:text-orange text-sm sm:text-base ${
+                        className={`hover:text-orange text-sm sm:text-base font-semibold ${
                           pathname === link.href ? "text-orange" : ""
                         }`}
                       >
@@ -104,21 +108,21 @@ const Navbar = () => {
                     <div className=" grid grid-cols-2 lg:gap-x-2 sm:gap-x-1 md:gap-x-2">
                       <Button
                         onClick={() => setShowLoginModal(true)}
-                        className="bg-white text-SignUp lg:text-sm sm:text-sm md:text-sm text-xs col-span-1 hover:bg-SignUp hover:text-white"
+                        className="bg-white text-SignUp font-semibold lg:text-sm sm:text-sm md:text-sm text-xs col-span-1 hover:bg-SignUp hover:text-white"
                       >
-                        LOG IN
+                        Đăng nhập
                       </Button>
                       <Button
                         onClick={() => setShowSignInModal(true)}
-                        className="bg-SignUp lg:text-sm sm:text-sm md:text-sm text-xs col-span-1 hover:bg-white hover:text-SignUp"
+                        className="bg-SignUp font-semibold lg:text-sm sm:text-sm md:text-sm text-xs col-span-1 hover:bg-white hover:text-SignUp"
                       >
-                        SIGN UP
+                        Đăng kí
                       </Button>
                     </div>
                   ) : (
                     <div className="flex justify-end gap-x-2 sm:gap-x-3 md:gap-x-4 lg:gap-x-5">
                       {role === "student" && (
-                        <>
+                        <div className="relative flex items-center space-x-4">
                           <Link href="/student/cart">
                             <Image
                               src="/assets/images/Bag.png"
@@ -127,25 +131,130 @@ const Navbar = () => {
                               alt="bag"
                             />
                           </Link>
-                          <Link href="/student/account">
+                          <button
+                            className="flex items-center space-x-2 py-2"
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                          >
                             <Image
                               src="/assets/images/user.png"
                               width={27}
                               height={27}
                               alt="user"
                             />
-                          </Link>
-                        </>
+                          </button>
+                          {isMenuOpen && (
+                            <div className="absolute bg-white shadow-lg rounded-lg p-4 mt-2">
+                              <ul className="space-y-2">
+                                <li>
+                                  <Link
+                                    href="/student/account"
+                                    className="block py-2"
+                                    onClick={() => setIsMenuOpen(false)}
+                                  >
+                                    Tài khoản
+                                  </Link>
+                                </li>
+                                <li>
+                                  <button
+                                    className="block py-2 w-full text-left"
+                                    onClick={() => {
+                                      setLogin(false);
+                                      setIsMenuOpen(false);
+                                      router.push("/");
+                                      setRole("student");
+
+                                      localStorage.removeItem("access_token");
+                                    }}
+                                  >
+                                    Đăng xuất
+                                  </button>
+                                </li>
+                              </ul>
+                            </div>
+                          )}
+                        </div>
                       )}
                       {role === "teacher" && (
-                        <Link href="/teacher/account">
-                          <Image
-                            src="/assets/images/user.png"
-                            width={20}
-                            height={20}
-                            alt="user"
-                          />
-                        </Link>
+                        <div className="relative">
+                          <button
+                            className="flex items-center space-x-2 py-2"
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                          >
+                            <Image
+                              src="/assets/images/user.png"
+                              width={20}
+                              height={20}
+                              alt="user"
+                            />
+                           </button>
+                          {isMenuOpen && (
+                            <div className="absolute bg-white shadow-lg rounded-lg p-4 mt-2">
+                              <ul className="space-y-2">
+                                <li>
+                                  <Link
+                                    href="/teacher/account"
+                                    className="block py-2"
+                                    
+                                    onClick={() => setIsMenuOpen(false)}
+                                  >
+                                   Tài khoản
+                                  </Link>
+                                </li>
+                                <li>
+                                  <button
+                                    className="block py-2 w-full text-left"
+                                    onClick={() => {
+                                      setLogin(false);
+                                      setIsMenuOpen(false);
+                                      router.push("/");
+                                      setRole("student");
+                                      localStorage.removeItem("access_token");
+                                    }}
+                                  >
+                                    Đăng xuất
+                                  </button>
+                                </li>
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      {role === "admin" && (
+                        <div className="relative">
+                          <button
+                            className="flex items-center space-x-2 py-2"
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                          >
+                            <Image
+                              src="/assets/images/user.png"
+                              width={27}
+                              height={27}
+                              alt="user"
+                            />
+                           </button>
+                          {isMenuOpen && (
+                            <div className="absolute bg-white shadow-lg rounded-lg p-4 mt-2">
+                              <ul className="space-y-2">
+                                 
+                                <li>
+                                  <button
+                                    className="block py-2 w-full text-left"
+                                    onClick={() => {
+                                      setLogin(false);
+                                      setIsMenuOpen(false);
+                                      router.push("/");
+                                      setRole("student");
+
+                                      localStorage.removeItem("access_token");
+                                    }}
+                                  >
+                                    Đăng xuất
+                                  </button>
+                                </li>
+                              </ul>
+                            </div>
+                          )}
+                        </div>
                       )}
                     </div>
                   )}
@@ -174,24 +283,10 @@ const Navbar = () => {
                   {login && (
                     <div className="pt-4 border-t space-y-4">
                       {role === "student" && (
-                        <>
-                          <Link
-                            href="/student/cart"
+                        <div className="relative">
+                          <button
                             className="flex items-center space-x-2 py-2"
-                            onClick={() => setIsMenuOpen(false)}
-                          >
-                            <Image
-                              src="/assets/images/Bag.png"
-                              width={20}
-                              height={20}
-                              alt="bag"
-                            />
-                            <span>Giỏ hàng</span>
-                          </Link>
-                          <Link
-                            href="/student/account"
-                            className="flex items-center space-x-2 py-2"
-                            onClick={() => setIsMenuOpen(false)}
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
                           >
                             <Image
                               src="/assets/images/user.png"
@@ -199,24 +294,108 @@ const Navbar = () => {
                               height={20}
                               alt="user"
                             />
-                            <span>Tài khoản</span>
-                          </Link>
-                        </>
+                           </button>
+                          {isMenuOpen && (
+                            <div className="absolute bg-white shadow-lg rounded-lg p-4 mt-2">
+                              <ul className="space-y-2">
+                                <li>
+                                  <Link
+                                    href="/student/account"
+                                    className="block py-2"
+                                    onClick={() => setIsMenuOpen(false)}
+                                  >
+                                    Tài khoản
+                                  </Link>
+                                </li>
+                                <li>
+                                  <button
+                                    className="block py-2 w-full text-left"
+                                    onClick={() => {
+                                      setLogin(false);
+                                      setIsMenuOpen(false);
+                                    }}
+                                  >
+                                    Đăng xuất
+                                  </button>
+                                </li>
+                              </ul>
+                            </div>
+                          )}
+                        </div>
                       )}
                       {role === "teacher" && (
-                        <Link
-                          href="/teacher/account"
-                          className="flex items-center space-x-2 py-2"
-                          onClick={() => setIsMenuOpen(false)}
-                        >
-                          <Image
-                            src="/assets/images/user.png"
-                            width={20}
-                            height={20}
-                            alt="user"
-                          />
-                          <span>Tài khoản</span>
-                        </Link>
+                        <div className="relative">
+                          <button
+                            className="flex items-center space-x-2 py-2"
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                          >
+                            <Image
+                              src="/assets/images/user.png"
+                              width={20}
+                              height={20}
+                              alt="user"
+                            />
+                           </button>
+                          {isMenuOpen && (
+                            <div className="absolute bg-white shadow-lg rounded-lg p-4 mt-2">
+                              <ul className="space-y-2">
+                                <li>
+                                  <Link
+                                    href="/teacher/account"
+                                    className="block py-2"
+                                    onClick={() => setIsMenuOpen(false)}
+                                  >
+                                   Tài khoản
+                                  </Link>
+                                </li>
+                                <li>
+                                  <button
+                                    className="block py-2 w-full text-left"
+                                    onClick={() => {
+                                      setLogin(false);
+                                      setIsMenuOpen(false);
+                                    }}
+                                  >
+                                    Đăng xuất
+                                  </button>
+                                </li>
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      {role === "admin" && (
+                        <div className="relative">
+                          <button
+                            className="flex items-center space-x-2 py-2"
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                          >
+                            <Image
+                              src="/assets/images/user.png"
+                              width={20}
+                              height={20}
+                              alt="user"
+                            />
+                           </button>
+                          {isMenuOpen && (
+                            <div className="absolute bg-white shadow-lg rounded-lg p-4 mt-2">
+                              <ul className="space-y-2">
+                                
+                                <li>
+                                  <button
+                                    className="block py-2 w-full text-left"
+                                    onClick={() => {
+                                      setLogin(false);
+                                      setIsMenuOpen(false);
+                                    }}
+                                  >
+                                    Đăng xuất
+                                  </button>
+                                </li>
+                              </ul>
+                            </div>
+                          )}
+                        </div>
                       )}
                     </div>
                   )}
@@ -232,13 +411,14 @@ const Navbar = () => {
         onClose={() => setShowLoginModal(false)}
         onLogin={handleLoginIn}
         setLogin={setLogin}
+        setRole={setRoleWhenLogin}
       />
       <SignIn
         isOpen={showSignInModal}
         onClose={() => setShowSignInModal(false)}
         onSignIn={handleSignIn}
         setLogin={setLogin}
-      />
+       />
     </>
   );
 };
