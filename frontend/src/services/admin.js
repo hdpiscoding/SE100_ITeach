@@ -84,7 +84,7 @@ const delteCourse = async (body) => {
 const getAllCourseOfATeacher = async (teacherId) => {
   try {
     const response = await axios.get(
-      `api/v1/get-all-courses-of-teacher?teacherId=${teacherId}`,
+      `api/v1/get-all-course-of-teacher?teacherId=${teacherId}`,
       {
         headers: {
           Authorization: admintoken,

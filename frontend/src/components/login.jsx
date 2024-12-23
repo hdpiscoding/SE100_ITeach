@@ -8,7 +8,7 @@ import {login} from "@/services/auth";
 import { toast } from "react-toastify";
 
 
-const Login = ({ isOpen, onClose, onLogin,setLogin }) => {
+const Login = ({ isOpen, onClose, onLogin,setLogin, setRole }) => {
   if (!isOpen) return null;
   const router = useRouter();
   const emailRef = useRef();
@@ -38,7 +38,16 @@ const Login = ({ isOpen, onClose, onLogin,setLogin }) => {
         onClose();
         setLogin(true);
         router.push("/");
-        localStorage.setItem("token", response.access_token);
+        localStorage.setItem("access_token", response.access_token);
+        if(response.user.role === "R1") {
+          setRole("student");
+        }
+        else if(response.user.role === "R2") {
+          setRole("teacher");
+        }
+        else {
+          setRole("admin");
+        }
 
       }
       else {

@@ -308,37 +308,49 @@ let deleteCourse = (data) => {
 const getAllCourseOfTeacher = (teacherId) => {
   return new Promise(async (resolve, reject) => {
     try {
-      let courses = "";
-      courses = await db.Course.findAll(
-        {
-          where: { teacherId: teacherId },
+      let courses = await db.Course.findAll({
+        where: {
+          teacherId: teacherId,
         },
-        { raw: true }
-      );
-      resolve({
-        errCode: 0,
-        errMessage: "OK",
-        courses,
+        attributes: [
+          "id",
+          "courseName",
+          "cost",
+          "discount",
+          "anhBia",
+          "intro",
+          "level",
+          "totalStudent",
+          "totalStars",
+          "createdAt",
+          "courseStatus",
+          "totalStudent",
+          "finishTime",
+          "level",
+        ],
+        include: [
+          {
+            model: db.CourseCategory,
+            as: "category",
+            attributes: ["id", "categoryName"],
+          },
+        ],
+        nest: true,
+        raw: true,
       });
-      if (data.id & (data.id !== "All")) {
-        courses = await db.Course.findOne({
-          where: { id: parseInt(data.id) },
+      if (courses && courses.length > 0) {
+        resolve({
+          errCode: 0,
+          data: courses,
         });
-        if (!courses) {
-          resolve({
-            errCode: 1,
-            errMessage: "Invalid id",
-          });
-        } else {
-          resolve({
-            errCode: 0,
-            errMessage: "OK",
-            courses,
-          });
-        }
+      } else {
+        resolve({
+          errCode: 1,
+          errMessage: "No courses found",
+        });
       }
-    } catch (error) {
-      reject(error);
+    } catch (e) {
+      reject(e);
     }
   });
 };
