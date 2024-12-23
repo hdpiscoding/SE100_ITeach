@@ -14,24 +14,31 @@ import {Button} from "@/components/ui/button";
 import {useParams, useRouter} from "next/navigation";
 import LessonComment from "@/components/Lesson/LessonComment";
 import LessonAssignments from "@/components/Lesson/LessonAssignments";
+import {Skeleton} from "@/components/ui/skeleton";
+import {getCourses, getLessonDetail} from "@/services/course";
 const ReactPlayer = dynamic(() => import('react-player'), {
     ssr: false, // Tắt server-side rendering cho ReactPlayer
 });
 
-interface Lesson {
-    id: string;
-    name: string;
-    duration: number;
+interface LessonContent {
+    lessonId: string;
     video: string;
+    contentHtml: string;
+    contentMarkDown: string;
+    exerciseHtml: string;
+    exerciseMarkDown: string;
 }
 
 interface Chapter {
     id: string;
-    name: string;
-    duration: number;
-    lessons: Lesson[];
+    chapterName: string;
+    courseId: string;
+    lessons:[{
+        id: string;
+        name: string;
+        studyTime: number;
+    }];
 }
-
 interface Course {
     id: number;
     name: string;
@@ -44,12 +51,14 @@ interface Course {
 
 interface Teacher {
     id: number;
+    firstName: string;
+    lastName: string;
     email: string;
     avatar: string;
 }
 
 interface User {
-    id: string,
+    id: number,
     email: string,
     avatar: string,
     role: string
@@ -65,231 +74,12 @@ const course: Course = {
     lessonCount: 26
 }
 
-const teacher: Teacher = {
-    id: 1,
-    email: "r9@gmail.com",
-    avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp"
-}
-
-const chapters: Chapter[] = [
-    {
-        id: "1",
-        name: "Giới thiệu về JavaScript",
-        duration: 90,
-        lessons: [
-            {
-                id: "a",
-                name: "JavaScript là gì?",
-                duration: 30,
-                video: "https://youtu.be/0SJE9dYdpps"
-            },
-            {
-                id: "b",
-                name: "JavaScript hoạt động như thế nào trong trình duyệt?",
-                duration: 30,
-                video: "https://youtu.be/W0vEUmyvthQ"
-            },
-            {
-                id: "c",
-                name: "Cài đặt môi trường phát triển",
-                duration: 30,
-                video: "https://youtu.be/efI98nT8Ffo"
-            }
-        ]
-    },
-    {
-        id: "2",
-        name: "Cú pháp và các khái niệm cơ bản",
-        duration: 120,
-        lessons: [
-            {
-                id: "d",
-                name: "Biến và kiểu dữ liệu",
-                duration: 40,
-                video: "https://youtu.be/CLbx37dqYEI"
-            },
-            {
-                id: "e",
-                name: "Các toán tử trong JavaScript",
-                duration: 40,
-                video: "https://youtu.be/SZb-N7TfPlw"
-            },
-            {
-                id: "f",
-                name: "Câu lệnh điều kiện và vòng lặp",
-                duration: 40,
-                video: "https://youtu.be/9MpHrdWBdxg"
-            }
-        ]
-    },
-    {
-        id: "3",
-        name: "Hàm và cách sử dụng",
-        duration: 90,
-        lessons: [
-            {
-                id: "g",
-                name: "Định nghĩa và gọi hàm",
-                duration: 30,
-                video: "https://youtu.be/4g9ENVc2KLA"
-            },
-            {
-                id: "h",
-                name: "Tham số và giá trị trả về",
-                duration: 30,
-                video: "https://youtu.be/jE6UPl17Nvo"
-            },
-            {
-                id: "i",
-                name: "Biến cục bộ và toàn cục",
-                duration: 30,
-                video: "https://youtu.be/orIXdOPFWeM"
-            }
-        ]
-    },
-    {
-        id: "4",
-        name: "Mảng và đối tượng",
-        duration: 120,
-        lessons: [
-            {
-                id: "j",
-                name: "Mảng và cách sử dụng",
-                duration: 40,
-                video: "https://youtu.be/YzO65uOJNMg"
-            },
-            {
-                id: "k",
-                name: "Đối tượng và thuộc tính",
-                duration: 40,
-                video: "https://youtu.be/orIXdOPFWeM"
-            },
-            {
-                id: "l",
-                name: "Thao tác với mảng và đối tượng",
-                duration: 40,
-                video: "https://youtu.be/KrYacXScNQk"
-            }
-        ]
-    },
-    {
-        id: "5",
-        name: "DOM và thao tác trên giao diện",
-        duration: 150,
-        lessons: [
-            {
-                id: "m",
-                name: "DOM là gì?",
-                duration: 30,
-                video: "https://youtu.be/TsTr-tKCREc"
-            },
-            {
-                id: "n",
-                name: "Truy xuất và thao tác DOM",
-                duration: 40,
-                video: "https://youtu.be/gETNXKi3l_U"
-            },
-            {
-                id: "o",
-                name: "Sự kiện và xử lý sự kiện",
-                duration: 40,
-                video: "https://youtu.be/AA3WWZAMv_0"
-            },
-            {
-                id: "p",
-                name: "Tạo và xóa phần tử DOM",
-                duration: 40,
-                video: "https://youtu.be/SXW4QSjk4Js"
-            }
-        ]
-    },
-    {
-        id: "6",
-        name: "Làm việc với JSON và API",
-        duration: 120,
-        lessons: [
-            {
-                id: "q",
-                name: "JSON là gì?",
-                duration: 30,
-                video: "https://youtu.be/Uph14HYkgEQ"
-            },
-            {
-                id: "r",
-                name: "Xử lý dữ liệu JSON",
-                duration: 40,
-                video: "https://youtu.be/Uph14HYkgEQ"
-            },
-            {
-                id: "s",
-                name: "Gửi và nhận dữ liệu từ API",
-                duration: 50,
-                video: "https://youtu.be/Uph14HYkgEQ"
-            }
-        ]
-    },
-    {
-        id: "7",
-        name: "Xử lý lỗi và debug",
-        duration: 90,
-        lessons: [
-            {
-                id: "t",
-                name: "Các loại lỗi trong JavaScript",
-                duration: 30,
-                video: "https://youtu.be/Uph14HYkgEQ"
-            },
-            {
-                id: "u",
-                name: "Sử dụng console và debugger",
-                duration: 30,
-                video: "https://youtu.be/Uph14HYkgEQ"
-            },
-            {
-                id: "v",
-                name: "Try-catch và xử lý ngoại lệ",
-                duration: 30,
-                video: "https://youtu.be/Uph14HYkgEQ"
-            }
-        ]
-    },
-    {
-        id: "8",
-        name: "ES6+ và các tính năng nâng cao",
-        duration: 150,
-        lessons: [
-            {
-                id: "w",
-                name: "Let, Const và Arrow Function",
-                duration: 30,
-                video: "https://youtu.be/tCPTBPua1Xo"
-            },
-            {
-                id: "x",
-                name: "Template Literals và Destructuring",
-                duration: 40,
-                video: "https://youtu.be/7Ls-fa8iVXA"
-            },
-            {
-                id: "y",
-                name: "Modules và Import/Export",
-                duration: 40,
-                video: "https://youtu.be/08lWi4T2Bfg"
-            },
-            {
-                id: "z",
-                name: "Promises và Async/Await",
-                duration: 40,
-                video: "https://youtu.be/XN2mt1i1kjk"
-            }
-        ]
+function findChapterByLessonId(chapters: Chapter[] | undefined, lessonId: string | undefined) {
+    if (chapters) {
+        return chapters.find((chapter) =>
+            chapter.lessons.some((lesson) => String(lesson.id) === lessonId)
+        )?.id;
     }
-];
-
-function findChapterByLessonId(chapters: Chapter[], lessonId: string | undefined) {
-    return chapters.find((chapter) =>
-        chapter.lessons.some((lesson) => lesson.id === lessonId)
-    )?.id;
 }
 
 const convertMinutes = (minutes: number): string => {
@@ -306,16 +96,36 @@ const convertMinutes = (minutes: number): string => {
 
 export default function LessonDetail(props: any) {
     const { courseId, lessonId } = useParams();
-    const [currentLesson, setCurrentLesson] = React.useState<Lesson | undefined>(undefined);
+    const [currentLesson, setCurrentLesson] = React.useState<LessonContent | undefined>(undefined);
+    const [currentLessonId, setCurrentLessonId] = React.useState<string | undefined>();
     const router = useRouter();
 
-    useEffect(() => {
-        const foundLesson = chapters.flatMap(chapter => chapter.lessons).find(lesson => lesson.id === lessonId);
-        setCurrentLesson(foundLesson);
-    }, [lessonId]);
+    const [chapters, setChapters] = useState<Chapter[]>();
+    const [courseName, setCourseName] = useState<string>("");
+    const [totalStudent, setTotalStudent] = useState<number>();
+    const [averageRating, setAverageRating] = useState<number>();
+    const [finishTime, setFinishTime] = useState<number>();
+    const [chapterCount, setChapterCount] = useState<number>();
+    const [lessonCount, setLessonCount] = useState<number>();
+    const [teacher, setTeacher] = useState<Teacher>();
 
+    useEffect(() => {
+        const foundLesson = chapters?.flatMap(chapter => chapter.lessons).find(lesson => lesson.id === lessonId);
+        setCurrentLessonId(foundLesson?.id);
+    }, [lessonId, chapters]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const lessonData = await getLessonDetail(String(lessonId));
+            setCurrentLesson(lessonData.content);
+        }
+
+        fetchData();
+    }, [currentLessonId]);
+
+    // Replace this with data from localStorage when finished login
     const user: User = {
-        id: "u1a2b3c4d5e6f7g8h9i0",
+        id: 7,
         email: "hdp@gmail.com",
         avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
         role: props.role
@@ -385,10 +195,31 @@ export default function LessonDetail(props: any) {
         }
     };
     useEffect(() => {
-        openAccordion(findChapterByLessonId(chapters, String(lessonId)));
+        console.log(currentLesson);
+        openAccordion(String(findChapterByLessonId(chapters, String(lessonId))));
     }, [currentLesson]);
 
     const [tab, setTab] = useState<number>(0);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const [courseData, lessonData] = await Promise.all([
+                getCourses(String(courseId), String(user.id)),
+                getLessonDetail(String(lessonId))
+            ]);
+            setChapters(courseData.chapters);
+            setCourseName(courseData.course.courseName);
+            setTotalStudent(courseData.course.totalStudent);
+            setAverageRating(courseData.course.totalStars);
+            setFinishTime(courseData.course.finishTime);
+            setChapterCount(courseData.chapters?.length);
+            setLessonCount(courseData.course.totalLesson);
+            setCurrentLesson(lessonData.content);
+            setTeacher(courseData.course.teacher);
+        }
+
+        fetchData();
+    }, []);
 
     return (
         <div className="grid grid-cols-[0.5fr_11fr_0.5fr] py-6">
@@ -404,11 +235,11 @@ export default function LessonDetail(props: any) {
 
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-4">
-                                {teacher.avatar ?
+                                {teacher?.avatar ?
                                     <div
                                         className="relative rounded-[50%] overflow-hidden h-[60px] w-[60px]">
                                         <Image
-                                            src={teacher.avatar}
+                                            src={String(teacher?.avatar)}
                                             alt="user avatar"
                                             className="object-cover"
                                             fill
@@ -420,28 +251,51 @@ export default function LessonDetail(props: any) {
                                         <FaUser className="text-3xl text-LightGray"/>
                                     </div>}
 
-                                <span className="text-Lime font-semibold">
-                                    {teacher.email}
-                                </span>
+                                <div className="flex flex-col gap-1">
+                                    {teacher
+                                        ?
+                                        (teacher?.firstName && teacher?.lastName
+                                            &&
+                                            <span className="font-semibold">
+                                                {teacher?.firstName + " " + teacher?.lastName}
+                                            </span>)
+                                        :
+                                        <Skeleton className="bg-gray w-[200px] h-[24px]"/>
+                                    }
+
+                                    {teacher
+                                        ?
+                                        <span className="text-Lime font-semibold text-sm">
+                                            {teacher?.email}
+                                        </span>
+                                        :
+                                        <Skeleton className="bg-gray w-[200px] h-[20px]"/>
+                                    }
+                                </div>
                             </div>
 
-                            <div className="flex items-center gap-4 mr-4">
-                                <div className="flex items-center gap-2">
-                                    <Users className="h-5 w-5 text-orange"/>
+                            {(totalStudent != null && averageRating != null)
+                                ?
+                                <div className="flex items-center gap-4 mr-4">
+                                    <div className="flex items-center gap-2">
+                                        <Users className="h-5 w-5 text-orange"/>
 
-                                    <span className="font-semibold">
-                                        {course.studentCount}
-                                    </span>
+                                        <span className="font-semibold">
+                                            {totalStudent}
+                                        </span>
+                                    </div>
+
+                                    <div className="flex items-center gap-2">
+                                        <Star className="h-5 w-5 text-orange"/>
+
+                                        <span className="font-semibold">
+                                            {averageRating}
+                                        </span>
+                                    </div>
                                 </div>
-
-                                <div className="flex items-center gap-2">
-                                    <Star className="h-5 w-5 text-orange"/>
-
-                                    <span className="font-semibold">
-                                        {course.averageRating}
-                                    </span>
-                                </div>
-                            </div>
+                                :
+                                <Skeleton className="bg-gray lg:w-[200px] w-[100px] h-[24px]"/>
+                            }
                         </div>
 
                         {!isBuy && props.role === "student"
@@ -454,39 +308,45 @@ export default function LessonDetail(props: any) {
 
                     </div>
 
-                    <div className="lg:col-start-3 bg-LighterGray rounded-2xl p-4 flex flex-col gap-6">
-                        <span className="text-xl font-semibold">
-                            Tổng quan
-                        </span>
-
-                        <div className="grid grid-cols-1 gap-3">
-                            <span>
-                                Số chương:
-                                <span className="font-semibold text-DarkGreen">
-                                    &nbsp; {course.chapterCount}
-                                </span>
+                    {(chapterCount != null && lessonCount != null && finishTime != null)
+                        ?
+                        <div className="lg:col-start-3 bg-LighterGray rounded-2xl p-4 flex flex-col gap-6">
+                            <span className="text-xl font-semibold">
+                                Tổng quan
                             </span>
 
-                            <span>
+                            <div className="grid grid-cols-1 gap-3">
+                                <span>
+                                    Số chương:
+                                    <span className="font-semibold text-DarkGreen">
+                                        &nbsp; {chapterCount}
+                                    </span>
+                                </span>
+
+                                <span>
                                 Số bài học:
-                                <span className="font-semibold text-DarkGreen">
-                                    &nbsp; {course.lessonCount}
+                                    <span className="font-semibold text-DarkGreen">
+                                        &nbsp; {lessonCount}
+                                    </span>
                                 </span>
-                            </span>
 
-                            <span>
-                                Thời lượng học:
-                                <span className="font-semibold text-DarkGreen">
-                                    &nbsp; {convertMinutes(course.studyTime)}
+                                <span>
+                                    Thời lượng học:
+                                    <span className="font-semibold text-DarkGreen">
+                                        &nbsp; {convertMinutes(Number(finishTime))}
+                                    </span>
                                 </span>
-                            </span>
+                            </div>
                         </div>
-                    </div>
+                        :
+                        <Skeleton className="bg-gray rounded-2xl w-full h-[180px] lg:col-start-3"/>
+                    }
                 </div>
 
                 <div className="grid lg:grid-cols-[68%_1%_31%] grid-cols-1 gap-4 lg:gap-0 mt-6">
                     <div className="relative bg-black h-[500px] w-full flex items-center justify-center">
-                        {(!isPlayerReady || !currentLesson) && <Loader2 className="absolute h-14 w-14 animate-spin text-white"/>}
+                        {(!isPlayerReady || !currentLesson) &&
+                            <Loader2 className="absolute h-14 w-14 animate-spin text-white"/>}
 
                         <ReactPlayer
                             ref={playerRef}
@@ -503,28 +363,37 @@ export default function LessonDetail(props: any) {
                             progressInterval={1000}/>
                     </div>
 
-
                     <div className="lg:col-start-3">
-                        <ScrollArea className="w-full h-[500px] rounded-2xl">
+                        {chapters
+                            ?
+                            <ScrollArea className="w-full h-[500px] rounded-2xl">
                             <Accordion type="multiple" value={openItems} onValueChange={setOpenItems} className="w-full bg-LighterGray px-4 py-1 rounded-2xl">
-                                {chapters.map((chapter, index) => (
-                                    <AccordionItem value={chapter.id} key={chapter.id}>
-                                        <AccordionTrigger>
-                                            <ChapterListItem type={"lesson"} index={index + 1} name={chapter.name}
-                                                             duration={chapter.duration}
-                                                             videos={chapter.lessons.length}/>
-                                        </AccordionTrigger>
-                                        {chapter.lessons.map((lesson, index) => (
-                                            <AccordionContent key={lesson.id} id={lesson.id} onClick={() => {
-                                                router.push(`/${props.role}/course/${courseId}/lesson/${lesson.id}`);
-                                            }}>
-                                                <LessonListItem type="lesson" index={index + 1} name={lesson.name} duration={lesson.duration} isStarted={isStarted} isPlaying={!isPause} isChosen={currentLesson?.id === lesson.id} isFinished={false}/>
-                                            </AccordionContent>
-                                        ))}
-                                    </AccordionItem>
-                                ))}
-                            </Accordion>
-                        </ScrollArea>
+                                    {chapters?.map((chapter, index) => (
+                                        <AccordionItem value={String(chapter.id)} key={String(chapter.id)}>
+                                            <AccordionTrigger>
+                                                <ChapterListItem type="lesson" index={index + 1}
+                                                                 name={chapter.chapterName}
+                                                                 duration={chapter.lessons?.reduce((acc, lesson) => {
+                                                                     const duration = lesson.studyTime || 0;
+                                                                     return acc + duration;
+                                                                 }, 0)}
+                                                                 videos={chapter.lessons.length}/>
+                                            </AccordionTrigger>
+
+                                            {chapter.lessons?.map((lesson, index) => (
+                                                <AccordionContent key={String(lesson.id)} id={String(lesson.id)} onClick={() => {
+                                                    router.push(`/${props.role}/course/${courseId}/lesson/${lesson.id}`);
+                                                }}>
+                                                    <LessonListItem type="lesson" index={index + 1} name={lesson.name} duration={lesson.studyTime} isStarted={isStarted} isPlaying={!isPause} isChosen={currentLesson?.lessonId === lesson.id} isFinished={false}/>
+                                                </AccordionContent>
+                                            ))}
+                                        </AccordionItem>
+                                    ))}
+                                </Accordion>
+                            </ScrollArea>
+                            :
+                            <Skeleton className="bg-gray h-[500px] w-full rounded-2xl"/>
+                        }
                     </div>
                 </div>
 
@@ -554,15 +423,25 @@ export default function LessonDetail(props: any) {
                 </div>
 
                 <div className={`${tab === 0 ? 'block' : 'hidden'}`}>
-                    <LessonContent/>
+                    {currentLesson != null
+                        ?
+                        <LessonContent content={currentLesson?.contentHtml}/>
+                        :
+                        <div className="flex flex-col gap-4 ml-3 mt-4">
+                            <Skeleton className="bg-gray lg:w-[800px] w-full h-[24px]"/>
+                            <Skeleton className="bg-gray lg:w-[800px] w-full h-[24px]"/>
+                            <Skeleton className="bg-gray lg:w-[800px] w-full h-[24px]"/>
+                        </div>
+                    }
+
                 </div>
 
                 <div className={`${tab === 1 ? 'block' : 'hidden'}`}>
-                    <LessonAssignments/>
+                    <LessonAssignments exercise={currentLesson?.exerciseHtml}/>
                 </div>
 
                 <div className={`${tab === 2 ? 'block' : 'hidden'}`}>
-                    <LessonComment user={user} lessonId={currentLesson?.id}/>
+                    <LessonComment user={user} lessonId={currentLesson?.lessonId}/>
                 </div>
             </div>
         </div>

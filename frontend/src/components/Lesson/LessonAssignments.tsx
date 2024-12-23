@@ -1,3 +1,4 @@
+/* eslint-disable react/no-children-prop,@typescript-eslint/no-unused-vars */
 'use client';
 import React, {ChangeEvent, useEffect, useState} from 'react';
 import {Loader2, Play} from 'lucide-react'
@@ -60,7 +61,7 @@ const languages: Language[] = [
     },
 ];
 
-export default function LessonAssignments() {
+export default function LessonAssignments(props: any) {
     const [code, setCode] = useState<string>("");
     const [currentLanguage, setCurrentLanguage] = useState<string | undefined>(undefined);
     const [showInput, setShowInput] = useState<boolean>(false);
@@ -68,22 +69,6 @@ export default function LessonAssignments() {
     const [output, setOutput] = useState<string>("");
     const [error, setError] = useState<string | null>(null);
     const [outputLoading, setOutputLoading] = useState<boolean>(false);
-    const [exercise, setExercise] = useState<string|null>(`# Bài tập: Biến toàn cục và cục bộ trong JavaScript
-
-## Mô tả
-
-Tạo một hàm \`incrementCounter\` nhận vào một tham số \`step\` và tăng giá trị của biến toàn cục \`counter\` lên giá trị \`step\` sau mỗi lần gọi hàm. Hàm này sẽ trả về giá trị mới của biến \`counter\`.
-
-> **Chú ý:**  
-> Biến \`counter\` là **biến toàn cục**. Bạn cần tăng giá trị của biến này mỗi khi gọi hàm mà không thay đổi trực tiếp giá trị ngoài hàm.
-
-## Các ví dụ:
-
-\`\`\`javascript
-incrementCounter(5)  ➞ 5
-incrementCounter(3)  ➞ 8
-incrementCounter(-2) ➞ 6
-`);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setInput(e.target.value);
@@ -127,7 +112,7 @@ incrementCounter(-2) ➞ 6
     }
 
     const handleRunCode = async () => {
-        let payload = {
+        const payload = {
             "source_code": encodeUnicodeToBase64(code),
             "language_id": languages.find((lang) => lang.value === currentLanguage)?.id || 0,
             "stdin": encodeUnicodeToBase64(input),
@@ -181,7 +166,7 @@ incrementCounter(-2) ➞ 6
 
                         <SelectContent>
                             {languages.map((lang) => (
-                                <SelectItem value={lang.value}>
+                                <SelectItem value={lang.value} key={lang.id}>
                                     {setLanguageName(lang.value)}
                                 </SelectItem>
                             ))}
@@ -250,10 +235,10 @@ incrementCounter(-2) ➞ 6
                 </div>
             </div>
 
-            <div className="lg:col-start-3 w-fit prose bg-LighterGray rounded-2xl p-4 h-fit order-1 lg:order-none">
+            <div className="lg:col-start-3 w-full prose bg-LighterGray rounded-2xl p-4 h-fit order-1 lg:order-none">
                 <ReactMarkdown
                     className="text-sm space-y-4"
-                    children={exercise}
+                    children={props.exercise}
                     components={{
                         blockquote: ({node, ...props}) => (
                             <blockquote className="border-l-[3px] border-blue-500 pl-4 italic bg-gray-100 p-2" {...props} />

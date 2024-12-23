@@ -5,6 +5,12 @@ const getCourses = async (courseId: string, userId: string) => {
     return response.data.data;
 }
 
+const getLessonDetail = async (lessonId: string) => {
+    const response = await instance(`api/v1/get-lesson-content?lessonId=${lessonId}`);
+    return response.data.data;
+}
+
 export {
-    getCourses
+    getCourses,
+    getLessonDetail
 }
