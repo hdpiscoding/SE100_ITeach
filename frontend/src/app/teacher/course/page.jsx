@@ -8,20 +8,22 @@ import { Button } from "@/components/ui/button";
 import{useEffect} from "react";
 import { getMyAccount } from "@/services/teacher";
 const CourseTeacher = () => {
-  let teacherId = 1;
+  let tId = 1;
   let username = "Username";
   let khoahoc = 24;
   let hocvien = 24;
-  const handleGetAcc = async () => {
-    await getMyAccount({ teacherId: teacherId });
-    window.location.reload();
-  };
+
   const [activeTab, setActiveTab] = useState("registered");
   const router = useRouter();
   useEffect(() => {
     const fetchMyAccount = async () => {
-      const response = await getMyAccount(teacherId);
-      console.log(response);
+      const response = await getMyAccount({ teacherId: tId });
+      if (response && response.data) {
+        console.log(response.data);
+        // username = response.data.username;
+        // khoahoc = response.data.khoahoc;
+        // hocvien = response.data.hocvien;
+      }
     };
     fetchMyAccount();
   }
