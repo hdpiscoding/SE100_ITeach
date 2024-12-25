@@ -5,6 +5,8 @@ import { useState } from "react";
 import Coursecard from "@/components/Course/Coursecard";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import{useEffect} from "react";
+import { getMyAccount } from "@/services/teacher";
 const CourseTeacher = () => {
   let teacherId = 1;
   let username = "Username";
@@ -12,6 +14,14 @@ const CourseTeacher = () => {
   let hocvien = 24;
   const [activeTab, setActiveTab] = useState("registered");
   const router = useRouter();
+  useEffect(() => {
+    const fetchMyAccount = async () => {
+      const response = await getMyAccount(teacherId);
+      console.log(response);
+    };
+    fetchMyAccount();
+  }
+  , []);
   return (
     <div className="space-y-3 md:space-y-5 lg:space-y-7 p-3">
       <div className="relative w-full h-[30vh] md:h-[50vh] lg:h-[70vh]">
