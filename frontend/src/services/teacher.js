@@ -2,17 +2,14 @@ import axios from "../utils/AxiosCustomized";
 const teacherToken =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImVtYWlsIjoiaHVuZzA4MDkyMDA0QGdtYWlsLmNvbSIsInJvbGUiOiJSMiIsImV4cGlyZXNJbiI6IjMwZCIsImlhdCI6MTcyNzU5OTQ4N30.2sAjaVD3nZ0KCZ1abl_8d2XXQqVKeVrLaZKeFuueALI";
 
-  const getMyAccount = async (teacherId) => {
+  const getMyAccount = async (body) => {
     try {
-      const response = await axios.get("api/v1/get-my-account", {
+      const response = await axios.get("api/v1/get-my-account", body, {
         headers: {
-          Authorization: `Bearer ${teacherToken}`
-        },
-        body: {
-          teacherId: teacherId
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImVtYWlsIjoiaHVuZzA4MDkyMDA0QGdtYWlsLmNvbSIsInJvbGUiOiJSMiIsImV4cGlyZXNJbiI6IjMwZCIsImlhdCI6MTcyNzU5OTQ4N30.2sAjaVD3nZ0KCZ1abl_8d2XXQqVKeVrLaZKeFuueALI`
         }
       });
-    return response.data;
+    return response;
   } catch (error) {
     console.error("Error while getting my account", error);
     return null;

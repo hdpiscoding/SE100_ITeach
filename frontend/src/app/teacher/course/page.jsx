@@ -12,6 +12,10 @@ const CourseTeacher = () => {
   let username = "Username";
   let khoahoc = 24;
   let hocvien = 24;
+  const handleGetAcc = async () => {
+    await getMyAccount({ teacherId: teacherId });
+    window.location.reload();
+  };
   const [activeTab, setActiveTab] = useState("registered");
   const router = useRouter();
   useEffect(() => {
