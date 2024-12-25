@@ -2,10 +2,11 @@
 import React from "react";
 import Image from "next/image";
 import { useState } from "react";
-import Coursecard from "@/components/Coursecard";
+import Coursecard from "@/components/Course/Coursecard";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 const CourseTeacher = () => {
+  let teacherId = 1;
   let username = "Username";
   let khoahoc = 24;
   let hocvien = 24;

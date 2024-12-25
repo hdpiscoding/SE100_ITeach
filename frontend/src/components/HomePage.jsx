@@ -12,10 +12,31 @@ import { Pagination, Navigation } from "swiper/modules";
 import Banner from "@/components/Banner";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { getAllCourseCategory, getAllCourse } from "@/services/student";
+import { useEffect } from "react";
 
 const Home = () => {
   const [activeButton, setActiveButton] = useState("All Program");
   const router = useRouter();
+  const [courseCategory, setCourseCategory] = useState([]);
+  const [allCourse, setAllCourse] = useState([]);
+  useEffect(() => {
+    const fetchCourseCategory = async () => {
+      const response = await getAllCourseCategory();
+      setCourseCategory(response.data);
+    };
+    fetchCourseCategory();
+  }, []);
+  console.log(courseCategory);
+  useEffect(() => {
+    const fetchAllCourse = async () => {
+      const response = await getAllCourse();
+      setAllCourse(response.data);
+    };
+    fetchAllCourse();
+  }, []);
+
+
   return (
     <div className="">
       <div className="relative w-full h-fit">
@@ -36,38 +57,32 @@ const Home = () => {
         </h1>
 
         <div className="flex flex-wrap gap-3 justify-center my-8 md:my-14 ">
-          {[
-            "All Program",
-            "Thuật Toán",
-            "Kiến thức cơ sở",
-            "Lập trình cơ bản",
-            "Lập trình nâng cao",
-            "Giải quyết vấn đề",
-          ].map((text) => (
+          {courseCategory.map((category) => (
             <button
-              key={text}
-              onClick={() => setActiveButton(text)}
+              key={category.id}
+              onClick={() => setActiveButton(category.categoryName)}
               className={`border-2 whitespace-nowrap text-[8px] sm:text-sm md:text-base lg:text-lg  lg:rounded-lg
                 md:rounded-lg sm:rounded-lg rounded-sm  lg:px-3 lg:py-2 md:px-2 md:py-1 sm:px-2 sm:py-1 px-2 py-1 ${
-                activeButton === text
+                activeButton === category.categoryName
                   ? "bg-SignUp text-white"
                   : "bg-white text-black hover:bg-SignUp hover:text-white"
               }`}
             >
-              {text}
+              {category.categoryName}
             </button>
           ))}
         </div>
 
         <div className=" grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-2 gap-6 justify-items-center">
-          <Coursecard />
-          <Coursecard />
-          <Coursecard />
-          <Coursecard />
-          <Coursecard />
-          <Coursecard />
-          <Coursecard />
-          <Coursecard />
+        {allCourse.map((course) => (
+          <Coursecard 
+            key={course.id}
+            courseName={course.courseName}
+            cost={course.cost}
+            discount={course.discount}
+            intro={course.intro}
+          />
+        ))}
         </div>
 
         <h1 className="text-SignUp text-center font-bold text-2xl md:text-4xl lg:text-5xl mt-12">
@@ -76,16 +91,16 @@ const Home = () => {
 
         <div className="flex justify-center">
           <h1 className="mt-10 text-base md:text-2xl text-gray-500 w-full md:w-[1000px] text-center px-4">
-            Onlearing is one powerful online software suite that combines all
-            the tools needed to run a successful school or office.
+          Chúng tôi mang đến những khóa học tuyệt vời, mở ra cánh cửa thành công cho tương lai của bạn.
           </h1>
         </div>
 
-        <div className="grid md:grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 grid-cols-2 gap-6 mt-10 justify-items-center">
-          <Coursecardnoprice />
-          <Coursecardnoprice />
-          <Coursecardnoprice />
-          <Coursecardnoprice />
+        <div className="grid md:grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 grid-cols-2 gap-6 mt-10 ">
+          {courseCategory.map((category) => (
+            <Coursecardnoprice
+             key={category.id}
+              categoryName={category.categoryName} />
+          ))}
         </div>
 
         <div className="flex justify-center p-10 lg:p-20">
@@ -161,8 +176,7 @@ const Home = () => {
         </h1>
         <div className="flex justify-center">
           <h1 className="mt-10 text-base md:text-2xl text-gray-500 w-full md:w-[800px] text-center px-4">
-            Onlearing is one powerful online software suite that combines all
-            the tools needed to run a successful school or office.
+          Chúng tôi mang đến những khóa học tuyệt vời, mở ra cánh cửa thành công cho tương lai của bạn.
           </h1>
         </div>
 
@@ -177,18 +191,17 @@ const Home = () => {
             modules={[Pagination]}
             className="w-full md:w-[60%] "
           >
-            <SwiperSlide className="flex justify-center">
-              <Package />
-            </SwiperSlide>
-            <SwiperSlide className="flex justify-center">
-              <Package />
-            </SwiperSlide>
-            <SwiperSlide className="flex justify-center">
-              <Package />
-            </SwiperSlide>
-            <SwiperSlide className="flex justify-center">
-              <Package />
-            </SwiperSlide>
+            {allCourse.map((course) => (
+              <SwiperSlide className="flex justify-center">
+                <Package 
+                key={course.id}
+                courseName={course.courseName}
+                cost={course.cost}
+                discount={course.discount}
+                intro={course.intro}
+                />
+              </SwiperSlide>
+            ))}
           </Swiper>
 
           <style jsx global>{`
