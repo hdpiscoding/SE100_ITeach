@@ -131,11 +131,11 @@ let editACourse = (data) => {
     }
   });
 };
-let getMyCourse = (data) => {
+let getMyCourse = (teacherId) => {
   return new Promise(async (resolve, reject) => {
     try {
       let courses = await db.Course.findAll({
-        where: { teacherId: data.teacherId },
+        where: { teacherId: teacherId },
       });
       if (!courses) {
         resolve({

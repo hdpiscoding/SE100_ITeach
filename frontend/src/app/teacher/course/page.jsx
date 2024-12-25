@@ -6,30 +6,44 @@ import Coursecard from "@/components/Course/Coursecard";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import{useEffect} from "react";
-import { getMyAccount } from "@/services/teacher";
+import { getMyAccount,getMyCourse } from "@/services/teacher";
 const CourseTeacher = () => {
   let tId = 1;
-  let username = "Username";
-  let khoahoc = 24;
-  let hocvien = 24;
+  const [username, setUsername] = useState("");
+  const [khoahoc, setKhoahoc] = useState(0);
+  const [hocvien, setHocvien] = useState(0);
+
 
   const [activeTab, setActiveTab] = useState("registered");
   const router = useRouter();
+  const fetchMyAccount = async () => {
+    const response = await getMyAccount(tId);
+    if (response && response.data) {
+      console.log(response.data);
+      setUsername(response.data.teacher.firstName+" "+response.data.teacher.lastName) ;
+      
+    }
+  };
+  const fetchMyCourse = async () =>
+  {
+    const response = await getMyCourse(tId);
+    if (response && response.data) {
+      console.log(response.data);
+      setKhoahoc(response.data.courses.length);
+      response.data.courses.map((course) => {
+        setHocvien(hocvien+course.totalStudent);
+      });
+    }
+  };
   useEffect(() => {
-    const fetchMyAccount = async () => {
-      const response = await getMyAccount({ teacherId: tId });
-      if (response && response.data) {
-        console.log(response.data);
-        // username = response.data.username;
-        // khoahoc = response.data.khoahoc;
-        // hocvien = response.data.hocvien;
-      }
-    };
+    fetchMyCourse();
     fetchMyAccount();
+   
   }
   , []);
   return (
     <div className="space-y-3 md:space-y-5 lg:space-y-7 p-3">
+     
       <div className="relative w-full h-[30vh] md:h-[50vh] lg:h-[70vh]">
         <Image
           src="/assets/images/bg_aboutus.png"

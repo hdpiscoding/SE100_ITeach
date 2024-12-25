@@ -58,7 +58,7 @@ let handleEditACourse = async (req, res) => {
   });
 };
 let handleGetMyCourse = async (req, res) => {
-  let teacherId = req.body.teacherId;
+  let teacherId = req.query.teacherId;
   if (!teacherId) {
     return res.status(500).json({
       errCode: 1,
@@ -66,7 +66,7 @@ let handleGetMyCourse = async (req, res) => {
       data: [],
     });
   }
-  let data = await teacherService.getMyCourse(req.body);
+  let data = await teacherService.getMyCourse(teacherId);
   return res.status(200).json(data);
 };
 let handlePutALesson = async (req, res) => {
@@ -139,14 +139,14 @@ let handlePostIDEUse = async (req, res) => {
   return res.status(200).json(data);
 };
 let handleGetMyAccount = async (req, res) => {
-  let teacherId = req.body.teacherId;
+  let teacherId = req.query.teacherId;
   if (!teacherId) {
     return res.status(500).json({
       errCode: 1,
       message: "Missing required fields",
     });
   }
-  let data = await teacherService.getMyAccountInformation(req.body);
+  let data = await teacherService.getMyAccountInformation(req.query);
   return res.status(200).json(data);
 };
 let handleGetAllStudentOfCourse = async (req, res) => {
