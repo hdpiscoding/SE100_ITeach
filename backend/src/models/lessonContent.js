@@ -11,9 +11,16 @@ The models/index file will call this method automatically.*/
   }
   LessonContent.init(
     {
-      lessonId: DataTypes.INTEGER,
-
-      video: DataTypes.TEXT("long"),
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+      },
+      lessonId: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+      },
+      video: DataTypes.STRING,
       contentHtml: DataTypes.TEXT("long"),
       contentMarkDown: DataTypes.TEXT("long"),
       exerciseHtml: DataTypes.TEXT("long"),

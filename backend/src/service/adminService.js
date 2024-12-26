@@ -239,10 +239,153 @@ let getAllReviews = () => {
     }
   });
 };
+let approveCourse = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!data.courseId) {
+        resolve({
+          errCode: 1,
+          errMessage: "Missing required parameters",
+        });
+      } else {
+        let course = await db.Course.update(
+          { courseStatus: "CS1" },
+          { where: { id: data.courseId } }
+        );
+        resolve({
+          errCode: 0,
+          errMessage: "OK",
+        });
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+let stopCourse = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!data.courseId) {
+        resolve({
+          errCode: 1,
+          errMessage: "Missing required parameters",
+        });
+      } else {
+        let course = await db.Course.update(
+          { courseStatus: "CS3" },
+          { where: { id: data.courseId } }
+        );
+        resolve({
+          errCode: 0,
+          errMessage: "OK",
+        });
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+let deleteCourse = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!data.courseId) {
+        resolve({
+          errCode: 1,
+          errMessage: "Missing required parameters",
+        });
+      } else {
+        let course = await db.Course.destroy({ where: { id: data.courseId } });
+        resolve({
+          errCode: 0,
+          errMessage: "OK",
+        });
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+const getAllCourseOfTeacher = (teacherId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let courses = await db.Course.findAll({
+        where: {
+          teacherId: teacherId,
+        },
+        attributes: [
+          "id",
+          "courseName",
+          "cost",
+          "discount",
+          "anhBia",
+          "intro",
+          "level",
+          "totalStudent",
+          "totalStars",
+          "createdAt",
+          "courseStatus",
+          "totalStudent",
+          "finishTime",
+          "level",
+        ],
+        include: [
+          {
+            model: db.CourseCategory,
+            as: "category",
+            attributes: ["id", "categoryName"],
+          },
+        ],
+        nest: true,
+        raw: true,
+      });
+      if (courses && courses.length > 0) {
+        resolve({
+          errCode: 0,
+          data: courses,
+        });
+      } else {
+        resolve({
+          errCode: 1,
+          errMessage: "No courses found",
+        });
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+const createNewCourseCategory = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!data.name) {
+        resolve({
+          errCode: 1,
+          errMessage: "Missing required parameters",
+        });
+      } else {
+        let category = await db.CourseCategory.create({
+          categoryName: data.name,
+        });
+        resolve({
+          errCode: 0,
+          errMessage: "OK",
+          id: category.id,
+        });
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 module.exports = {
   getAllTeacher,
   getPopularTeacher,
   getPopularCourse,
   getAnalysisInformation,
   getAllReviews,
+  approveCourse,
+  stopCourse,
+  deleteCourse,
+  getAllCourseOfTeacher,
+  createNewCourseCategory,
 };

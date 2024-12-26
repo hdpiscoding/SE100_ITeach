@@ -19,10 +19,16 @@ let createNewUser = (data) => {
   return new Promise(async (resolve, reject) => {
     let checkExistEmail = await checkUserEmail(data.email);
     let totalStudents;
+    let firstName;
+    let lastName;
     if (data.role === "R2") {
       totalStudents = 0;
+      firstName = data.firstName;
+      lastName = data.lastName;
     } else {
       totalStudents = null;
+      firstName = null;
+      lastName = null;
     }
     if (checkExistEmail === false) {
       let hashPassword = await hashUserPassword(data.password);
@@ -32,6 +38,8 @@ let createNewUser = (data) => {
           password: hashPassword,
           role: data.role,
           totalStudentNumber: totalStudents,
+          firstName: firstName,
+          lastName: lastName,
         });
         resolve({
           errCode: 0,
@@ -99,17 +107,17 @@ let login = (email, password) => {
           } else {
             userData.errCode = 3;
             userData.errMessage =
-              "Your password is incorrect. Please try again!";
+              "Mật khẩu không chính xác. Vui lòng nhập lại!";
           }
         } else {
           userData.errCode = 2;
           userData.errMessage =
-            "Your email isn`t exist in system. Please try again!";
+            "Email không tồn tại trong hệ thống. Vui lòng thử lại!";
         }
       } else {
         userData.errCode = 1;
         userData.errMessage =
-          "Your email isn`t exist in system. Please try again!";
+          "Email không tồn tại trong hệ thống. Vui lòng thử lại!";
       }
       resolve(userData);
     } catch (error) {
@@ -158,7 +166,7 @@ let changePassword = (data) => {
       if (!data.id || !data.oldPassword || !data.newPassword) {
         resolve({
           errCode: 1,
-          errMessage: "Missing required fields",
+          errMessage: "Vui lòng nhập đầy đủ thông tin",
         });
       }
       let user = await db.User.findOne({ where: { id: data.id }, raw: false });
@@ -167,19 +175,19 @@ let changePassword = (data) => {
         if (!check) {
           resolve({
             errCode: 3,
-            errMessage: "Your old password is incorrect. Please try again!",
+            errMessage: "Mật khẩu hiện tại không chính xác",
           });
         }
         user.password = bcrypt.hashSync(data.newPassword, salt);
         await user.save();
         resolve({
           errCode: 0,
-          errMessage: "Change password successfully",
+          errMessage: "Đổi mật khẩu thành công",
         });
       } else {
         resolve({
           errCode: 2,
-          errMessage: "User is not found",
+          errMessage: "Không tìm thấy người dùng",
         });
       }
     } catch (error) {

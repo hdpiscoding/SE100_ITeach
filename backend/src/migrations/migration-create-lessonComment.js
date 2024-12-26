@@ -5,18 +5,18 @@ module.exports = {
     await queryInterface.createTable("LessonComments", {
       id: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
       },
       lessonId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
       },
       parrentCommentId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
       },
       userId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
       },
       content: {
         type: Sequelize.TEXT,

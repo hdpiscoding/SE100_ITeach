@@ -17,6 +17,11 @@ let getAllCourses = async () => {
           "level",
           "totalStudent",
           "totalStars",
+          "createdAt",
+          "courseStatus",
+          "totalStudent",
+          "finishTime",
+          "level",
         ],
         include: [
           {
@@ -67,7 +72,16 @@ let getAllCoursesCategories = async () => {
 let getStudentsOrders = async (userId) => {
   return new Promise(async (resolve, reject) => {
     try {
-      let courses = await db.Order.findAll();
+      let courses = await db.Order.findAll({
+        where: { userId: userId },
+        raw: true,
+      });
+      for (let course of courses) {
+        const orderItemsCount = await db.OrderItem.count({
+          where: { orderId: course.id },
+        });
+        course.orderItemsCount = orderItemsCount;
+      }
       if (courses && courses.length > 0) {
         resolve({
           errCode: 0,
@@ -202,6 +216,8 @@ let getBoughtCourses = (id) => {
               "anhBia",
               "intro",
               "level",
+              "createdAt",
+              "courseCategoryId",
 
               "totalStudent",
             ],
@@ -395,7 +411,7 @@ let getDetailCourseInfo = (id, userId) => {
           {
             model: db.User,
             as: "teacher",
-            attributes: ["id", "firstName", "lastName", "avatar"],
+            attributes: ["id", "firstName", "lastName", "email", "avatar"],
           },
           {
             model: db.CourseCategory,
@@ -406,10 +422,11 @@ let getDetailCourseInfo = (id, userId) => {
         nest: true,
         raw: true,
       });
-      result.chapters = await db.Chapter.findAll({
+
+      // Get all chapters with their lessons
+      const rawChapters = await db.Chapter.findAll({
         where: { courseId: id },
         attributes: ["id", "chapterName", "courseId"],
-
         include: [
           {
             model: db.Lesson,
@@ -417,27 +434,55 @@ let getDetailCourseInfo = (id, userId) => {
             attributes: ["id", "name", "studyTime"],
           },
         ],
-        nest: true,
+        nest: false,
         raw: true,
       });
+
+      // Group lessons by chapter
+      result.chapters = Object.values(
+        rawChapters.reduce((acc, curr) => {
+          const chapterId = curr.id;
+
+          if (!acc[chapterId]) {
+            acc[chapterId] = {
+              id: curr.id,
+              chapterName: curr.chapterName,
+              courseId: curr.courseId,
+              lessons: [], // Initialize with empty array
+            };
+          }
+
+          // Only add lesson if it has an id (not null)
+          if (curr["lessons.id"]) {
+            acc[chapterId].lessons.push({
+              id: curr["lessons.id"],
+              name: curr["lessons.name"],
+              studyTime: curr["lessons.studyTime"],
+            });
+          }
+
+          return acc;
+        }, {})
+      );
 
       result.reviews = await db.Review.findAll({
         where: { courseId: id },
         attributes: ["content", "star"],
-
         include: [
           {
             model: db.User,
             as: "user",
-            attributes: ["id", "firstName", "lastName", "avatar"],
+            attributes: ["id", "firstName", "lastName", "email", "avatar"],
           },
         ],
         nest: true,
         raw: true,
       });
+
       result.mycourse = await db.MyCourse.findOne({
         where: { courseId: id, userId: userId },
       });
+
       if (result) {
         resolve({
           errCode: 0,
@@ -617,6 +662,194 @@ let getCurrentLessonId = (courseId, studentId) => {
     }
   });
 };
+
+const deleteAllCartItems = async (userId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await db.CartItem.destroy({
+        where: { userId: userId },
+      });
+      resolve({
+        errCode: 0,
+        errMessage: "OK",
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+const postPayment = async (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const order = await db.Order.create({
+        userId: data.userId,
+        totalCost: data.totalCost,
+      });
+      const orderId = order.id;
+      for (const item of data.cartItems) {
+        await db.OrderItem.create({
+          orderId: orderId,
+          courseId: item.courseId,
+        });
+        const course = await db.Course.findOne({
+          where: { id: item.courseId },
+          raw: false,
+        });
+        if (course) {
+          course.totalStudent += 1;
+          await course.save();
+
+          // Tìm Teacher tương ứng
+          const teacher = await db.User.findOne({
+            where: { id: course.teacherId },
+            raw: false,
+          });
+          if (teacher) {
+            teacher.totalStudentNumber += 1;
+            await teacher.save();
+          }
+        }
+        await db.MyCourse.create({
+          userId: data.userId,
+          courseId: item.courseId,
+          numberOfProcess: 0,
+        });
+      }
+
+      resolve({
+        errCode: 0,
+        errMessage: "OK",
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+let getStudentCertificates = (studentId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let certificates = await db.Certificate.findAll({
+        where: { userId: studentId },
+
+        raw: true,
+      });
+      for (let certificate of certificates) {
+        let course = await db.Course.findOne({
+          where: { id: certificate.courseId },
+          attributes: ["id", "courseName"],
+          raw: true,
+        });
+        let user = await db.User.findOne({
+          where: { id: certificate.userId },
+          attributes: ["id", "firstName", "lastName"],
+          raw: true,
+        });
+        if (course) {
+          certificate.course = course;
+        }
+        certificate.user = user;
+      }
+      if (certificates) {
+        resolve({
+          errCode: 0,
+          certificates: certificates,
+        });
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+const getACertificate = (id) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let certificate = await db.Certificate.findOne({
+        where: { id: id },
+        raw: true,
+      });
+
+      let course = await db.Course.findOne({
+        where: { id: certificate.courseId },
+        attributes: ["id", "courseName"],
+        raw: true,
+      });
+      let user = await db.User.findOne({
+        where: { id: certificate.userId },
+        attributes: ["id", "firstName", "lastName"],
+        raw: true,
+      });
+      if (course) {
+        certificate.course = course;
+      }
+      certificate.user = user;
+
+      if (certificate) {
+        resolve({
+          errCode: 0,
+          certificate: certificate,
+        });
+      } else {
+        resolve({
+          errCode: 1,
+          errMessage: "No certificate found",
+        });
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+const getATeacher = (id) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let teacher = await db.User.findOne({
+        where: { id: id },
+        attributes: [
+          "id",
+          "firstName",
+          "lastName",
+          "email",
+          "phoneNumber",
+          "avatar",
+          "totalStudentNumber",
+          "totalCourseNumber",
+        ],
+        raw: true,
+      });
+
+      if (teacher) {
+        const reviews = await db.Review.findAll({
+          where: { teacherId: id },
+          attributes: ["star"],
+          raw: true,
+        });
+
+        const totalStars = reviews.reduce(
+          (sum, review) => sum + review.star,
+          0
+        );
+        const averageStars = reviews.length ? totalStars / reviews.length : 0;
+
+        resolve({
+          errCode: 0,
+          teacher: {
+            ...teacher,
+            averageStars: averageStars.toFixed(2),
+          },
+        });
+      } else {
+        resolve({
+          errCode: 1,
+          errMessage: "No teacher found",
+        });
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
 module.exports = {
   getAllCourses,
   getAllCoursesCategories,
@@ -637,4 +870,9 @@ module.exports = {
   completeLesson,
   getCurrentLessonId,
   deleteCartItem,
+  getStudentCertificates,
+  getACertificate,
+  deleteAllCartItems,
+  postPayment,
+  getATeacher,
 };

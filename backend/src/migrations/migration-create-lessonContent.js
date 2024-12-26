@@ -5,15 +5,15 @@ module.exports = {
     await queryInterface.createTable("LessonContents", {
       id: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
       },
       lessonId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
       },
       video: {
-        type: Sequelize.TEXT("long"),
+        type: Sequelize.STRING,
       },
       contentHtml: {
         type: Sequelize.TEXT("long"),

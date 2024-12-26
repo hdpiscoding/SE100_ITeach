@@ -2,11 +2,11 @@
 import React from "react";
 import Image from "next/image";
 import MarkdownIt from "markdown-it";
-import MDEditor from "@uiw/react-md-editor";
+import MdEditor from 'react-markdown-editor-lite';
+import 'react-markdown-editor-lite/lib/index.css';
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-const md = new MarkdownIt();
-
+const mdParser = new MarkdownIt(/* Markdown-it options */);
 const Step2 = () => {
   const router = useRouter();
   const [activeTab, setActiveTab] = React.useState("content");
@@ -15,7 +15,9 @@ const Step2 = () => {
   const [markdownContent, setMarkdownContent] = React.useState("");
   const [lessonTitle, setLessonTitle] = useState("");
   const [lessonDuration, setLessonDuration] = useState("");
-
+  function handleEditorChange({ html, text }) {
+    console.log("handleEditorChange", html, text);
+  }
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -294,12 +296,7 @@ const Step2 = () => {
             </div>
           </div>
           <div className="border border-gray rounded-md p-5">
-            <MDEditor
-              value={markdownContent}
-              onChange={setMarkdownContent}
-              preview="live"
-              height={400}
-            />
+          <MdEditor style={{ height: '500px' }} renderHTML={text => mdParser.render(text)} onChange={handleEditorChange} />
           </div>
           <div className="flex justify-end space-x-3">
             <button className="bg-white text-orange px-5 py-2 rounded-md border border-orange">

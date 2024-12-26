@@ -194,6 +194,65 @@ const handleGetCurrentLessonId = async (req, res) => {
   );
   return res.status(200).json(response);
 };
+
+const handleDeleteAllCartItems = async (req, res) => {
+  if (!req.query.userId) {
+    return res.status(500).json({
+      errCode: 1,
+      errMessage: "Missing required parameter",
+    });
+  }
+  let response = await studentService.deleteAllCartItems(req.query.userId);
+  return res.status(200).json(response);
+};
+
+const handleGetStudentCertificates = async (req, res) => {
+  if (!req.query.studentId) {
+    return res.status(500).json({
+      errCode: 1,
+      errMessage: "Missing required parameter",
+    });
+  }
+  let response = await studentService.getStudentCertificates(
+    req.query.studentId
+  );
+  return res.status(200).json(response);
+};
+
+const handlePostPayment = async (req, res) => {
+  if (!req.body.userId || !req.body.totalCost || !req.body.cartItems) {
+    return res.status(500).json({
+      errCode: 1,
+      errMessage: "Missing required parameter",
+    });
+  }
+  let response = await studentService.postPayment(req.body);
+  return res.status(200).json(response);
+};
+
+const handleGetACertificate = async (req, res) => {
+  if (!req.query.id) {
+    return res.status(500).json({
+      errCode: 1,
+      errMessage: "Missing required parameter",
+    });
+  }
+  let response = await studentService.getACertificate(req.query.id);
+
+  return res.status(200).json(response);
+};
+const handleGetATeacher = async (req, res) => {
+  if (!req.query.id) {
+    return res.status(500).json({
+      errCode: 1,
+      errMessage: "Missing required parameter",
+    });
+  }
+  let response = await studentService.getATeacher(req.query.id);
+
+  return res.status(200).json(response);
+};
+
 module.exports = {
   handleGetAllCourses,
   handleGetAllCoursesCategories,
@@ -214,4 +273,10 @@ module.exports = {
   handleCompleteLesson,
   handleGetCurrentLessonId,
   handleDeleteCartItem,
+  handleDeleteAllCartItems,
+  handlePostPayment,
+
+  handleGetStudentCertificates,
+  handleGetACertificate,
+  handleGetATeacher,
 };

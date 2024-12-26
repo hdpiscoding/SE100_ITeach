@@ -10,9 +10,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { getAllCourses } from "@/services/admin";
+import { getAllCourseOfATeacher,getAllCourses } from "@/services/admin";
 import { parse } from "path";
-const CoursesAdmin = () => {
+const AdminTeacherCourse = () => {
   const [activeTab, setActiveTab] = useState("public");
   const [currentPage, setCurrentPage] = useState(1);
   const coursesPerPage = 12;
@@ -32,9 +32,11 @@ const CoursesAdmin = () => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const response = await getAllCourses();
-        const allCourses = response.data.data;
-        setAll(allCourses);
+        const response = await getAllCourseOfATeacher(1);
+        //   const allCourses = response.data.data;
+        //   console.log("allCourses", allCourses);
+          setAll(response.data.data);
+          console.log("all", all);
       } catch (error) {
         console.error("Error fetching courses:", error);
       }
@@ -85,7 +87,7 @@ const CoursesAdmin = () => {
       setFilteredCourses(all);
       return;
     }
-    const response = await getAllCourses();
+    const response =await getAllCourseOfATeacher(1);
     const allCourses = response.data.data;
     const filter = allCourses.filter((course) => {
       var abovecost = 0;
@@ -139,29 +141,7 @@ const CoursesAdmin = () => {
   }, [filteredCourses]);
   return (
     <div className="space-y-7">
-      <div className="h-[120px] bg-bg grid grid-cols-[0.5fr_11fr_0.5fr]">
-        <div></div>
-        <div className="flex items-center">
-          <div className="space-x-2 ">
-            <Image
-              className="inline-block"
-              src="/assets/images/home.png"
-              alt="banner"
-              width={20}
-              height={20}
-            />
-            <Image
-              className="inline-block"
-              src="/assets/images/arrow_right.png"
-              alt="banner"
-              width={5}
-              height={5}
-            />
-            <span className="text-orange font-bold"> Khóa học</span>
-          </div>
-        </div>
-        <div></div>
-      </div>
+       
       <div className="grid grid-cols-[0.5fr_11fr_0.5fr] ">
         <div></div>
 
@@ -298,4 +278,4 @@ const CoursesAdmin = () => {
   );
 };
 
-export default CoursesAdmin;
+export default AdminTeacherCourse;

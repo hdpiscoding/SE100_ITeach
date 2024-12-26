@@ -11,8 +11,19 @@ The models/index file will call this method automatically.*/
   }
   Certificate.init(
     {
-      userId: DataTypes.INTEGER,
-      courseId: DataTypes.STRING,
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+      },
+      userId: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+      },
+      courseId: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+      },
       qr: DataTypes.STRING,
     },
     {
@@ -20,5 +31,6 @@ The models/index file will call this method automatically.*/
       modelName: "Certificate",
     }
   );
+
   return Certificate;
 };

@@ -20,9 +20,23 @@ The models/index file will call this method automatically.*/
   }
   OrderItem.init(
     {
-      orderId: DataTypes.INTEGER,
-      courseId: DataTypes.INTEGER,
-      reviewId: DataTypes.INTEGER,
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+      },
+      orderId: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+      },
+      courseId: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+      },
+      reviewId: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+      },
     },
     {
       sequelize,

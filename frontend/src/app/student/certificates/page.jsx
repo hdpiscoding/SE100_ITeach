@@ -1,13 +1,26 @@
-import React from "react";
+"use client";
 import Certificate from "@/components/Certificate";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
 const Certificates = () => {
+  const router = useRouter();
+  const [id, setId] = useState(null);
+
+  useEffect(() => {
+    // Access the window object safely inside useEffect
+    const query = new URLSearchParams(window.location.search);
+    const certificateId = query.get("id");
+    setId(certificateId); // Set the ID only if it exists
+  }, []); // Empty dependency array ensures this runs once on the client
+
   return (
     <div className="space-y-24 mb-24">
       <div className="h-[120px] bg-bg grid grid-cols-[0.5fr_11fr_0.5fr]">
         <div></div>
         <div className="flex items-center">
-          <div className="space-x-2 ">
+          <div className="space-x-2">
             <Image
               className="inline-block"
               src="/assets/images/home.png"
@@ -27,7 +40,8 @@ const Certificates = () => {
         </div>
         <div></div>
       </div>
-      <Certificate/>
+      {/* Only render Certificate if ID is available */}
+      {id ? <Certificate id={id} /> : <p>Loading...</p>}
     </div>
   );
 };

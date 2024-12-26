@@ -16,7 +16,7 @@ import { getAllCourseCategory, getAllCourse } from "@/services/student";
 import { useEffect } from "react";
 
 const Home = () => {
-  const [activeButton, setActiveButton] = useState("All Program");
+  const [activeButton, setActiveButton] = useState("");
   const router = useRouter();
   const [courseCategory, setCourseCategory] = useState([]);
   const [allCourse, setAllCourse] = useState([]);
@@ -74,7 +74,14 @@ const Home = () => {
         </div>
 
         <div className=" grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-2 gap-6 justify-items-center">
-        {allCourse.map((course) => (
+
+        {allCourse
+         .filter(course => {
+         return course.category.categoryName === activeButton || activeButton === "";
+         
+        })
+        .filter((course) => course.courseStatus === "CS1")
+        .map((course) => (
           <Coursecard 
             key={course.id}
             courseName={course.courseName}

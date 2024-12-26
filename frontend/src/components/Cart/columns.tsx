@@ -3,6 +3,9 @@ import {ArrowUpDown, CircleX} from "lucide-react"
 import { ColumnDef } from "@tanstack/react-table"
 import {Button} from "@/components/ui/button";
 import Image from "next/image";
+import AlertModal from "../AlertDialog2/AlertModal";
+import { useRef, useState } from "react";
+import {deleteCartItem} from "@/services/student";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -72,11 +75,30 @@ export const columns: ColumnDef<OrderItems>[] = [
         id: "actions",
         cell: ({ row }) => {
             const order = row.original
+    const triggerRef = useRef<HTMLButtonElement | null>(null);
+            const handleConfirm = async () => {
+                                    window.location.reload();
 
+                const res = await deleteCartItem(order.id);
+                
+            };
             return (
-                <div className="cursor-pointer" onClick={() => (alert("Delete cart item " + order.id))}>
+                <>
+                <div className="cursor-pointer" onClick={() =>  triggerRef.current?.click()}>
                     <CircleX className="h-5 w-5 hover:text-Red"/>
-                </div>
+                    </div>
+                     <AlertModal
+                                                  title="Xác nhận xóa"
+                                                  description="Bạn có chắc chắn muốn xóa khóa học khỏi giỏ hàng?"
+                                                  trigger={
+                                                      <button
+                                                          ref={triggerRef}
+                                                          style={{ display: "none" }} // Ẩn trigger button
+                                                      />
+                                                  }
+                                                     onConfirm={handleConfirm}
+                                               />
+                    </>
             )
         },
     },

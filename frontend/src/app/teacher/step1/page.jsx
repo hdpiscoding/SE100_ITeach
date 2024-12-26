@@ -6,19 +6,55 @@ import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
 import { useRouter } from "next/navigation";
 import{createNewCourse} from "@/services/teacher";
+import { getAllCourseCategory } from "@/services/student";
+import { useState,useEffect,useRef} from "react";
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 
-function handleEditorChange({ html, text }) {
-  console.log('handleEditorChange', html, text);
-}
-const handleCreateCourse=()=>
-{
-  router.push("/teacher/step2")
-}
+
 const Step1 = () => {
   const router = useRouter();
   const [imagePreview, setImagePreview] = React.useState(null);
   const fileInputRef = React.useRef(null);
+  const [courseName, setCourseName] = useState("");
+   const [courseCategory, setCourseCategory] = useState([]);
+   const [level, setLevel] = useState("begin");
+   const [price, setPrice] = useState();
+   const [intro, setIntro] = useState();
+   const editorContent = useRef("");
+   const [courseCategoryId, setCourseCategoryId] = useState("");
+    useEffect(() => {
+       const fetchCourseCategory = async () => {
+         const response = await getAllCourseCategory();
+         setCourseCategory(response.data);
+         if (response.data.length > 0) {
+          setCourseCategoryId(response.data[0].id);
+        }
+       };
+       fetchCourseCategory();
+     }, []);
+  function handleEditorChange({ html, text }) {
+    editorContent.current = html;
+  }
+  const handleCreateCourse = async () => {
+    const courseData = {
+      courseName: courseName,
+      courseCategoryId: courseCategoryId,
+      cost: price,
+      level: level,
+      intro: intro,
+      gioiThieu: editorContent.current,
+      anhBia: "anhBia",
+      teacherId: "98e89016-b2d1-49a4-84b5-7d1e361a007c"
+    };
+    console.log(courseData);
+  
+    const response = await createNewCourse(courseData);
+    if (response) {
+      router.push("/teacher/step2");
+    } else {
+      console.error("Failed to create course");
+    }
+  };
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -33,6 +69,7 @@ const Step1 = () => {
   const handleImageClick = () => {
     fileInputRef.current.click();
   };
+ 
   return (
     <div className="mb-20">
       <div className="space-y-3 md:space-y-5 lg:space-y-7 grid grid-cols-[0.5fr_11fr_0.5fr]">
@@ -56,6 +93,7 @@ const Step1 = () => {
             <div className="lg:col-span-2 md:col-span-2 col-span-2">
               <label htmlFor="name">Tên khóa học</label>
               <input
+                onChange={(e) => setCourseName(e.target.value)}
                 type="text"
                 id="name"
                 className="w-full h-[40px] border border-gray rounded-md p-2"
@@ -64,14 +102,17 @@ const Step1 = () => {
             <div className="col-span-1">
               <label htmlFor="type">Loại</label>
               <select
-                id="type"
-                className="w-full h-[40px] border border-gray rounded-md p-2 bg-white"
-              >
-                <option value="">Selects</option>
-                <option value="online">Online</option>
-                <option value="offline">Offline</option>
-                <option value="hybrid">Hybrid</option>
-              </select>
+              id="courseCategory"
+              className="w-full h-[40px] border border-gray rounded-md p-2 bg-white"
+            value={courseCategoryId}
+                onChange={(e) => setCourseCategoryId(e.target.value)} 
+                  >
+                          {courseCategory.map((category) => (
+                          <option key={category.id} value={category.id}>
+                              {category.categoryName}
+                          </option>
+                    ))}
+            </select>
             </div>
             <div className="col-span-1">
               <label htmlFor="type">Mức độ</label>
@@ -79,15 +120,18 @@ const Step1 = () => {
                 id="type"
                 className="w-full h-[40px] border border-gray rounded-md p-2 bg-white"
               >
-                <option value="">Selects</option>
-                <option value="online">Online</option>
-                <option value="offline">Offline</option>
-                <option value="hybrid">Hybrid</option>
+                 value={level}
+                 onChange={(e) => setLevel(e.target.value)}
+                <option value="begin">Cơ bản</option>
+                <option value="intermediate">Trung cấp</option>
+                <option value="advanced">Nâng cao</option>
               </select>
             </div>
             <div className="col-span-1">
               <label htmlFor="name">Giá</label>
               <input
+                onChange={(e) => setPrice(e.target.value)}
+              value={price}
                 type="text"
                 id="name"
                 className="w-full h-[40px] border border-gray rounded-md p-2"
@@ -98,6 +142,8 @@ const Step1 = () => {
             <div className="lg:col-span-3 md:col-span-5 col-span-5">
               <label htmlFor="name">Mô tả</label>
               <textarea
+                onChange={(e) => setIntro(e.target.value)}
+                value={intro}
                 id="name"
                 className="w-full lg:h-[300px] md:h-[200px] h-[100px] border border-gray rounded-md p-2"
               ></textarea>
@@ -145,7 +191,7 @@ const Step1 = () => {
             <button className="bg-white text-orange px-5 py-2 rounded-md border border-orange">
               Xóa khóa học
             </button>
-            <button onClick={()=>handleCreateCourse} className="bg-orange text-white px-10 py-2 rounded-md">
+            <button onClick={handleCreateCourse} className="bg-orange text-white px-10 py-2 rounded-md">
               Tiếp tục
             </button>
           </div>

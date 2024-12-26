@@ -2,6 +2,7 @@ import express from "express";
 import { auth, checkPermission } from "../middleware/auth";
 import userController from "../controller/userController";
 import studentController from "../controller/studentController";
+import adminController from "../controller/adminController";
 const router = express.Router();
 const initWebRoutes = (app) => {
   ///////////////////////
@@ -66,6 +67,10 @@ const initWebRoutes = (app) => {
     "/api/v1/delete-cart-item",
     studentController.handleDeleteCartItem
   );
+  router.delete(
+    "/api/v1/delete-all-cart-items",
+    studentController.handleDeleteAllCartItems
+  );
   router.put(
     "/api/v1/complete-the-lesson",
     studentController.handleCompleteLesson
@@ -74,7 +79,16 @@ const initWebRoutes = (app) => {
     "/api/v1/get-current-lesson-id",
     studentController.handleGetCurrentLessonId
   );
-
+  router.post("/api/v1/post-payment", studentController.handlePostPayment);
+  router.get("/api/v1/get-a-teacher-info", studentController.handleGetATeacher);
+  router.get(
+    "/api/v1/get-all-course-of-teacher",
+    adminController.handleGetAllCourseOfTeacher
+  );
+  router.post(
+    "/api/v1/create-new-course-category",
+    adminController.handleCreateNewCourseCategory
+  );
   return app.use("/", router);
 };
 export default initWebRoutes;

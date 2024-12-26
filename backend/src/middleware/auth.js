@@ -25,6 +25,14 @@ const studentPaths = [
   "/api/v1/add-to-cart",
   "/api/v1/complete-the-lesson",
   "/api/v1/get-current-lesson-id",
+
+  "/api/v1/delete-cart-item",
+  "/api/v1/delete-all-cart-items",
+  "/api/v1/post-payment",
+
+  "/api/v1/get-student-certificates",
+  "/api/v1/get-a-certificate",
+  "/api/v1/get-a-teacher-info",
 ];
 const teacherPaths = [
   "/api/v1/create-new-course",
@@ -43,6 +51,7 @@ const teacherPaths = [
   "/api/v1/get-all-chapter",
   "/api/v1/put-a-chapter",
   "/api/v1/delete-a-chapter",
+  "/api/v1/get-detail-course-info",
 ];
 const adminPaths = [
   "/api/v1/get-all-teacher",
@@ -50,6 +59,15 @@ const adminPaths = [
   "/api/v1/get-popular-course",
   "/api/v1/get-analysis-information",
   "/api/v1/get-all-reviews",
+  "/api/v1/get-all-courses",
+  "/api/v1/approve-course",
+  "/api/v1/stop-course",
+  "/api/v1/delete-course",
+  "/api/v1/get-all-course-of-teacher",
+  "/api/v1/get-ide-use",
+  "/api/v1/get-all-student-of-course",
+  "/api/v1/get-detail-course-info",
+  "/api/v1/create-new-course-category",
 ];
 const commonPaths = [
   "/api/v1/update-user-info",
@@ -59,6 +77,7 @@ const commonPaths = [
 ];
 
 const auth = (req, res, next) => {
+  console.log(">>>Path:", req.path);
   if (nonSecurePaths.includes(req.path)) {
     return next();
   }

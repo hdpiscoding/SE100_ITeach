@@ -9,16 +9,27 @@ This method is not a part of Sequelize lifecycle.
 The models/index file will call this method automatically.*/
     static associate(models) {
       Lesson.belongsTo(models.Chapter, {
-        foreignKey: "course",
+        foreignKey: "chapter",
         as: "lessons",
       });
     }
   }
   Lesson.init(
     {
-      courseId: DataTypes.INTEGER,
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+      },
+      courseId: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+      },
       name: DataTypes.STRING,
-      chapter: DataTypes.INTEGER,
+      chapter: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+      },
       studyTime: DataTypes.DOUBLE,
     },
     {

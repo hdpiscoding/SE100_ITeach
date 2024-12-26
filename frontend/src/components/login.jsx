@@ -4,8 +4,11 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useRef } from "react";
+import {login} from "@/services/auth";
+import { toast } from "react-toastify";
 
-const Login = ({ isOpen, onClose, onLogin }) => {
+
+const Login = ({ isOpen, onClose, onLogin,setLogin, setRole }) => {
   if (!isOpen) return null;
   const router = useRouter();
   const emailRef = useRef();
@@ -13,11 +16,44 @@ const Login = ({ isOpen, onClose, onLogin }) => {
   const handleSubmit = () => {
     const email = emailRef.current.value;
     const password = passwordRef.current.value;
+    
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+      toast.error("Email không hợp lệ");
+      return;
+    }
+
+    if (!password || password.length < 6) {
+      toast.error("Mật khẩu phải có ít nhất 6 ký tự");
+      return;
+    }
     const data = {
       email,
       password,
     };
-    console.log("data", data);
+    login(data).then((response) => {
+      console.log("response", response);
+      if (response?.errCode === 0) {
+        onClose();
+        setLogin(true);
+        router.push("/");
+        localStorage.setItem("access_token", response.access_token);
+        if(response.user.role === "R1") {
+          setRole("student");
+        }
+        else if(response.user.role === "R2") {
+          setRole("teacher");
+        }
+        else {
+          setRole("admin");
+        }
+
+      }
+      else {
+        toast.error(response?.message);
+      }
+    });
   }
 
   return (

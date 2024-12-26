@@ -11,6 +11,13 @@ let handleCreateNewUser = async (req, res) => {
       message: "Missing required fields",
     });
   }
+  if (req.body.role === "R2" && !req.body.firstName && !req.body.lastName) {
+    return res.status(500).json({
+      errCode: 1,
+      message: "Missing required fields",
+    });
+  }
+
   let message = await userService.createNewUser(req.body);
   return res.status(200).json(message);
 };
