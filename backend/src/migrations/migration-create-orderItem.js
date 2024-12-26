@@ -5,18 +5,18 @@ module.exports = {
     await queryInterface.createTable("OrderItems", {
       id: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
       },
       orderId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
       },
       courseId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
       },
       reviewId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
       },
 
       createdAt: {

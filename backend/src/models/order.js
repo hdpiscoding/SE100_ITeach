@@ -16,8 +16,15 @@ The models/index file will call this method automatically.*/
   }
   Order.init(
     {
-      userId: DataTypes.INTEGER,
-
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+      },
+      userId: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+      },
       totalCost: DataTypes.DOUBLE,
     },
     {

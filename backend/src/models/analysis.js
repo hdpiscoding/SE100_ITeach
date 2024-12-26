@@ -11,6 +11,11 @@ The models/index file will call this method automatically.*/
   }
   Analysis.init(
     {
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+      },
       month: DataTypes.INTEGER,
       year: DataTypes.INTEGER,
       totalStudent: DataTypes.INTEGER,

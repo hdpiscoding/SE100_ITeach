@@ -5,13 +5,12 @@ module.exports = {
     await queryInterface.createTable("Reviews", {
       id: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
       },
-
       userId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
       },
       content: {
         type: Sequelize.TEXT("long"),
@@ -20,10 +19,10 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       courseId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
       },
       teacherId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
       },
       createdAt: {
         allowNull: false,

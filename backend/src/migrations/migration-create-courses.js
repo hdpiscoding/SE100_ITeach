@@ -5,18 +5,15 @@ module.exports = {
     await queryInterface.createTable("Courses", {
       id: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
       },
       courseName: {
         type: Sequelize.STRING,
       },
       courseCategoryId: {
-        type: Sequelize.INTEGER,
-      },
-      courseCategoryId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
       },
       cost: {
         type: Sequelize.DOUBLE,
@@ -47,13 +44,13 @@ module.exports = {
         type: Sequelize.TEXT("long"),
       },
       anhBia: {
-        type: Sequelize.BLOB("long"),
-      },
-      chungchiId: {
         type: Sequelize.STRING,
       },
+      chungchiId: {
+        type: Sequelize.UUID,
+      },
       teacherId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
       },
       totalLesson: {
         type: Sequelize.INTEGER,

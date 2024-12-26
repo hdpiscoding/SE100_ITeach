@@ -16,9 +16,23 @@ The models/index file will call this method automatically.*/
   }
   LessonComment.init(
     {
-      lessonId: DataTypes.INTEGER,
-      parrentCommentId: DataTypes.INTEGER,
-      userId: DataTypes.INTEGER,
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+      },
+      lessonId: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+      },
+      parrentCommentId: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+      },
+      userId: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+      },
       content: DataTypes.TEXT,
     },
     {

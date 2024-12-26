@@ -5,12 +5,12 @@ module.exports = {
     await queryInterface.createTable("Lessons", {
       id: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
       },
       courseId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
       },
       chapter: {
         type: Sequelize.INTEGER,

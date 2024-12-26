@@ -16,11 +16,25 @@ The models/index file will call this method automatically.*/
   }
   Review.init(
     {
-      userId: DataTypes.INTEGER,
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+      },
+      userId: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+      },
       content: DataTypes.TEXT,
       star: DataTypes.INTEGER,
-      courseId: DataTypes.INTEGER,
-      teacherId: DataTypes.INTEGER,
+      courseId: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+      },
+      teacherId: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+      },
     },
     {
       sequelize,
