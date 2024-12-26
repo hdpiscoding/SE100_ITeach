@@ -1,15 +1,19 @@
-"use client";
+ "use client";
 import React from "react";
 import Image from "next/image";
 import MarkdownIt from "markdown-it";
-import MDEditor from "@uiw/react-md-editor";
+import MdEditor from 'react-markdown-editor-lite';
+import 'react-markdown-editor-lite/lib/index.css';
 import { useRouter } from "next/navigation";
-const md = new MarkdownIt();
+const mdParser = new MarkdownIt(/* Markdown-it options */);
+
+function handleEditorChange({ html, text }) {
+  console.log('handleEditorChange', html, text);
+}
 const Step1 = () => {
   const router = useRouter();
   const [imagePreview, setImagePreview] = React.useState(null);
   const fileInputRef = React.useRef(null);
-  const [markdownContent, setMarkdownContent] = React.useState("");
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -130,12 +134,7 @@ const Step1 = () => {
             Giới thiệu
           </h1>
           <div className=" border border-gray rounded-md p-5">
-            <MDEditor
-              value={markdownContent}
-              onChange={setMarkdownContent}
-              preview="live" // Hiển thị cả editor và preview
-              height={400}
-            />
+          <MdEditor style={{ height: '500px' }} renderHTML={text => mdParser.render(text)} onChange={handleEditorChange} />
           </div>
           <div className="flex justify-end space-x-3">
             <button className="bg-white text-orange px-5 py-2 rounded-md border border-orange">

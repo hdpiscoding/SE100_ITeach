@@ -12,9 +12,9 @@ const CourseTeacher = () => {
   const [username, setUsername] = useState("");
   const [khoahoc, setKhoahoc] = useState(0);
   const [hocvien, setHocvien] = useState(0);
+  const [myCourse, setMyCourse] = useState([]);
 
-
-  const [activeTab, setActiveTab] = useState("registered");
+  const [activeTab, setActiveTab] = useState("active");
   const router = useRouter();
   const fetchMyAccount = async () => {
     const response = await getMyAccount(tId);
@@ -28,11 +28,11 @@ const CourseTeacher = () => {
   {
     const response = await getMyCourse(tId);
     if (response && response.data) {
-      console.log(response.data);
       setKhoahoc(response.data.courses.length);
       response.data.courses.map((course) => {
         setHocvien(hocvien+course.totalStudent);
       });
+      setMyCourse(response.data.courses);
     }
   };
   useEffect(() => {
@@ -86,37 +86,47 @@ const CourseTeacher = () => {
           <div className="flex justify-start items-center space-x-10 my-10 lg:text-2xl md:text-xl text-xs">
             <span
               className={`cursor-pointer ${
-                activeTab === "registered" ? "text-orange" : "text-black"
+                activeTab === "active" ? "text-orange" : "text-black"
               }`}
-              onClick={() => setActiveTab("registered")}
+              onClick={() => setActiveTab("active")}
             >
               Đang hoạt động({khoahoc})
             </span>
             <span
               className={`cursor-pointer ${
-                activeTab === "suggested" ? "text-orange" : "text-black"
+                activeTab === "approval" ? "text-orange" : "text-black"
               }`}
-              onClick={() => setActiveTab("suggested")}
+              onClick={() => setActiveTab("approval")}
             >
               Đang chờ duyệt
             </span>
             <span
               className={`cursor-pointer ${
-                activeTab === "certificate" ? "text-orange" : "text-black"
+                activeTab === "pause" ? "text-orange" : "text-black"
               }`}
-              onClick={() => setActiveTab("certificate")}
+              onClick={() => setActiveTab("pause")}
             >
               Tạm dừng
             </span>
           </div>
           <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-6 ">
-            <Coursecard />
-            <Coursecard />
-            <Coursecard />
-            <Coursecard />
-            <Coursecard />
-            <Coursecard />
-            <Coursecard />
+          {myCourse
+    .filter(course => {
+      if (activeTab === "active") return course.courseStatus === "CS1";
+      if (activeTab === "approval") return course.courseStatus === "CS2";
+      if (activeTab === "pause") return course.courseStatus === "CS3";
+      return false;
+    })
+    .map((course) => (
+      <Coursecard
+        key={course.id}
+        courseName={course.courseName}
+        cost={course.cost}
+        discount={course.discount}
+        intro={course.intro}
+      
+      />
+    ))}
           </div>
         </div>
         <div></div>

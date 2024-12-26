@@ -28,7 +28,7 @@ const Coursecard = ({courseName, cost, discount, intro}) => {
       <div className='flex flex-wrap justify-between mx-3 sm:mx-4 items-center pb-3 sm:pb-4 gap-2'>
         <div className='flex items-center'>
           <span className='text-orange font-semibold sm:text-sm md:text-lg lg:text-xl text-xs'>
-           ${discount*cost}
+           ${(1-discount)*cost}
           </span>
           <span className='line-through ml-2 text-gray-500 text-sm'>
             ${cost}
