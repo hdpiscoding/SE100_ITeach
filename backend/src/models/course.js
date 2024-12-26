@@ -27,8 +27,16 @@ module.exports = (sequelize, DataTypes) => {
 
   Course.init(
     {
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+      },
       courseName: DataTypes.STRING,
-      courseCategoryId: DataTypes.INTEGER,
+      courseCategoryId: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+      },
       cost: DataTypes.DOUBLE,
       level: DataTypes.STRING,
       discount: DataTypes.DOUBLE,
@@ -38,9 +46,15 @@ module.exports = (sequelize, DataTypes) => {
       intro: DataTypes.TEXT,
       finishTime: DataTypes.STRING,
       gioiThieu: DataTypes.TEXT("long"),
-      anhBia: DataTypes.TEXT("long"),
-      chungchiId: DataTypes.STRING,
-      teacherId: DataTypes.INTEGER,
+      anhBia: DataTypes.STRING,
+      chungchiId: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+      },
+      teacherId: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+      },
       totalLesson: DataTypes.INTEGER,
       totalStudent: DataTypes.INTEGER,
     },

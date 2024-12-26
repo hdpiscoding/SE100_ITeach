@@ -17,8 +17,16 @@ The models/index file will call this method automatically.*/
   }
   Chapter.init(
     {
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+      },
       chapterName: DataTypes.STRING,
-      courseId: DataTypes.INTEGER,
+      courseId: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+      },
     },
     {
       sequelize,

@@ -85,7 +85,10 @@ const initWebRoutes = (app) => {
     "/api/v1/get-all-course-of-teacher",
     adminController.handleGetAllCourseOfTeacher
   );
-
+  router.post(
+    "/api/v1/create-new-course-category",
+    adminController.handleCreateNewCourseCategory
+  );
   return app.use("/", router);
 };
 export default initWebRoutes;

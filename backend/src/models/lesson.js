@@ -16,9 +16,20 @@ The models/index file will call this method automatically.*/
   }
   Lesson.init(
     {
-      courseId: DataTypes.INTEGER,
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+      },
+      courseId: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+      },
       name: DataTypes.STRING,
-      chapter: DataTypes.INTEGER,
+      chapter: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+      },
       studyTime: DataTypes.DOUBLE,
     },
     {

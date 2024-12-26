@@ -16,8 +16,19 @@ The models/index file will call this method automatically.*/
   }
   CartItem.init(
     {
-      userId: DataTypes.INTEGER,
-      courseId: DataTypes.INTEGER,
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+      },
+      userId: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+      },
+      courseId: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+      },
     },
     {
       sequelize,

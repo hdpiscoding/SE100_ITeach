@@ -5,17 +5,16 @@ module.exports = {
     await queryInterface.createTable("CartItems", {
       id: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
       },
       userId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
       },
       courseId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
       },
-
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

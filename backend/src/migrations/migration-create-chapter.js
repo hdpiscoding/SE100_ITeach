@@ -5,16 +5,15 @@ module.exports = {
     await queryInterface.createTable("Chapters", {
       id: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
       },
-
       chapterName: {
         type: Sequelize.STRING,
       },
       courseId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
       },
       createdAt: {
         allowNull: false,

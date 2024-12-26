@@ -11,8 +11,16 @@ The models/index file will call this method automatically.*/
   }
   IDEUsed.init(
     {
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+      },
       date: DataTypes.DATE,
-      courseId: DataTypes.INTEGER,
+      courseId: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+      },
       number: DataTypes.INTEGER,
     },
     {
