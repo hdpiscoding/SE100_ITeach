@@ -30,3 +30,17 @@ const getMyCourse = async (teacherId) => {
 }
 };
 export { getMyCourse };
+const createNewCourse = async (data) => {
+  try {
+    const response = await axios.post("api/v1/create-new-course", data, {
+      headers: {
+        Authorization: teacherToken,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error("Error while creating new course", error);
+    return null;
+  }
+};
+export { createNewCourse };

@@ -5,10 +5,15 @@ import MarkdownIt from "markdown-it";
 import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
 import { useRouter } from "next/navigation";
+import{createNewCourse} from "@/services/teacher";
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 
 function handleEditorChange({ html, text }) {
   console.log('handleEditorChange', html, text);
+}
+const handleCreateCourse=()=>
+{
+  router.push("/teacher/step2")
 }
 const Step1 = () => {
   const router = useRouter();
@@ -140,7 +145,7 @@ const Step1 = () => {
             <button className="bg-white text-orange px-5 py-2 rounded-md border border-orange">
               Xóa khóa học
             </button>
-            <button onClick={()=>router.push("/teacher/step2")} className="bg-orange text-white px-10 py-2 rounded-md">
+            <button onClick={()=>handleCreateCourse} className="bg-orange text-white px-10 py-2 rounded-md">
               Tiếp tục
             </button>
           </div>
