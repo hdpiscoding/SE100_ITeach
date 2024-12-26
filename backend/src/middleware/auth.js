@@ -52,6 +52,7 @@ const teacherPaths = [
   "/api/v1/put-a-chapter",
   "/api/v1/delete-a-chapter",
   "/api/v1/get-detail-course-info",
+  "/api/v1/get-ide-use-by-month",
 ];
 const adminPaths = [
   "/api/v1/get-all-teacher",
