@@ -39,15 +39,6 @@ interface Chapter {
         studyTime: number;
     }];
 }
-interface Course {
-    id: number;
-    name: string;
-    studentCount: number;
-    averageRating: number;
-    studyTime: number;
-    chapterCount: number;
-    lessonCount: number;
-}
 
 interface Teacher {
     id: number;
@@ -62,16 +53,6 @@ interface User {
     email: string,
     avatar: string,
     role: string
-}
-
-const course: Course = {
-    id: 1,
-    name: "Khóa học JavaScript cơ bản cho người mới bắt đầu",
-    studentCount: 100,
-    averageRating: 4.5,
-    studyTime: 930,
-    chapterCount: 8,
-    lessonCount: 26
 }
 
 function findChapterByLessonId(chapters: Chapter[] | undefined, lessonId: string | undefined) {
@@ -92,6 +73,18 @@ const convertMinutes = (minutes: number): string => {
         return `${hours}h`;
     }
     return `${hours}h ${remainingMinutes}m`;
+}
+
+const convertMinutesVN = (minutes: number): string => {
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+    if (hours === 0) {
+        return `${remainingMinutes} phút`;
+    }
+    else if (remainingMinutes === 0) {
+        return `${hours} giờ`;
+    }
+    return `${hours} giờ ${remainingMinutes} phút`;
 }
 
 export default function LessonDetail(props: any) {
@@ -228,9 +221,16 @@ export default function LessonDetail(props: any) {
                     <div className="flex flex-col gap-4">
                         <div className="flex items-center gap-2">
                             <ArrowLeft className="h-7 w-7 cursor-pointer text-DarkGreen" onClick={() => {router.push(`/${props.role}/course/${courseId}`)}}/>
-                            <span className="font-bold text-DarkGreen text-3xl">
-                                {course.name}
-                            </span>
+
+                            {courseName
+                                ?
+                                <span className="font-bold text-DarkGreen text-3xl">
+                                    {courseName}
+                                </span>
+                                :
+                                <Skeleton className="bg-gray w-full h-[36px]"/>
+                            }
+
                         </div>
 
                         <div className="flex items-center justify-between">
@@ -333,7 +333,7 @@ export default function LessonDetail(props: any) {
                                 <span>
                                     Thời lượng học:
                                     <span className="font-semibold text-DarkGreen">
-                                        &nbsp; {convertMinutes(Number(finishTime))}
+                                        &nbsp; {convertMinutesVN(Number(finishTime))}
                                     </span>
                                 </span>
                             </div>
@@ -437,7 +437,7 @@ export default function LessonDetail(props: any) {
                 </div>
 
                 <div className={`${tab === 1 ? 'block' : 'hidden'}`}>
-                    <LessonAssignments exercise={currentLesson?.exerciseHtml}/>
+                    <LessonAssignments exercise={currentLesson?.exerciseHtml} courseId={courseId} role="student"/>
                 </div>
 
                 <div className={`${tab === 2 ? 'block' : 'hidden'}`}>

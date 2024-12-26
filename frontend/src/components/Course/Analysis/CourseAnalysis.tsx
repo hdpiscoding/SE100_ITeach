@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 import React, {useEffect, useMemo, useState} from 'react';
 import {ArrowLeft, Star, Users} from "lucide-react";
 import Image from "next/image";
 import {FaUser} from "react-icons/fa";
-import {format, parse} from "date-fns";
+import {format, getDaysInMonth, parse, parseISO} from "date-fns";
 import DatePicker from "@/components/ui/date-picker";
 import {
     ChartConfig,
@@ -15,40 +16,93 @@ import {CartesianGrid, Legend, Line, LineChart, XAxis, Label, Pie, PieChart} fro
 import {Button} from "@/components/ui/button";
 import {DataTable} from "@/components/ui/data-table";
 import {columns} from "@/components/Course/Analysis/column";
+import {useParams, useRouter} from "next/navigation";
+import {getCourses, getLessonDetail} from "@/services/course";
+import {Skeleton} from "@/components/ui/skeleton";
+import {getIDEUsed} from "@/services/courseAnalysis";
 
-const currentMonthData = [
-    { date: "01", IDE_used_count: 5 },
-    { date: "02", IDE_used_count: 8 },
-    { date: "03", IDE_used_count: 4 },
-    { date: "04", IDE_used_count: 7 },
-    { date: "05", IDE_used_count: 6 },
-    { date: "06", IDE_used_count: 3 },
-    { date: "07", IDE_used_count: 9 },
-    { date: "08", IDE_used_count: 2 },
-    { date: "09", IDE_used_count: 4 },
-    { date: "10", IDE_used_count: 5 },
-    { date: "11", IDE_used_count: 6 },
-    { date: "12", IDE_used_count: 7 },
-    { date: "13", IDE_used_count: 3 },
-    { date: "14", IDE_used_count: 4 },
-    { date: "15", IDE_used_count: 8 },
-    { date: "16", IDE_used_count: 9 },
-    { date: "17", IDE_used_count: 10 },
-    { date: "18", IDE_used_count: 2 },
-    { date: "19", IDE_used_count: 3 },
-    { date: "20", IDE_used_count: 4 },
-    { date: "21", IDE_used_count: 6 },
-    { date: "22", IDE_used_count: 8 },
-    { date: "23", IDE_used_count: 5 },
-    { date: "24", IDE_used_count: 4 },
-    { date: "25", IDE_used_count: 3 },
-    { date: "26", IDE_used_count: 7 },
-    { date: "27", IDE_used_count: 6 },
-    { date: "28", IDE_used_count: 9 },
-    { date: "29", IDE_used_count: 2 },
-    { date: "30", IDE_used_count: 5 },
-    { date: "31", IDE_used_count: 4 },
-];
+interface RawData {
+    id: number;
+    date: string;
+    courseId: string;
+    number: number;
+}
+
+interface MonthlyData {
+    date: string;
+    IDE_used_count: number;
+}
+
+function transformRawDataToCurrentMonthData(rawData: RawData[], year: number, month: number): MonthlyData[] {
+    // Tính số ngày trong tháng
+    const daysInMonth = getDaysInMonth(new Date(year, month - 1));
+
+    // Khởi tạo currentMonthData với IDE_used_count = 0
+    const currentMonthData: MonthlyData[] = Array.from({ length: daysInMonth }, (_, index) => ({
+        date: String(index + 1).padStart(2, "0"),
+        IDE_used_count: 0,
+    }));
+
+    // Chuyển đổi rawData thành map để dễ tra cứu
+    const rawDataMap: { [key: string]: number } = {};
+    rawData.forEach((item) => {
+        const itemDate = parseISO(item.date); // Chuyển đổi ISO date thành đối tượng Date
+        const itemYear = itemDate.getFullYear();
+        const itemMonth = itemDate.getMonth() + 1;
+        const itemDay = itemDate.getDate();
+
+        if (itemYear === year && itemMonth === month) {
+            const dayKey = String(itemDay).padStart(2, "0");
+            if (!rawDataMap[dayKey]) {
+                rawDataMap[dayKey] = 0;
+            }
+            rawDataMap[dayKey] += item.number;
+        }
+    });
+
+    // Gán giá trị từ rawDataMap vào currentMonthData
+    currentMonthData.forEach((item) => {
+        if (rawDataMap[item.date]) {
+            item.IDE_used_count = rawDataMap[item.date];
+        }
+    });
+
+    return currentMonthData;
+}
+
+// const currentMonthData = [
+//     { date: "01", IDE_used_count: 5 },
+//     { date: "02", IDE_used_count: 8 },
+//     { date: "03", IDE_used_count: 4 },
+//     { date: "04", IDE_used_count: 7 },
+//     { date: "05", IDE_used_count: 6 },
+//     { date: "06", IDE_used_count: 3 },
+//     { date: "07", IDE_used_count: 9 },
+//     { date: "08", IDE_used_count: 2 },
+//     { date: "09", IDE_used_count: 4 },
+//     { date: "10", IDE_used_count: 5 },
+//     { date: "11", IDE_used_count: 6 },
+//     { date: "12", IDE_used_count: 7 },
+//     { date: "13", IDE_used_count: 3 },
+//     { date: "14", IDE_used_count: 4 },
+//     { date: "15", IDE_used_count: 8 },
+//     { date: "16", IDE_used_count: 9 },
+//     { date: "17", IDE_used_count: 10 },
+//     { date: "18", IDE_used_count: 2 },
+//     { date: "19", IDE_used_count: 3 },
+//     { date: "20", IDE_used_count: 4 },
+//     { date: "21", IDE_used_count: 6 },
+//     { date: "22", IDE_used_count: 8 },
+//     { date: "23", IDE_used_count: 5 },
+//     { date: "24", IDE_used_count: 4 },
+//     { date: "25", IDE_used_count: 3 },
+//     { date: "26", IDE_used_count: 7 },
+//     { date: "27", IDE_used_count: 6 },
+//     { date: "28", IDE_used_count: 9 },
+//     { date: "29", IDE_used_count: 2 },
+//     { date: "30", IDE_used_count: 5 },
+//     { date: "31", IDE_used_count: 4 },
+// ];
 
 const pieChartData = [
     {
@@ -99,50 +153,42 @@ const updateDateWithMonthAndYear = (currentMonth: Date | undefined, data: Array<
     });
 };
 
-interface Course {
-    id: number;
-    name: string;
-    studentCount: number;
-    averageRating: number;
-    studyTime: number;
-    chapterCount: number;
-    lessonCount: number;
-}
-
 interface User {
     id: string,
     email: string,
+    firstName: string,
+    lastName: string,
     avatar: string,
     role: string
 }
 
+interface Teacher {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    avatar: string;
+}
+
 const user: User = {
-    id: "u1a2b3c4d5e6f7g8h9i0",
+    id: "1",
+    firstName: "Cristiano",
+    lastName: "Ronaldo dos Santos Aveiro",
     email: "hdp@gmail.com",
     avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
     role: "teacher"
 }
 
-const course: Course = {
-    id: 1,
-    name: "Khóa học JavaScript cơ bản cho người mới bắt đầu",
-    studentCount: 100,
-    averageRating: 4.5,
-    studyTime: 930,
-    chapterCount: 8,
-    lessonCount: 26
-}
-
-const convertMinutes = (minutes: number): string => {
+const convertMinutesVN = (minutes: number): string => {
     const hours = Math.floor(minutes / 60);
     const remainingMinutes = minutes % 60;
     if (hours === 0) {
-        return `${remainingMinutes}m`;
+        return `${remainingMinutes} phút`;
     }
     else if (remainingMinutes === 0) {
-        return `${hours}h`;
+        return `${hours} giờ`;
     }
-    return `${hours}h ${remainingMinutes}m`;
+    return `${hours} giờ ${remainingMinutes} phút`;
 }
 
 interface Student {
@@ -176,8 +222,8 @@ const students: Student[] = [
     },
     {
         id: "3",
-        firstName: "Trần",
-        lastName: "Bảo Ngọc",
+        firstName: "",
+        lastName: "",
         phone: "0934567890",
         email: "bao.ngoc.tran@example.com",
         birthday: "03/03/2005",
@@ -249,8 +295,20 @@ const students: Student[] = [
 ]
 
 export default function CourseAnalysis() {
+    const { courseId } = useParams();
+    const router = useRouter();
+
+    const [courseName, setCourseName] = useState<string>("");
+    const [totalStudent, setTotalStudent] = useState<number>();
+    const [averageRating, setAverageRating] = useState<number>();
+    const [finishTime, setFinishTime] = useState<number>();
+    const [chapterCount, setChapterCount] = useState<number>();
+    const [lessonCount, setLessonCount] = useState<number>();
+    const [teacher, setTeacher] = useState<Teacher>();
+
     const [isShowDetail, setIsShowDetail] = useState<boolean>(false);
-    const [currentMonth, setCurrentMonth] = useState<Date | undefined>(new Date("2022-07-01"));
+    const [currentMonth, setCurrentMonth] = useState<Date | undefined>(new Date(Date.now()));
+    const [currentMonthData, setCurrentMonthData] = useState<MonthlyData[]>([]);
     const [lineChartData, setLineChartData] = useState(updateDateWithMonthAndYear(currentMonth, currentMonthData));
 
     const handleShowDetail = () => {
@@ -267,27 +325,69 @@ export default function CourseAnalysis() {
         },
     } satisfies ChartConfig
 
+    useEffect(() => {
+        const fetchData = async () => {
+            const rawData = await getIDEUsed(String(courseId), Number(currentMonth?.getMonth()) + 1, Number(currentMonth?.getFullYear() || 0));
+            setCurrentMonthData(transformRawDataToCurrentMonthData(rawData, currentMonth?.getFullYear() || 0, (currentMonth?.getMonth() || 0) + 1));
+        }
+
+        fetchData();
+    }, [currentMonth]);
+
+    useEffect(() => {
+        const today = new Date(Date.now());
+        const fetchData = async () => {
+            const [rawData, courseData] = await Promise.all([
+                getIDEUsed(String(courseId), Number(today.getMonth()) + 1, Number(today.getFullYear() || 0)),
+                getCourses(String(courseId), String(user.id))
+            ]);
+            //const courseData = await getCourses(String(courseId), String(user.id));
+            setCurrentMonth(today);
+            setCourseName(courseData.course.courseName);
+            setTotalStudent(courseData.course.totalStudent);
+            setAverageRating(courseData.course.totalStars);
+            setFinishTime(courseData.course.finishTime);
+            setChapterCount(courseData.chapters?.length);
+            setLessonCount(courseData.course.totalLesson);
+            setTeacher(courseData.course.teacher);
+
+            setCurrentMonthData(transformRawDataToCurrentMonthData(rawData, today.getFullYear(), today.getMonth() + 1));
+        }
+
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        setLineChartData(updateDateWithMonthAndYear(currentMonth, currentMonthData));
+    }, [currentMonthData, currentMonth]);
+
     return (
         <div className="grid grid-cols-[0.5fr_11fr_0.5fr] py-6">
             <div className="col-start-2 flex flex-col gap-12 text-center">
-                <div className="grid lg:grid-cols-[68%_1%_31%] grid-cols-1 gap-4 lg:gap-0">
+                <div className="grid lg:grid-cols-[68%_1%_31%] grid-cols-1 gap-4 lg:gap-0 text-left">
                     <div className="flex flex-col gap-4">
-                        <div className="flex items-center gap-2 text-left">
+                        <div className="flex items-center gap-2">
                             <ArrowLeft className="h-7 w-7 cursor-pointer text-DarkGreen" onClick={() => {
-                                // router.push(`/teacher/course/${course.id}`)
+                                //router.push(`/${props.role}/course/${courseId}`)
                             }}/>
-                            <span className="font-bold text-DarkGreen text-3xl">
-                                {course.name}
-                            </span>
+
+                            {courseName
+                                ?
+                                <span className="font-bold text-DarkGreen text-3xl">
+                                    {courseName}
+                                </span>
+                                :
+                                <Skeleton className="bg-gray w-full h-[36px]"/>
+                            }
                         </div>
 
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-4">
-                                {user.avatar ?
+                                {teacher?.avatar ?
                                     <div
                                         className="relative rounded-[50%] overflow-hidden h-[60px] w-[60px]">
                                         <Image
-                                            src={user.avatar}
+                                            src={String(teacher?.avatar)}
                                             alt="user avatar"
                                             className="object-cover"
                                             fill
@@ -299,59 +399,87 @@ export default function CourseAnalysis() {
                                         <FaUser className="text-3xl text-LightGray"/>
                                     </div>}
 
-                                <span className="text-Lime font-semibold">
-                                    {user.email}
-                                </span>
+                                <div className="flex flex-col gap-1">
+                                    {teacher
+                                        ?
+                                        (teacher?.firstName && teacher?.lastName
+                                            &&
+                                            <span className="font-semibold">
+                                                {teacher?.firstName + " " + teacher?.lastName}
+                                            </span>)
+                                        :
+                                        <Skeleton className="bg-gray w-[200px] h-[24px]"/>
+                                    }
+
+                                    {teacher
+                                        ?
+                                        <span className="text-Lime font-semibold text-sm">
+                                            {teacher?.email}
+                                        </span>
+                                        :
+                                        <Skeleton className="bg-gray w-[200px] h-[20px]"/>
+                                    }
+                                </div>
                             </div>
 
-                            <div className="flex items-center gap-4 mr-4">
-                                <div className="flex items-center gap-2">
-                                    <Users className="h-5 w-5 text-orange"/>
+                            {(totalStudent != null && averageRating != null)
+                                ?
+                                <div className="flex items-center gap-4 mr-4">
+                                    <div className="flex items-center gap-2">
+                                        <Users className="h-5 w-5 text-orange"/>
 
-                                    <span className="font-semibold">
-                                        {course.studentCount}
-                                    </span>
+                                        <span className="font-semibold">
+                                            {totalStudent}
+                                        </span>
+                                    </div>
+
+                                    <div className="flex items-center gap-2">
+                                        <Star className="h-5 w-5 text-orange"/>
+
+                                        <span className="font-semibold">
+                                            {averageRating}
+                                        </span>
+                                    </div>
                                 </div>
-
-                                <div className="flex items-center gap-2">
-                                    <Star className="h-5 w-5 text-orange"/>
-
-                                    <span className="font-semibold">
-                                        {course.averageRating}
-                                    </span>
-                                </div>
-                            </div>
+                                :
+                                <Skeleton className="bg-gray lg:w-[200px] w-[100px] h-[24px]"/>
+                            }
                         </div>
                     </div>
 
-                    <div className="lg:col-start-3 bg-LighterGray rounded-2xl p-4 flex flex-col gap-6 text-left">
-                        <span className="text-xl font-semibold">
-                            Tổng quan
-                        </span>
-
-                        <div className="grid grid-cols-1 gap-3">
-                            <span>
-                                Số chương:
-                                <span className="font-semibold text-DarkGreen">
-                                    &nbsp; {course.chapterCount}
-                                </span>
+                    {(chapterCount != null && lessonCount != null && finishTime != null)
+                        ?
+                        <div className="lg:col-start-3 bg-LighterGray rounded-2xl p-4 flex flex-col gap-6">
+                            <span className="text-xl font-semibold">
+                                Tổng quan
                             </span>
 
-                            <span>
+                            <div className="grid grid-cols-1 gap-3">
+                                <span>
+                                    Số chương:
+                                    <span className="font-semibold text-DarkGreen">
+                                        &nbsp; {chapterCount}
+                                    </span>
+                                </span>
+
+                                <span>
                                 Số bài học:
-                                <span className="font-semibold text-DarkGreen">
-                                    &nbsp; {course.lessonCount}
+                                    <span className="font-semibold text-DarkGreen">
+                                        &nbsp; {lessonCount}
+                                    </span>
                                 </span>
-                            </span>
 
-                            <span>
-                                Thời lượng học:
-                                <span className="font-semibold text-DarkGreen">
-                                    &nbsp; {convertMinutes(course.studyTime)}
+                                <span>
+                                    Thời lượng học:
+                                    <span className="font-semibold text-DarkGreen">
+                                        &nbsp; {convertMinutesVN(Number(finishTime))}
+                                    </span>
                                 </span>
-                            </span>
+                            </div>
                         </div>
-                    </div>
+                        :
+                        <Skeleton className="bg-gray rounded-2xl w-full h-[180px] lg:col-start-3"/>
+                    }
                 </div>
 
                 <div>
@@ -369,7 +497,8 @@ export default function CourseAnalysis() {
                         <DatePicker className="" date={currentMonth} setDate={setCurrentMonth} type={"month"}/>
                     </div>
 
-                    <ChartContainer config={chartConfig} className="min-h-[100px] h-[400px] w-[420px] md:w-full lg:w-full">
+                    <ChartContainer config={chartConfig}
+                                    className="min-h-[100px] h-[400px] w-[420px] md:w-full lg:w-full">
                         <LineChart
                             accessibilityLayer
                             data={lineChartData}
@@ -378,7 +507,7 @@ export default function CourseAnalysis() {
                                 right: 12,
                             }}
                         >
-                            <CartesianGrid vertical={false} />
+                            <CartesianGrid vertical={false}/>
                             <XAxis
                                 dataKey="date"
                                 tickLine={false}
@@ -389,7 +518,7 @@ export default function CourseAnalysis() {
                                     const day = parsedDate.getDate();
                                     return day % 5 === 1 ? String(day) : '';
                                 }}/>
-                            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+                            <ChartTooltip cursor={false} content={<ChartTooltipContent/>}/>
                             <Line
                                 dataKey="IDE_used_count"
                                 type="monotone"
@@ -413,7 +542,7 @@ export default function CourseAnalysis() {
                             <PieChart>
                                 <ChartTooltip
                                     cursor={false}
-                                    content={<ChartTooltipContent hideLabel />}
+                                    content={<ChartTooltipContent hideLabel/>}
                                 />
                                 <Pie
                                     data={pieChartData}
@@ -423,7 +552,7 @@ export default function CourseAnalysis() {
                                     strokeWidth={5}
                                 >
                                     <Label
-                                        content={({ viewBox }) => {
+                                        content={({viewBox}) => {
                                             if (viewBox && "cx" in viewBox && "cy" in viewBox) {
                                                 return (
                                                     <text
@@ -453,7 +582,8 @@ export default function CourseAnalysis() {
                                     />
                                 </Pie>
 
-                                <ChartLegend content={<ChartLegendContent nameKey="status" className="text-sm font-semibold"/>}
+                                <ChartLegend
+                                    content={<ChartLegendContent nameKey="status" className="text-sm font-semibold"/>}
                                 />
                             </PieChart>
                         </ChartContainer>

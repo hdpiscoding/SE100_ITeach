@@ -16,6 +16,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {Label} from "@/components/ui/label";
 import {submitCode, getSubmission} from "@/services/Judge0"
 import ReactMarkdown from "react-markdown";
+import {postIDEUsed} from "@/services/courseAnalysis";
 
 
 interface Language {
@@ -121,7 +122,17 @@ export default function LessonAssignments(props: any) {
         try {
             setOutputLoading(true);
             // Gửi submission
-            const submitResponse = await submitCode(payload);
+            let submitResponse;
+            if (props.role === "student") {
+                const [tempResponse, _] = await Promise.all([
+                    submitCode(payload),
+                    postIDEUsed(props.courseId)
+                ]);
+                submitResponse = tempResponse;
+            }
+            else{
+                submitResponse = await submitCode(payload);
+            }
 
             // Polling để kiểm tra trạng thái
             let getResponse;

@@ -397,7 +397,10 @@ export default function CourseDetail(props: any) {
                                     </Button>
 
                                     <Button className="bg-DarkGreen text-white hover:bg-DarkGreen_Hover rounded-2xl"
-                                            onClick={() => router.push(`/teacher/course/${courseId}/analysis`)}>
+                                            onClick={() => {
+                                                setIsPending(true);
+                                                router.push(`/teacher/course/${courseId}/analysis`);
+                                            }}>
                                         <span className="font-semibold">
                                             Xem phân tích
                                         </span>
@@ -419,7 +422,10 @@ export default function CourseDetail(props: any) {
                                     </Button>
 
                                     <Button className="bg-DarkGreen text-white hover:bg-DarkGreen_Hover rounded-2xl"
-                                            onClick={() => router.push(`/admin/course/${courseId}/analysis`)}>
+                                            onClick={() => {
+                                                setIsPending(true);
+                                                router.push(`/admin/course/${courseId}/analysis`);
+                                            }}>
                                         <span className="font-semibold">
                                             Xem phân tích
                                         </span>
