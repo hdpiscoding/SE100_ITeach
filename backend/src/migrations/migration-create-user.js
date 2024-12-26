@@ -5,9 +5,9 @@ module.exports = {
     await queryInterface.createTable("Users", {
       id: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
       },
       email: {
         type: Sequelize.STRING,
@@ -26,7 +26,7 @@ module.exports = {
         type: Sequelize.STRING,
       },
       avatar: {
-        type: Sequelize.BLOB("long"),
+        type: Sequelize.STRING,
       },
       birthday: {
         type: Sequelize.DATE,

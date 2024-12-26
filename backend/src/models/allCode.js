@@ -11,6 +11,11 @@ The models/index file will call this method automatically.*/
   }
   Allcode.init(
     {
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+      },
       key: DataTypes.STRING,
       type: DataTypes.STRING,
       value: DataTypes.STRING,

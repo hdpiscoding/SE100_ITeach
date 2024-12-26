@@ -14,10 +14,9 @@ module.exports = (sequelize, DataTypes) => {
   CourseCategory.init(
     {
       id: {
-        allowNull: false,
-        autoIncrement: true,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
-        type: DataTypes.INTEGER,
       },
       categoryName: DataTypes.STRING,
       number: DataTypes.INTEGER,

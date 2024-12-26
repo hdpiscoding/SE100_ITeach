@@ -354,6 +354,29 @@ const getAllCourseOfTeacher = (teacherId) => {
     }
   });
 };
+const createNewCourseCategory = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!data.name) {
+        resolve({
+          errCode: 1,
+          errMessage: "Missing required parameters",
+        });
+      } else {
+        let category = await db.CourseCategory.create({
+          categoryName: data.name,
+        });
+        resolve({
+          errCode: 0,
+          errMessage: "OK",
+          id: category.id,
+        });
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 module.exports = {
   getAllTeacher,
   getPopularTeacher,
@@ -364,4 +387,5 @@ module.exports = {
   stopCourse,
   deleteCourse,
   getAllCourseOfTeacher,
+  createNewCourseCategory,
 };
