@@ -39,6 +39,7 @@ const Login = ({ isOpen, onClose, onLogin,setLogin, setRole }) => {
         setLogin(true);
         router.push("/");
         localStorage.setItem("access_token", response.access_token);
+        localStorage.setItem("user", JSON.stringify(response.user));
         if(response.user.role === "R1") {
           setRole("student");
         }

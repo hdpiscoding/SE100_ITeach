@@ -372,8 +372,8 @@ const createNewCourseCategory = (data) => {
           id: category.id,
         });
       }
-    } catch (error) {
-      reject(error);
+    } catch (e) {
+      reject(e);
     }
   });
 };

@@ -14,11 +14,11 @@ const parseDate = (dateStr: string) => {
 // You can use a Zod schema here if you want.
 export type Student = {
     id: string
-    firstName: string
-    lastName: string
-    phone: string
+    firstName: string | null
+    lastName: string | null
+    phone: string | null
     email: string
-    birthday: string //dd/MM/yyyy
+    birthday: string | null //dd/MM/yyyy
     progress: number
 }
 

@@ -33,6 +33,9 @@ const studentPaths = [
   "/api/v1/get-student-certificates",
   "/api/v1/get-a-certificate",
   "/api/v1/get-a-teacher-info",
+
+  "/api/v1/post-ide-use",
+  "/api/v1/get-all-student-of-course"
 ];
 const teacherPaths = [
   "/api/v1/create-new-course",
@@ -52,6 +55,7 @@ const teacherPaths = [
   "/api/v1/put-a-chapter",
   "/api/v1/delete-a-chapter",
   "/api/v1/get-detail-course-info",
+  "/api/v1/get-ide-use-by-month",
 ];
 const adminPaths = [
   "/api/v1/get-all-teacher",
@@ -67,6 +71,7 @@ const adminPaths = [
   "/api/v1/get-ide-use",
   "/api/v1/get-all-student-of-course",
   "/api/v1/get-detail-course-info",
+  "/api/v1/get-ide-use-by-month",
   "/api/v1/create-new-course-category",
 ];
 const commonPaths = [

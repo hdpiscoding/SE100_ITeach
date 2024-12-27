@@ -39,12 +39,14 @@ export default function RootLayout({
       </header>
 
       <Suspense fallback={<Loading/>}>
-        <main>
-            {children}
-        </main>
+          <main>
+              {children}
+          </main>
       </Suspense>
- <ToastContainer
-        position="top-right"
+
+
+      <ToastContainer
+          position="top-right"
         autoClose={5000}
         hideProgressBar={false}
         newestOnTop={false}

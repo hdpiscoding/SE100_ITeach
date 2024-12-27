@@ -432,8 +432,10 @@ let getDetailCourseInfo = (id, userId) => {
             model: db.Lesson,
             as: "lessons",
             attributes: ["id", "name", "studyTime"],
+            order: [["id", "ASC"]], // Order lessons from oldest to newest
           },
         ],
+        order: [["id", "ASC"]], // Order chapters from oldest to newest
         nest: false,
         raw: true,
       });

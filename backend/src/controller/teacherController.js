@@ -203,6 +203,20 @@ let handleDeleteAChapter = async (req, res) => {
   let data = await teacherService.deleteAChapter(req.body);
   return res.status(200).json(data);
 };
+let handleGetIDEUseByMonth = async (req, res) => {
+  let courseId = req.body.courseId;
+  let month = req.body.month;
+  let year = req.body.year;
+
+  if (!courseId || !month || !year) {
+    return res.status(500).json({
+      errCode: 1,
+      message: "Missing required fields",
+    });
+  }
+  let data = await teacherService.getIDEUseByMonth(req.body);
+  return res.status(200).json(data);
+};
 module.exports = {
   handleCreateNewCourse,
   handleGetAllCourse,
@@ -220,4 +234,5 @@ module.exports = {
   handleGetAllChapter,
   handlePutAChapter,
   handleDeleteAChapter,
+  handleGetIDEUseByMonth,
 };

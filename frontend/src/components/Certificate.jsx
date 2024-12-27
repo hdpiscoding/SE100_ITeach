@@ -22,7 +22,7 @@ const Certificate = ({ id }) => {
   return (
     <div className="lg:w-full md:w-[500px] sm p-4 ">
       <div className="grid grid-cols-[0.5fr_11fr_0.5fr]">
-        <div></div>
+        <div onClick={handleOnclik}>Button </div>
         <div className="border-4 md:border-8 border-certificate text-certificate p-2">
           <div className="border-2 border-gray-500 p-2">
             <div className="border-2 border-gray-500 grid grid-cols-[0.5fr_5fr_0.5fr]">

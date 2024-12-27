@@ -1,28 +1,13 @@
+/* eslint-disable react/no-children-prop,@typescript-eslint/no-unused-vars */
 'use client';
 import React from 'react';
 import Markdown from "react-markdown";
 
 export default function LessonContent(props: any){
-    const [content, setContent] = React.useState<string>(`# JavaScript là gì?
-
-JavaScript (JS) là một ngôn ngữ lập trình phổ biến được sử dụng để phát triển các ứng dụng web động. Nó là một ngôn ngữ kịch bản phía client, có thể được chạy trực tiếp trong trình duyệt mà không cần phải tải lại trang. JavaScript hỗ trợ tương tác động với người dùng, xử lý sự kiện, và thay đổi nội dung trang web mà không cần phải tải lại trang.
-
-## Biến và Kiểu Dữ Liệu
-
-JavaScript hỗ trợ các kiểu dữ liệu cơ bản như số, chuỗi, boolean, đối tượng, mảng, v.v. Bạn có thể khai báo biến với các từ khóa như \`var\`, \`let\`, và \`const\`.
-
-- **var**: Được sử dụng để khai báo biến trong các phiên bản JavaScript cũ.
-- **let**: Dùng để khai báo biến có thể thay đổi giá trị.
-- **const**: Dùng để khai báo biến có giá trị không thay đổi sau khi khởi tạo.
-
-> Ví dụ:
-
-\`\`\`javascript
-let x = 10; // Biến x có giá trị 10`);
     return (
         <div className="grid lg:grid-cols-[68%_1%_31%] grid-cols-1 gap-4 lg:gap-0 mt-6 ">
             <div className="prose col-start-1">
-                <Markdown children={content}
+                <Markdown children={props.content}
                           className="space-y-4"
                           components={{
                               blockquote: ({node, ...props}) => (
