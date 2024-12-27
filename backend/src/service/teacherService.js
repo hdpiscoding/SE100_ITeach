@@ -408,9 +408,16 @@ let createNewChapter = (data) => {
         chapterName: data.chapterName,
         courseId: data.courseId,
       });
+      let newChapter = await db.Chapter.findOne({
+        where: { chapterName: data.chapterName, courseId: data.courseId },
+        order: [["createdAt", "DESC"]],
+        attributes: ["id"],
+      });
+      let newChapterId = newChapter ? newChapter.id : null;
       resolve({
         errCode: 0,
         errMessage: "OK",
+        chapterId: newChapterId,
       });
     } catch (error) {
       reject(error);
