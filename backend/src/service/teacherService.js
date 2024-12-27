@@ -28,9 +28,17 @@ let createNewCourse = (data) => {
         teacher.totalCourseNumber += 1;
         await teacher.save();
       }
+      let newCourse = await db.Course.findOne({
+        where: { courseName: data.courseName },
+        order: [["createdAt", "DESC"]],
+        attributes: ["id"],
+      });
+      let newCourseId = newCourse ? newCourse.id : null;
+
       resolve({
         errCode: 0,
         errMessage: "OK",
+        courseId: newCourseId,
       });
     } catch (error) {
       reject(error);
