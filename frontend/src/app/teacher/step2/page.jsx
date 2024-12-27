@@ -7,7 +7,7 @@ import 'react-markdown-editor-lite/lib/index.css';
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 const mdParser = new MarkdownIt(/* Markdown-it options */);
-const Step2 = () => {
+const Step2 = (courseId) => {
   const router = useRouter();
   const [activeTab, setActiveTab] = React.useState("content");
   const [imagePreview, setImagePreview] = React.useState(null);
@@ -33,38 +33,8 @@ const Step2 = () => {
     fileInputRef.current.click();
   };
   
-  const [chapters, setChapters] = React.useState([
-    {
-      title: "Chapter 1: Course Overview",
-      duration: "28m",
-      isOpen: true,
-      lessons: [],
-    },
-    {
-      title: "Chapter 2: Curriculum",
-      duration: "1h 28m",
-      isOpen: true,
-      lessons: [
-        { title: "Installing Vue JS", duration: "10m", completed: true },
-        {
-          title: "Understand Vue Components",
-          duration: "59m",
-          completed: true,
-        },
-        { title: "Vue Templating", duration: "15m", completed: false },
-        { title: "Vue Forms", duration: "20m", completed: false },
-        { title: "Vue Styling", duration: "15m", completed: false },
-        { title: "Vue Routing", duration: "15m", completed: false },
-      ],
-    },
-    {
-      title: "Chapter 3: Components",
-      duration: "1h 28m",
-      isOpen: false,
-      lessons: [],
-    },
+  const [chapters, setChapters] = useState([
   ]);
-
   const toggleChapter = (index) => {
     setChapters(
       chapters.map((chapter, i) => ({
@@ -79,7 +49,9 @@ const Step2 = () => {
     const newChapters = chapters.filter((_, i) => i !== index);
     setChapters(newChapters);
   };
-
+const getAllChapters = () => {
+  
+}
   return (
     <div className="mb-20">
       <div className="space-y-3 md:space-y-5 lg:space-y-7 grid grid-cols-[0.5fr_11fr_0.5fr]">

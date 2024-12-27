@@ -8,8 +8,9 @@ import { useRouter } from "next/navigation";
 import{createNewCourse} from "@/services/teacher";
 import { getAllCourseCategory } from "@/services/student";
 import { useState,useEffect,useRef} from "react";
+import { toast } from 'react-toastify';
 const mdParser = new MarkdownIt(/* Markdown-it options */);
-
+const courseId = -1;
 
 const Step1 = () => {
   const router = useRouter();
@@ -36,6 +37,10 @@ const Step1 = () => {
     editorContent.current = html;
   }
   const handleCreateCourse = async () => {
+    if(!validate())
+    {
+      return;
+    }
     const courseData = {
       courseName: courseName,
       courseCategoryId: courseCategoryId,
@@ -49,8 +54,9 @@ const Step1 = () => {
     console.log(courseData);
   
     const response = await createNewCourse(courseData);
+    
     if (response) {
-      router.push("/teacher/step2");
+      router.push(`/teacher/step2?courseId=${courseId}`);
     } else {
       console.error("Failed to create course");
     }
@@ -69,7 +75,15 @@ const Step1 = () => {
   const handleImageClick = () => {
     fileInputRef.current.click();
   };
- 
+ const validate =()=>
+ {
+    if(courseName===""||price===""||intro===""||editorContent.current==="")
+    {
+      toast.error("Vui lòng điền đầy đủ thông tin");
+      return false;
+    }
+    return true;
+ }
   return (
     <div className="mb-20">
       <div className="space-y-3 md:space-y-5 lg:space-y-7 grid grid-cols-[0.5fr_11fr_0.5fr]">

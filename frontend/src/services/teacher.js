@@ -44,3 +44,17 @@ const createNewCourse = async (data) => {
   }
 };
 export { createNewCourse };
+const getAllChapter = async (courseId) => {
+  try {
+    const response = await axios.get(`api/v1/get-all-chapter?courseId=${courseId}`, {
+      headers: {
+        Authorization: teacherToken,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error("Error while getting all chapter", error);
+    return null;
+  }
+};
+export { getAllChapter };

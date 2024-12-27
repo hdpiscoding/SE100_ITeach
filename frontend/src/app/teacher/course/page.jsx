@@ -5,17 +5,18 @@ import { useState } from "react";
 import Coursecard from "@/components/Course/Coursecard";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import{useEffect} from "react";
+import{useEffect,useRef} from "react";
 import { getMyAccount,getMyCourse } from "@/services/teacher";
 const CourseTeacher = () => {
-  let tId = 1;
+  let tId = "98e89016-b2d1-49a4-84b5-7d1e361a007c";
   const [username, setUsername] = useState("");
   const [khoahoc, setKhoahoc] = useState(0);
   const [hocvien, setHocvien] = useState(0);
   const [myCourse, setMyCourse] = useState([]);
-
+  const [courseStats, setCourseStats] = useState({ CS1: 0, CS2: 0, CS3: 0 });
   const [activeTab, setActiveTab] = useState("active");
   const router = useRouter();
+  const fetchRef = useRef(false);
   const fetchMyAccount = async () => {
     const response = await getMyAccount(tId);
     if (response && response.data) {
@@ -24,23 +25,28 @@ const CourseTeacher = () => {
       
     }
   };
-  const fetchMyCourse = async () =>
-  {
+  const fetchMyCourse = async () => {
     const response = await getMyCourse(tId);
     if (response && response.data) {
       setKhoahoc(response.data.courses.length);
-      response.data.courses.map((course) => {
-        setHocvien(hocvien+course.totalStudent);
+      let totalStudents = 0;
+      response.data.courses.forEach((course) => {
+        totalStudents += course.totalStudent;
+        if (course.courseStatus === "CS1") courseStats.CS1 += 1;
+        if (course.courseStatus === "CS2") courseStats.CS2 += 1;
+        if (course.courseStatus === "CS3") courseStats.CS3 += 1;
       });
+      setHocvien(totalStudents);
       setMyCourse(response.data.courses);
     }
   };
   useEffect(() => {
-    fetchMyCourse();
-    fetchMyAccount();
-   
-  }
-  , []);
+    if (!fetchRef.current) {
+      fetchRef.current = true;
+      fetchMyCourse();
+      fetchMyAccount();
+    }
+  }, []);
   return (
     <div className="space-y-3 md:space-y-5 lg:space-y-7 p-3">
      
@@ -90,7 +96,7 @@ const CourseTeacher = () => {
               }`}
               onClick={() => setActiveTab("active")}
             >
-              Đang hoạt động({khoahoc})
+              Đang hoạt động({courseStats.CS1})
             </span>
             <span
               className={`cursor-pointer ${
@@ -98,7 +104,7 @@ const CourseTeacher = () => {
               }`}
               onClick={() => setActiveTab("approval")}
             >
-              Đang chờ duyệt
+              Đang chờ duyệt({courseStats.CS2})
             </span>
             <span
               className={`cursor-pointer ${
@@ -106,7 +112,7 @@ const CourseTeacher = () => {
               }`}
               onClick={() => setActiveTab("pause")}
             >
-              Tạm dừng
+              Tạm dừng({courseStats.CS3})
             </span>
           </div>
           <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-6 ">

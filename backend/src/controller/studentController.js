@@ -118,17 +118,25 @@ const handleBuyCourse = async (req, res) => {
   return res.status(200).json(response);
 };
 const handleGetDetailCourseInfo = async (req, res) => {
-  if (!req.query.id || !req.query.userId) {
+  if (!req.query.id ) {
     return res.status(500).json({
       errCode: 1,
       errMessage: "Missing required parameter",
     });
   }
-  let response = await studentService.getDetailCourseInfo(
+  let response
+  if (!req.query.userId) {
+    response = await studentService.getDetailCourseInfo(req.query.id, null);
+  }
+  else
+  {
+ response = await studentService.getDetailCourseInfo(
     req.query.id,
     req.query.userId
   );
+}
   return res.status(200).json(response);
+
 };
 const handleGetListChapters = async (req, res) => {
   if (!req.query.courseId) {

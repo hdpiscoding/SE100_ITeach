@@ -171,14 +171,14 @@ let handleCreateNewChapter = async (req, res) => {
   return res.status(200).json(data);
 };
 let handleGetAllChapter = async (req, res) => {
-  let courseId = req.body.courseId;
+  let courseId = req.query.courseId;
   if (!courseId) {
     return res.status(500).json({
       errCode: 1,
       message: "Missing required fields",
     });
   }
-  let data = await teacherService.getAllChapter(req.body);
+  let data = await teacherService.getAllChapter(courseId);
   return res.status(200).json(data);
 };
 let handlePutAChapter = async (req, res) => {

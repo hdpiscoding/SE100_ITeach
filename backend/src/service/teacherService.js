@@ -409,11 +409,11 @@ let createNewChapter = (data) => {
     }
   });
 };
-let getAllChapter = (data) => {
+let getAllChapter = (courseId) => {
   return new Promise(async (resolve, reject) => {
     try {
       let chapters = await db.Chapter.findAll({
-        where: { courseId: data.courseId },
+        where: { courseId: courseId }, // Use courseId directly
         attributes: { exclude: ["createdAt", "updatedAt"] },
         order: [["id", "ASC"]],
       });
