@@ -13,7 +13,7 @@ module.exports = {
         type: Sequelize.UUID,
       },
       chapter: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
       },
       name: {
         type: Sequelize.STRING,
