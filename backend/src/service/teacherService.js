@@ -79,11 +79,11 @@ let getAllCourses = (data) => {
     }
   });
 };
-let deleteACourse = (data) => {
+let deleteACourse = (id) => {
   return new Promise(async (resolve, reject) => {
     try {
       let Course = await db.Course.findOne({
-        where: { id: parseInt(data.id) },
+        where: { id: parseInt(id) },
       });
       if (!Course) {
         resolve({
@@ -91,7 +91,7 @@ let deleteACourse = (data) => {
           errMessage: "Invalid id",
         });
       }
-      await db.Course.destroy({ where: { id: parseInt(data.id) } });
+      await db.Course.destroy({ where: { id: parseInt(id) } });
       resolve({
         errCode: 0,
         errMessage: "Deleted",
@@ -253,11 +253,11 @@ let PostALesson = (data) => {
     }
   });
 };
-let deleteALesson = (data) => {
+let deleteALesson = (id) => {
   return new Promise(async (resolve, reject) => {
     try {
       let Lesson = await db.Lesson.findOne({
-        where: { id: data.id },
+        where: { id: id },
       });
       if (!Lesson) {
         resolve({
@@ -265,9 +265,9 @@ let deleteALesson = (data) => {
           errMessage: "Invalid id",
         });
       }
-      await db.Lesson.destroy({ where: { id: data.id } });
+      await db.Lesson.destroy({ where: { id: id } });
       await db.LessonContent.destroy({
-        where: { lessonId: data.id },
+        where: { lessonId: id },
       });
       resolve({
         errCode: 0,
@@ -467,11 +467,11 @@ let putAChapter = (data) => {
     }
   });
 };
-let deleteAChapter = (data) => {
+let deleteAChapter = (id) => {
   return new Promise(async (resolve, reject) => {
     try {
       let chapter = await db.Chapter.findOne({
-        where: { id: parseInt(data.id) },
+        where: { id: parseInt(id) },
       });
       if (!chapter) {
         resolve({
@@ -479,7 +479,7 @@ let deleteAChapter = (data) => {
           errMessage: "Invalid id",
         });
       }
-      await db.Chapter.destroy({ where: { id: parseInt(data.id) } });
+      await db.Chapter.destroy({ where: { id: parseInt(id) } });
       resolve({
         errCode: 0,
         errMessage: "Deleted",

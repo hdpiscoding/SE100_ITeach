@@ -10,7 +10,7 @@ import { getAllCourseCategory } from "@/services/student";
 import { useState,useEffect,useRef} from "react";
 import { toast } from 'react-toastify';
 const mdParser = new MarkdownIt(/* Markdown-it options */);
-const courseId = -1;
+let courseId = -1;
 
 const Step1 = () => {
   const router = useRouter();
@@ -56,7 +56,10 @@ const Step1 = () => {
     const response = await createNewCourse(courseData);
     
     if (response) {
+      console.log(response);
+      courseId = response.data.courseId;
       router.push(`/teacher/step2?courseId=${courseId}`);
+   
     } else {
       console.error("Failed to create course");
     }
