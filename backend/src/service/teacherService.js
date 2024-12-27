@@ -249,7 +249,7 @@ let deleteALesson = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
       let Lesson = await db.Lesson.findOne({
-        where: { id: parseInt(data.id) },
+        where: { id: data.id },
       });
       if (!Lesson) {
         resolve({
@@ -257,7 +257,7 @@ let deleteALesson = (data) => {
           errMessage: "Invalid id",
         });
       }
-      await db.Lesson.destroy({ where: { id: parseInt(data.id) } });
+      await db.Lesson.destroy({ where: { id: data.id } });
       await db.LessonContent.destroy({
         where: { lessonId: data.id },
       });
