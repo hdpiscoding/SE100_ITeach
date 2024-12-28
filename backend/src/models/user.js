@@ -19,6 +19,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "userId",
         as: "userInfo",
       });
+      User.hasOne(models.VideoProgess, {
+        foreignKey: "userId",
+        as: "videoProgess",
+      });
     }
   }
   User.init(

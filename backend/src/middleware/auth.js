@@ -35,7 +35,9 @@ const studentPaths = [
   "/api/v1/get-a-teacher-info",
 
   "/api/v1/post-ide-use",
-  "/api/v1/get-all-student-of-course"
+  "/api/v1/get-all-student-of-course",
+  "/api/v1/post-video-progess",
+  "/api/v1/get-video-progess-by-studentId",
 ];
 const teacherPaths = [
   "/api/v1/create-new-course",
