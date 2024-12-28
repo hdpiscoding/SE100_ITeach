@@ -219,7 +219,7 @@ const CoursesPage = () => {
                           : "2";
                         return (
                           <Coursecard
-                            key={course.id}x
+                            key={course.id}
                             course={course}
                             type= {type}
                           />
