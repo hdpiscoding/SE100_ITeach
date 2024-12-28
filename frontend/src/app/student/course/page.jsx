@@ -24,7 +24,9 @@ const CoursesPage = () => {
   const indexOfLastCourse = currentPage * coursesPerPage;
   const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
   const currentCourses = courses.slice(indexOfFirstCourse, indexOfLastCourse);
-
+  useEffect(() => {
+    console.log(currentCourses);
+  },[currentCourses])
   const totalPages = Math.ceil(courses.length / coursesPerPage);
 
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -35,13 +37,16 @@ const CoursesPage = () => {
         setLoading(true); // Bắt đầu tải dữ liệu
         const response = await getAllCourses();
         const allCourses = response.data.data;
+    
 
         setAll(allCourses);
         const rawmycourses = await getMyCourses(
           "11ddfd9c-0066-4dcd-af1c-0050a422caea"
+          
         );
         const mycourse = rawmycourses.data.data;
         setMyCourses(mycourse);
+        // console.log(mycourse);
       } catch (error) {
         console.error("Error fetching courses:", error);
       } finally {
@@ -200,7 +205,7 @@ const CoursesPage = () => {
             <div className="grid lg:grid-cols-[1fr_4fr] md:grid-cols-[1fr_3fr] sm:grid-cols-[1fr_2fr] grid-cols-[1fr_1fr] gap-6">
               <Filter parentFilter={handleFilter} />
 
-              <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6">
+             
                 <div>
                   {loading ? (
                     <div className="text-center my-10">Loading courses...</div>
@@ -216,14 +221,14 @@ const CoursesPage = () => {
                           <Coursecard
                             key={course.id}
                             course={course}
-                            type={type}
+                            type= {type}
                           />
                         );
                       })}
                     </div>
                   )}
                 </div>
-              </div>
+             
             </div>
           </div>
           <div className="flex justify-center space-x-2 my-10 lg:text-base md:text-sm sm:text-xs text-xs">
