@@ -6,61 +6,64 @@ import {Textarea} from "@/components/ui/textarea";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
 import {Send, MessageCircle, CirclePlus, CircleMinus, Crown} from "lucide-react";
 import { motion, AnimatePresence  } from 'framer-motion';
+import {createLessonComment} from "@/services/course";
 
+interface User {
+    id: string,
+    firstName: string,
+    lastName: string,
+    email: string,
+    avatar: string,
+    role: string
+}
 
 interface LessonComment {
     id: string;
-    user: {
-        id: string;
-        email: string;
-        avatar: string;
-        role: string;
-    };
-    lessonId: string;
+    userInfo: User;
+    userId: string;
     content: string;
-    parentCommentId?: string | null;
+    createdAt: string;
+    parrentCommentId?: string | null;
     children?: LessonComment[];
 }
 
 export default function NestedCommentItem({comment, lessonId, currentUser, addComment}: {
     comment: LessonComment;
     lessonId: string;
-    currentUser: any;
+    currentUser: User;
     addComment: (newComment: LessonComment) => void;
 }) {
+    const [currentComment, setCurrentComment] = useState<LessonComment>();
     const [userComment, setUserComment] = useState<string>("");
     const [showReply, setShowReply] = useState<boolean>(false);
     const [showMore, setShowMore] = useState<boolean>(false);
-    const [commentId, setCommentId] = useState<string | null>(null);
 
     useEffect(() => {
-        const randomId = Math.random().toString(36).substring(7);
-        setCommentId(randomId); // Chỉ set sau khi client render
-    }, []);
+        setCurrentComment(comment);
+    }, [comment]);
+
+    useEffect(() => {
+        console.log("current comment");
+        console.log(currentComment);
+    }, [currentComment]);
 
     const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setUserComment(e.target.value);
     }
 
-    const handleUploadComment = () => {
-        let newComment: LessonComment = {
-            id: String(commentId),
-            user: {
-                id: currentUser.id,
-                email: currentUser.email,
-                avatar: currentUser.avatar,
-                role: currentUser.role
-            },
-            lessonId: lessonId,
-            content: userComment,
-            parentCommentId: comment.id
+    const handleUploadComment = async () => {
+        try {
+            const newComment = await createLessonComment(lessonId, currentUser.id, userComment, String(currentComment?.id));
+            addComment(newComment);
+            console.log(newComment);
+            setUserComment("");
         }
-        addComment(newComment);
-        console.log(newComment);
-        setUserComment("");
+        catch (error) {
+            console.log(error);
+        }
     }
 
-    const handleKeyDown = (e: React.KeyboardEvent) => {
+    const handleKeyDown = async (e: React.KeyboardEvent) => {
         if (userComment) {
             if (e.shiftKey && e.key === "Enter") {
                 e.preventDefault();
@@ -68,7 +71,7 @@ export default function NestedCommentItem({comment, lessonId, currentUser, addCo
             }
             else if (e.key === "Enter") {
                 e.preventDefault();
-                handleUploadComment();
+                await handleUploadComment();
             }
         }
     }
@@ -77,11 +80,11 @@ export default function NestedCommentItem({comment, lessonId, currentUser, addCo
         <div className="flex flex-col gap-6 w-full mb-2">
             <div className="flex gap-4">
                 <div className="flex flex-col">
-                    {comment.user.avatar ?
+                    {currentComment?.userInfo?.avatar ?
                         <div
                             className="relative rounded-[50%] overflow-hidden h-[40px] w-[40px]">
                             <Image
-                                src={comment.user.avatar}
+                                src={currentComment?.userInfo?.avatar}
                                 alt="user avatar"
                                 className="object-cover"
                                 fill
@@ -96,10 +99,10 @@ export default function NestedCommentItem({comment, lessonId, currentUser, addCo
 
 
                 <div className="flex flex-col gap-1">
-                    <span className={`font-semibold flex items-center ${comment.user.role === "teacher" ? "text-orange" : "text-Lime"}`}>
-                        {comment.user.email}
+                    <span className={`font-semibold flex items-center ${currentComment?.userInfo?.role === "R2" ? "text-orange" : "text-Lime"}`}>
+                        {currentComment?.userInfo?.email}
                         &nbsp;&nbsp;&nbsp;
-                        {comment.user.role === "teacher"
+                        {currentComment?.userInfo?.role === "R2"
                             &&
                             <div className="py-1 px-2 bg-orange rounded-xl">
                                 <Crown className="h-4 w-4 text-white"/>
@@ -107,11 +110,11 @@ export default function NestedCommentItem({comment, lessonId, currentUser, addCo
                     </span>
 
                     <p className="text-DarkerGray whitespace-pre-line">
-                        {comment.content}
+                        {currentComment?.content}
                     </p>
 
                     <div className="flex items-center gap-4">
-                        {currentUser.role !== "admin"
+                        {currentUser.role !== "R3"
                             &&
                             <TooltipProvider>
                                 <Tooltip>
@@ -133,7 +136,7 @@ export default function NestedCommentItem({comment, lessonId, currentUser, addCo
                             </TooltipProvider>
                         }
 
-                        {(comment?.children !== undefined && comment.children?.length > 0)
+                        {(currentComment?.children !== undefined && currentComment?.children?.length > 0)
                             &&
                             <TooltipProvider>
                                 <Tooltip>
@@ -170,8 +173,8 @@ export default function NestedCommentItem({comment, lessonId, currentUser, addCo
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.3 }}
                     >
-                        {comment.children?.map((child) => (
-                            <NestedCommentItem comment={child} lessonId={lessonId} currentUser={currentUser} addComment={addComment}/>
+                        {currentComment?.children?.map((child, index) => (
+                            <NestedCommentItem key={index} comment={child} lessonId={lessonId} currentUser={currentUser} addComment={addComment}/>
                         ))}
                     </motion.div>
                 )}

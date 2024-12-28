@@ -15,8 +15,29 @@ const checkIsEnrolled = async (studentId: string, courseId: string) => {
     return response.data.check;
 }
 
+const createLessonComment = async (lessonId: string, userId: string, content: string, parentId: string | null) => {
+    const response = await instance.post(`api/v1/post-lesson-comments`, {
+        userId: userId,
+        lessonId: lessonId,
+        content: content,
+        parentId: parentId
+    });
+    return response.data.data;
+}
+
+const completeLesson = async (lessonId: string, studentId: string, courseId: string) => {
+    const response = await instance.post(`api/v1/complete-the-lesson`, {
+        studentId: studentId,
+        lessonId: lessonId,
+        courseId: courseId
+    });
+    return response.data.data;
+}
+
 export {
     getCourses,
     getLessonDetail,
-    checkIsEnrolled
+    checkIsEnrolled,
+    createLessonComment,
+    completeLesson
 }

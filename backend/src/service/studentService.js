@@ -319,15 +319,31 @@ let getAllCertificates = () => {
 let postLessonComments = (data) => {
   return new Promise(async (resolve, reject) => {
     let parent = data.parentId ? data.parentId : null;
-    await db.LessonComment.create({
+    let newComment = await db.LessonComment.create({
       userId: data.userId,
       lessonId: data.lessonId,
       content: data.content,
       parrentCommentId: parent,
     });
+
+    let createdComment = await db.LessonComment.findOne({
+        where: { id: newComment.id },
+        attributes: ["id", "content", "userId", "parrentCommentId", "createdAt"],
+        include: [
+            {
+            model: db.User,
+            as: "userInfo",
+            attributes: ["id", "firstName", "lastName", "avatar", "email", "role"],
+            },
+        ],
+        nest: true,
+        raw: true,
+    });
+
     resolve({
       errCode: 0,
       errMessage: "OK",
+      data: createdComment,
     });
     try {
     } catch (e) {
@@ -432,10 +448,10 @@ let getDetailCourseInfo = (id, userId) => {
             model: db.Lesson,
             as: "lessons",
             attributes: ["id", "name", "studyTime"],
-            order: [["id", "ASC"]], // Order lessons from oldest to newest
+            order: [["createdAt", "ASC"]], // Order lessons from oldest to newest
           },
         ],
-        order: [["id", "ASC"]], // Order chapters from oldest to newest
+        order: [["createdAt", "ASC"]], // Order chapters from oldest to newest
         nest: false,
         raw: true,
       });
@@ -507,14 +523,14 @@ let getListChapters = (courseId) => {
       let chapters = await db.Chapter.findAll({
         where: { courseId: courseId },
         attributes: ["id", "chapterName", "courseId"],
-        order: [["id", "ASC"]],
+        order: [["createdAt", "ASC"]],
 
         include: [
           {
             model: db.Lesson,
             as: "lessons",
             attributes: ["id", "name", "studyTime"],
-            order: [["id", "ASC"]],
+            order: [["createdAt", "ASC"]],
           },
         ],
         nest: true,
@@ -564,7 +580,7 @@ let getLessonContent = (lessonId) => {
           {
             model: db.User,
             as: "userInfo",
-            attributes: ["id", "firstName", "lastName", "avatar"],
+            attributes: ["id", "firstName", "lastName", "avatar", "email", "role"],
           },
         ],
         nest: true,

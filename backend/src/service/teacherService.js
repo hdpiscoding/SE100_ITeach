@@ -225,7 +225,7 @@ let PostALesson = (data) => {
       );
       let latestLesson = await db.Lesson.findOne({
         where: { courseId: data.courseId },
-        order: [["id", "DESC"]],
+        order: [["createdAt", "ASC"]],
       });
       await db.LessonContent.create({
         lessonId: latestLesson.id,
