@@ -28,9 +28,17 @@ let createNewCourse = (data) => {
         teacher.totalCourseNumber += 1;
         await teacher.save();
       }
+      let newCourse = await db.Course.findOne({
+        where: { courseName: data.courseName },
+        order: [["createdAt", "DESC"]],
+        attributes: ["id"],
+      });
+      let newCourseId = newCourse ? newCourse.id : null;
+
       resolve({
         errCode: 0,
         errMessage: "OK",
+        courseId: newCourseId,
       });
     } catch (error) {
       reject(error);
@@ -249,7 +257,7 @@ let deleteALesson = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
       let Lesson = await db.Lesson.findOne({
-        where: { id: parseInt(data.id) },
+        where: { id: data.id },
       });
       if (!Lesson) {
         resolve({
@@ -257,7 +265,7 @@ let deleteALesson = (data) => {
           errMessage: "Invalid id",
         });
       }
-      await db.Lesson.destroy({ where: { id: parseInt(data.id) } });
+      await db.Lesson.destroy({ where: { id: data.id } });
       await db.LessonContent.destroy({
         where: { lessonId: data.id },
       });
@@ -400,9 +408,16 @@ let createNewChapter = (data) => {
         chapterName: data.chapterName,
         courseId: data.courseId,
       });
+      let newChapter = await db.Chapter.findOne({
+        where: { chapterName: data.chapterName, courseId: data.courseId },
+        order: [["createdAt", "DESC"]],
+        attributes: ["id"],
+      });
+      let newChapterId = newChapter ? newChapter.id : null;
       resolve({
         errCode: 0,
         errMessage: "OK",
+        chapterId: newChapterId,
       });
     } catch (error) {
       reject(error);
