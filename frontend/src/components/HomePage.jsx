@@ -31,6 +31,7 @@ const Home = () => {
   useEffect(() => {
     const fetchAllCourse = async () => {
       const response = await getAllCourse();
+     
       setAllCourse(response.data);
     };
     fetchAllCourse();
@@ -77,7 +78,7 @@ const Home = () => {
 
         {allCourse
          .filter(course => {
-         return course.category.categoryName === activeButton || activeButton === "";
+         return course.category.categoryName === activeButton ;
          
         })
         .filter((course) => course.courseStatus === "CS1")

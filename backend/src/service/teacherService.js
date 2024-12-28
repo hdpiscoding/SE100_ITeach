@@ -59,7 +59,7 @@ let getAllCourses = (data) => {
       });
       if (data.id & (data.id !== "All")) {
         courses = await db.Course.findOne({
-          where: { id: parseInt(data.id) },
+          where: { id: data.id },
         });
         if (!courses) {
           resolve({
@@ -83,7 +83,7 @@ let deleteACourse = (id) => {
   return new Promise(async (resolve, reject) => {
     try {
       let Course = await db.Course.findOne({
-        where: { id: parseInt(id) },
+        where: { id: id },
       });
       if (!Course) {
         resolve({
@@ -91,7 +91,7 @@ let deleteACourse = (id) => {
           errMessage: "Invalid id",
         });
       }
-      await db.Course.destroy({ where: { id: parseInt(id) } });
+      await db.Course.destroy({ where: { id: id } });
       resolve({
         errCode: 0,
         errMessage: "Deleted",
@@ -476,17 +476,19 @@ let putAChapter = (data) => {
 };
 let deleteAChapter = (id) => {
   return new Promise(async (resolve, reject) => {
+    console.log("deleteAChapter");
     try {
       let chapter = await db.Chapter.findOne({
-        where: { id: parseInt(id) },
+        where: { id: id },
       });
+      console.log("fine one");
       if (!chapter) {
         resolve({
           errCode: 2,
           errMessage: "Invalid id",
         });
       }
-      await db.Chapter.destroy({ where: { id: parseInt(id) } });
+      await db.Chapter.destroy({ where: { id: id } });
       resolve({
         errCode: 0,
         errMessage: "Deleted",

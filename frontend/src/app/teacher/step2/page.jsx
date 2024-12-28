@@ -6,9 +6,22 @@ import MdEditor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { useEffect } from "react";
-import { postAChapter, postALesson, getDetailCourse } from "@/services/teacher";
+import { useEffect,useRef } from "react";
+import {
+  postAChapter,
+  postALesson,
+  getDetailCourse,
+  deleteAChapter,
+  putAChapter,
+  putALesson,
+  deleteALesson,
+} from "@/services/teacher";
 import { toast } from "react-toastify";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import AddIcon from "@mui/icons-material/Add";
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 const Step2 = () => {
   const searchParams = useSearchParams();
@@ -25,19 +38,25 @@ const Step2 = () => {
   const [courseInfo, setCourseInfo] = useState(null);
   const [hidden, setHidden] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingChapterId, setEditingChapterId] = useState(null);
+  const [editingChapterName, setEditingChapterName] = useState("");
+  const contentMarkDown = useRef("");
+  const contentHtml = useRef("");
+  const exerciseMarkDown = useRef("");
+  const exerciseHtml = useRef("");
+
   const fetchDetailCourse = async () => {
     try {
       setIsLoading(true);
       const response = await getDetailCourse(courseId);
-      
+
       if (response.data) {
         console.log("Chapters:", response.data.data.chapters);
         console.log("Data từ API:", response.data);
-      
+
         setCourseInfo(response.data.data.course);
         setChapters(response.data.data.chapters);
-       
-   
       }
     } catch (error) {
       toast.error("Lỗi khi tải thông tin khóa học!");
@@ -49,12 +68,12 @@ const Step2 = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (courseId) {
-         fetchDetailCourse();
+        fetchDetailCourse();
       }
     };
     fetchData();
   }, []);
-  
+
   const xuLyThemChuong = () => {
     setHienFormChuongMoi(true);
   };
@@ -90,7 +109,16 @@ const Step2 = () => {
   };
 
   function handleEditorChange({ html, text }) {
-    console.log("handleEditorChange", html, text);
+   if(activeTab==="content")
+   {
+     contentHtml.current = html;
+     contentMarkDown.current = text;
+   }
+    else
+    {
+      exerciseHtml.current = html;
+      exerciseMarkDown.current = text
+    }
   }
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -115,13 +143,122 @@ const Step2 = () => {
       }))
     );
   };
-
-  const deleteChapter = (index, e) => {
-    e.stopPropagation();
-    const newChapters = chapters.filter((_, i) => i !== index);
-    setChapters(newChapters);
+  const deleteChapter = async (id) => {
+    try {
+      const response = await deleteAChapter(id);
+      if (response.data) {
+        toast.success("Xóa chương thành công!");
+        setChapters(chapters.filter((chapter) => chapter.id !== id));
+      }
+    } catch (error) {
+      toast.error("Xóa chương thất bại!");
+    }
   };
+  const handleDeleteChapter = (id, e) => {
+    e.stopPropagation();
+    console.log("Chapter ID:", id);
+    deleteChapter(id);
+  };
+  const handleEditChapter = (id, name, e) => {
+    e.stopPropagation();
+    setEditingChapterId(id);
+    setEditingChapterName(name);
+    setIsEditing(true);
+  };
+  const handleSaveEdit = async () => {
+    if (!editingChapterName.trim()) {
+      toast.error("Vui lòng nhập tên chương!");
+      return;
+    }
 
+    const chapterExists = chapters.some(
+      (chapter) =>
+        chapter.chapterName === editingChapterName &&
+        chapter.id !== editingChapterId
+    );
+
+    if (chapterExists) {
+      toast.error("Tên chương đã tồn tại!");
+      return;
+    }
+    try {
+      const response = await putAChapter({
+        id: editingChapterId,
+        chapterName: editingChapterName,
+      });
+      console.log("Response:", response);
+      if (response.data.errCode === 0) {
+        setChapters(
+          chapters.map((chapter) =>
+            chapter.id === editingChapterId
+              ? { ...chapter, chapterName: editingChapterName }
+              : chapter
+          )
+        );
+
+        setIsEditing(false);
+        setEditingChapterId(null);
+        setEditingChapterName("");
+
+        toast.success("Cập nhật chương thành công!");
+      } else {
+        toast.error(response.errMessage);
+      }
+    } catch (error) {
+      toast.error("Cập nhật chương thất bại!");
+    }
+  };
+  const handleAddLesson = async (chapterId) => {
+    setHidden(false);
+    if (!lessonTitle.trim() || !lessonDuration.trim()) {
+      toast.error("Vui lòng nhập đầy đủ thông tin!");
+      return;
+    }
+
+    try {
+      const response = await postALesson({
+        courseId: courseId,
+      chapter: chapterId,
+      studyTime: parseInt(lessonDuration),
+      video: "data.video", // Cần cập nhật theo dữ liệu thực tế
+      contentHtml: editorContent.current, // Nội dung HTML từ editor
+      contentMarkDown: "data.contentMarkDown", // Nội dung Markdown từ editor
+      exerciseHtml: "data.exerciseHtml", // Bài tập dạng HTML
+      exerciseMarkDown: "data.exerciseMarkDown" // Bài tập dạng Markdown
+      });
+
+      if (response && response.data) {
+        // const newLesson = {
+        //   id: response.data.lessonId,
+        //   name: lessonTitle,
+        //   studyTime: lessonDuration,
+        //   video: "data.video",
+        //   contentHtml: editorContent.current,
+        //   contentMarkDown: "data.contentMarkDown",
+        //   exerciseHtml: "data.exerciseHtml",
+        //   exerciseMarkDown: "data.exerciseMarkDown"
+        // };
+
+        // setChapters(
+        //   chapters.map((chapter) =>
+        //     chapter.id === chapterId
+        //       ? {
+        //           ...chapter,
+        //           lessons: [...chapter.lessons, newLesson],
+        //         }
+        //       : chapter
+        //   )
+        // );
+
+        setLessonTitle("");
+        setLessonDuration("");
+
+        toast.success("Thêm bài học mới thành công!");
+      }
+    } catch (error) {
+      toast.error("Thêm bài học mới thất bại!");
+    }
+  };
   return (
     <div className="mb-20">
       <div className="space-y-3 md:space-y-5 lg:space-y-7 grid grid-cols-[0.5fr_11fr_0.5fr]">
@@ -209,61 +346,155 @@ const Step2 = () => {
             )}
             <div className="lg:col-span-1 md:col-span-1 col-span-1">
               <div className="w-full border rounded-md">
-              {isLoading ? (
-          
-          [...Array(3)].map((_, i) => (
-            <div key={i} className="border-b last:border-b-0 p-2 animate-pulse">
-              <div className="h-5 bg-gray-200 rounded w-3/4 mb-2"></div>
-              <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-            </div>
-          ))
-        ) : (
-                chapters?.map((chapter, index) => (
-                  <div key={chapter.id} className="border-b last:border-b-0">
-                    <div
-                      className="flex justify-between items-center p-2 cursor-pointer hover:bg-gray-50"
-                      onClick={() => toggleChapter(index)}
-                    >
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-bold truncate">
-                          {chapter.chapterName}
-                        </h3>
-                        <span className="text-stroke1 text-sm">
-                          {chapter.duration}
-                        </span>
-                      </div>
-                      <div className="flex items-center space-x-4 flex-shrink-0">
-                        <button
-                          className="text-gray-500"
-                          onClick={(e) => deleteChapter(index, e)}
+                {isLoading ? (
+                  <span className="p-3"> Đang tải dữ liệu ....</span>
+                ) : (
+                  <div className="border border-gray rounded-md p-5">
+                    {/* Hiển thị các chương hiện có */}
+                    {chapters.map((chapter, index) => (
+                      <div
+                        key={chapter.id}
+                        className="border-b last:border-b-0"
+                      >
+                        <div
+                          className="flex justify-between items-center p-2 cursor-pointer hover:bg-gray-50"
+                          onClick={() => toggleChapter(index)}
                         >
-                          <Image
-                            src="/assets/images/delete.png"
-                            width={20}
-                            height={20}
-                            alt="delete"
-                          />
-                        </button>
-                        {chapter.isOpen ? (
-                          <Image
-                            src="/assets/images/arrow_up.png"
-                            width={20}
-                            height={20}
-                            alt="up"
-                          />
-                        ) : (
-                          <Image
-                            src="/assets/images/arrow_down.png"
-                            width={20}
-                            height={20}
-                            alt="down"
-                          />
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-bold truncate">
+                              {chapter.chapterName}
+                            </h3>
+                            <span className="text-stroke1 text-sm">
+                              {chapter.duration}
+                            </span>
+                          </div>
+                          <div className="flex items-center space-x-4 flex-shrink-0">
+                            <button
+                              className="text-gray-500 "
+                              onClick={(e) =>
+                                handleEditChapter(
+                                  chapter.id,
+                                  chapter.chapterName,
+                                  e
+                                )
+                              }
+                            >
+                              <EditIcon sx={{ color: "gray" }} />
+                            </button>
+                            <button
+                              className="text-gray-500"
+                              onClick={(e) =>
+                                handleDeleteChapter(chapter.id, e)
+                              }
+                            >
+                              <DeleteIcon sx={{ color: "gray" }} />
+                            </button>
+                            {chapter.isOpen ? (
+                              <ExpandLessIcon sx={{ color: "gray" }} />
+                            ) : (
+                              <ExpandMoreIcon sx={{ color: "gray" }} />
+                            )}
+                          </div>
+                        </div>
+                        {chapter.isOpen && (
+                          <div className="pl-4 py-2 bg-gray-50">
+                            {/* Danh sách lessons hiện tại */}
+                            {chapter.lessons &&
+                              chapter.lessons.length > 0 &&
+                              chapter.lessons.map((lesson) => (
+                                <div
+                                  key={lesson.id}
+                                  className="flex justify-between items-center p-2 border-b last:border-b-0"
+                                >
+                                  <span className="text-sm">{lesson.name}</span>
+                                  <span className="text-xs text-gray-500">
+                                    {lesson.studyTime} phút
+                                  </span>
+                                </div>
+                              ))}
+
+                            {/* Nút thêm lesson mới */}
+                            <div
+                              className="flex justify-between items-center p-2 mt-2 cursor-pointer hover:bg-gray-100 border-t"
+                              onClick={() => handleAddLesson(chapter.id)}
+                            >
+                              <span className="text-sm text-gray-500">
+                                Thêm bài học mới
+                              </span>
+                              <button className="text-gray-500 bg-stroke1 rounded-sm">
+                                <AddIcon sx={{ color: "white" }} />
+                              </button>
+                            </div>
+                          </div>
                         )}
                       </div>
+                    ))}
+                    {isEditing && (
+                      <div className="mt-4 space-y-2 p-4 border rounded-md">
+                        <span>Nhập tên chương mới</span>
+                        <input
+                          type="text"
+                          placeholder="Nhập tên chương"
+                          value={editingChapterName}
+                          onChange={(e) =>
+                            setEditingChapterName(e.target.value)
+                          }
+                          className="w-full p-2 border rounded-md"
+                        />
+                        <div className="mt-2 flex justify-end space-x-2">
+                          <button
+                            onClick={() => setIsEditing(false)}
+                            className="px-4 py-2 border rounded hover:bg-gray-50"
+                          >
+                            Hủy
+                          </button>
+                          <button
+                            onClick={handleSaveEdit}
+                            className="px-4 py-2 bg-stroke1 text-white rounded hover:bg-orange-600"
+                          >
+                            Lưu
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                    {/* Nút thêm chương mới */}
+                    <div className="mt-4">
+                      <button
+                        onClick={xuLyThemChuong}
+                        className="w-full py-2 bg-stroke1 text-white rounded-md"
+                      >
+                        Thêm chương mới
+                      </button>
                     </div>
+
+                    {/* Form thêm chương mới */}
+                    {hienFormChuongMoi && (
+                      <div className="mt-4 p-4 border rounded-md">
+                        <input
+                          type="text"
+                          placeholder="Nhập tên chương"
+                          value={tenChuongMoi}
+                          onChange={(e) => setTenChuongMoi(e.target.value)}
+                          className="w-full p-2 border rounded-md"
+                        />
+                        <div className="mt-2 flex justify-end space-x-2">
+                          <button
+                            onClick={() => setHienFormChuongMoi(false)}
+                            className="px-4 py-2 border rounded hover:bg-gray-50"
+                          >
+                            Hủy
+                          </button>
+                          <button
+                            onClick={xuLyLuuChuong}
+                            className="px-4 py-2 bg-stroke1 text-white rounded hover:bg-orange-600"
+                          >
+                            Lưu
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                ))
-              )}
+                )}
               </div>
             </div>
           </div>

@@ -87,17 +87,20 @@ const putAChapter = async (data) => {
 };
 export { putAChapter };
 const deleteAChapter = async (chapterId) => {
+  console.log("goi ham");
   try {
-    const response = await axios.delete(`api/v1/delete-a-chapter?chapterId=${chapterId}`, {
+    const response = await axios.delete(`api/v1/delete-a-chapter?id=${chapterId}`, {
       headers: {
         Authorization: teacherToken,
       },
     });
+    console.log("response", response);
     return response;
   } catch (error) {
     console.error("Error while deleting chapter", error);
     return null;
   }
+
 };
 export { deleteAChapter };
 const postALesson = async (data) => {

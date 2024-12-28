@@ -193,6 +193,7 @@ let handlePutAChapter = async (req, res) => {
   return res.status(200).json(data);
 };
 let handleDeleteAChapter = async (req, res) => {
+  console.log("controller");
   let id = req.query.id;
   if (!id) {
     return res.status(500).json({
