@@ -252,6 +252,30 @@ const handleGetATeacher = async (req, res) => {
 
   return res.status(200).json(response);
 };
+const handlePostVideoProgess = async (req, res) => {
+  if (!req.body.userId || !req.body.lessonId || !req.body.progess) {
+    return res.status(500).json({
+      errCode: 1,
+      errMessage: "Missing required parameter",
+    });
+  }
+  let response = await studentService.postVideoProgess(req.body);
+
+  return res.status(200).json(response);
+};
+const handleGetVideoProgessByStudentId = async (req, res) => {
+  if (!req.query.userId) {
+    return res.status(500).json({
+      errCode: 1,
+      errMessage: "Missing required parameter",
+    });
+  }
+  let response = await studentService.getVideoProgessByStudentId(
+    req.query.userId
+  );
+
+  return res.status(200).json(response);
+};
 
 module.exports = {
   handleGetAllCourses,
@@ -279,4 +303,6 @@ module.exports = {
   handleGetStudentCertificates,
   handleGetACertificate,
   handleGetATeacher,
+  handlePostVideoProgess,
+  handleGetVideoProgessByStudentId,
 };

@@ -851,6 +851,46 @@ const getATeacher = (id) => {
     }
   });
 };
+const postVideoProgess = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await db.VideoProgess.create({
+        userId: data.userId,
+        lessonId: data.lessonId,
+        progess: data.progess,
+      });
+      resolve({
+        errCode: 0,
+        errMessage: "OK",
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+const getVideoProgessByStudentId = (studentId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let videoProgess = await db.VideoProgess.findAll({
+        where: { userId: studentId },
+        raw: true,
+      });
+      if (videoProgess) {
+        resolve({
+          errCode: 0,
+          videoProgess: videoProgess,
+        });
+      } else {
+        resolve({
+          errCode: 1,
+          errMessage: "No video progess found",
+        });
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 
 module.exports = {
   getAllCourses,
@@ -877,4 +917,7 @@ module.exports = {
   deleteAllCartItems,
   postPayment,
   getATeacher,
+  postVideoProgess,
+
+  getVideoProgessByStudentId,
 };
