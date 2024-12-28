@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // noinspection JSUnusedLocalSymbols
-
 'use client';
 import React, {useState, useRef, useEffect, ChangeEvent} from "react";
 import {Button} from "@/components/ui/button";
@@ -23,8 +22,10 @@ import { Textarea } from "@/components/ui/textarea"
 import {useParams, useRouter} from "next/navigation";
 import Markdown from "react-markdown";
 import { Skeleton } from "@/components/ui/skeleton"
-import {getCourses} from "@/services/course";
+import {checkIsEnrolled, getCourses} from "@/services/course";
 import Loading from "@/app/loading";
+import {addToCart, getCartByStudentId} from "@/services/cart";
+import {toast} from "react-toastify";
 
 
 interface Teacher {
@@ -35,23 +36,30 @@ interface Teacher {
     avatar: string | null;
 }
 
+interface Lesson {
+    id: string;
+    name: string;
+    studyTime: number;
+}
+
 interface Chapter {
     id: number;
     chapterName: string;
     courseId: string;
-    lessons: {
-        id: string;
-        name: string;
-        studyTime: number;
-    }[];
+    lessons: Lesson[];
 }
 
 interface User {
-    id: number;
+    id: string;
     firstname: string | null;
     lastname: string | null;
     email: string;
+    phoneNumber: string | null;
+    role: string;
     avatar: string | null;
+    birthday: string | null;
+    totalCourseNumber: number | null;
+    totalStudentNumber: number | null;
 }
 
 interface Review {
@@ -60,7 +68,7 @@ interface Review {
     user: User;
 }
 
-const isUserInReviews = (userId: number, reviews: Review[]): boolean => {
+const isUserInReviews = (userId: string | undefined, reviews: Review[]): boolean => {
     return reviews.some((review) => review.user.id === userId);
 }
 
@@ -78,7 +86,7 @@ const convertMinutes = (minutes: number): string => {
 
 export default function CourseDetail(props: any) {
     const {courseId} = useParams();
-    const userId = 1;
+    const [user, setUser] = useState<User>();
     const router = useRouter();
 
     // Refs for scrolling
@@ -116,13 +124,6 @@ export default function CourseDetail(props: any) {
     const [isFinish, setIsFinish] = useState<boolean>(false);
 
     // State for rating
-    const [user, setUser] = useState<User>({
-        id: 1,
-        firstname: "Huy",
-        lastname: "Nguyễn",
-        email: "nghuy@gmail.com",
-        avatar: ""
-    });
     const [averageRating, setAverageRating] = useState<number>();
     const [rating, setRating] = useState<number | null>(5);
     const [comment, setComment] = useState<string>("");
@@ -156,22 +157,51 @@ export default function CourseDetail(props: any) {
     const [students, setStudents] = useState<number>();
     const [teacher, setTeacher] = useState<Teacher>();
     const [chapters, setChapters] = useState<Array<Chapter>>();
+    const [certificate, setCertificate] = useState<string>();
 
     const [intro, setIntro] = useState<string>();
     const [isPending, setIsPending] = useState(false);
 
     useEffect(() => {
+        setUser(JSON.parse(localStorage.getItem("user") || "{}"));
+    }, []);
+
+    useEffect(() => {
+        console.log(user);
         const fetchData = async () => {
-            const data = await getCourses(String(courseId), String(userId));
+            const [data, isEnrolled] = await Promise.all([
+                getCourses(String(courseId), String(user?.id)),
+                checkIsEnrolled(String(user?.id), String(courseId))
+            ]);
+            if(props.role === "student") {
+                setIsBuy(isEnrolled);
+            }
             setName(data.course.courseName);
             setDescription(data.course.intro);
             setIntro(data.course.gioiThieu);
             setPrice(data.course.cost);
             setImage(data.course.anhBia);
-            setTotalTime(data.course.finishTime);
+            if (data.course.finishTime) {
+                setTotalTime(data.course.finishTime);
+            }
+            else {
+                const totalDuration = data.chapters?.reduce((total: number, chapter: Chapter) => {
+                    const chapterDuration = chapter.lessons?.reduce((lessonTotal: number, lesson: Lesson) => {
+                        return lessonTotal + lesson.studyTime;
+                    }, 0);
+
+                    return total + chapterDuration;
+                }, 0);
+                setTotalTime(totalDuration);
+            }
             setTotalChapter(data.chapters?.length);
             setTotalLecture(data.course.totalLesson);
-            setDiscount(data.course.discount);
+            if (data.course.discount) {
+                setDiscount(data.course.discount);
+            }
+            else {
+                setDiscount(0);
+            }
             setStudents(data.course.totalStudent);
             setTeacher(data.course.teacher);
             setChapters(data.chapters);
@@ -184,12 +214,18 @@ export default function CourseDetail(props: any) {
                     return counts;
                 }, [0, 0, 0, 0, 0]))
             }
+            else{
+                setRatingValueList([0, 0, 0, 0, 0]);
+            }
             setReviews(data.reviews);
-            setIsReviewed(isUserInReviews(userId, data.reviews));
+            setIsReviewed(isUserInReviews(user?.id, data.reviews));
+            setCertificate(data.course.chungchiId);
         }
 
-        fetchData();
-    }, []);
+        if (user) {
+            fetchData();
+        }
+    }, [user]);
 
     useEffect(() => {
         setItemsPerPage(3);
@@ -200,6 +236,27 @@ export default function CourseDetail(props: any) {
         const indexOfFirstItem = indexOfLastItem - itemsPerPage;
         setCurrentReviews(reviews?.slice(indexOfFirstItem, indexOfLastItem));
     }, [reviews, page]);
+
+    const handleAddToCart = async () => {
+        try {
+            const cartItems = await getCartByStudentId(String(user?.id));
+            if (cartItems.some((item: any) => item.courseId === courseId)) {
+                toast.error("Khóa học đã có trong giỏ hàng");
+            }
+            else {
+                const response = await addToCart(String(courseId), String(user?.id));
+                if (response.errMessage === "OK") {
+                    toast.success("Thêm vào giỏ hàng thành công");
+                }
+                else {
+                    toast.error("Đã có lỗi xảy ra");
+                }
+            }
+        }
+        catch (error) {
+            console.error(error);
+        }
+    }
 
     return (
         <div>
@@ -269,7 +326,7 @@ export default function CourseDetail(props: any) {
                                 </div>
                             </div>
 
-                            {students
+                            {students != null
                                 ?
                                 <div className="bg-white rounded-3xl py-2 px-4 w-fit">
                                     <span className="font-semibold text-DarkGreen">
@@ -331,7 +388,7 @@ export default function CourseDetail(props: any) {
                                 <Skeleton className="bg-MediumGray h-[32px] w-[100px]"/>
                             }
 
-                            {ratingCount
+                            {ratingCount != null
                                 ?
                                 <div className="bg-white px-2 py-1 flex items-center w-fit gap-2 rounded-lg">
                                     <Star className="h-5 w-5 text-DarkGreen"/>
@@ -344,7 +401,7 @@ export default function CourseDetail(props: any) {
                             }
                         </div>
 
-                        {(price && discount)
+                        {(price && discount != null)
                             ?
                             <div className="flex flex-col-reverse lg:flex-row lg:items-center mt-5">
                                 <span className="text-orange font-bold text-4xl">
@@ -354,19 +411,22 @@ export default function CourseDetail(props: any) {
                                     }).format(Number(((price ?? 0) * (1 - (discount ?? 0))).toFixed(0)))}
                                 </span>
 
-                                <div className="flex items-center gap-2">
-                                    &nbsp;&nbsp;&nbsp;
-                                    <span className="text-DarkGray line-through font-semibold text-xl">
-                                        {new Intl.NumberFormat("vi-VN", {
-                                            style: "currency",
-                                            currency: "VND",
-                                        }).format(price ?? 0)}
-                                    </span>
+                                {discount !== 0
+                                    &&
+                                    <div className="flex items-center gap-2">
+                                        &nbsp;&nbsp;&nbsp;
+                                        <span className="text-DarkGray line-through font-semibold text-xl">
+                                            {new Intl.NumberFormat("vi-VN", {
+                                                style: "currency",
+                                                currency: "VND",
+                                            }).format(price ?? 0)}
+                                        </span>
 
-                                    <span className="text-sm bg-orange text-white px-2 py-1 rounded-lg mb-6">
-                                        -{String((discount ?? 0) * 100)}%
-                                    </span>
-                                </div>
+                                        <span className="text-sm bg-orange text-white px-2 py-1 rounded-lg mb-6">
+                                            -{String((discount ?? 0) * 100)}%
+                                        </span>
+                                    </div>
+                                }
                             </div>
                             :
                             <Skeleton className="bg-MediumGray h-[52px] w-[300px]"/>
@@ -375,7 +435,7 @@ export default function CourseDetail(props: any) {
                         <div>
                             {props.role === "student" && (!isBuy
                                 ?
-                                <Button className="bg-DarkGreen text-white hover:bg-DarkGreen_Hover rounded-2xl">
+                                <Button className="bg-DarkGreen text-white hover:bg-DarkGreen_Hover rounded-2xl" onClick={handleAddToCart}>
                                     <span className="font-semibold">
                                         Thêm vào giỏ hàng
                                     </span>
@@ -601,11 +661,11 @@ export default function CourseDetail(props: any) {
                                                     {5 - index} sao ({rating})
                                                 </span>
 
-                                                <Progress value={Number((rating / (ratingCount ?? 0) * 100).toFixed(0))}
+                                                <Progress value={Number((rating / (ratingCount ?? 1) * 100).toFixed(0))}
                                                           indicatorColor="bg-Yellow"/>
 
                                                 <span className="font-semibold">
-                                                    {(rating / (ratingCount ?? 0) * 100).toFixed(0)}%
+                                                    {ratingCount === 0 ? 0 : (rating / (ratingCount ?? 1) * 100).toFixed(0)}%
                                                 </span>
                                             </div>
                                         ))}
@@ -665,12 +725,12 @@ export default function CourseDetail(props: any) {
                                 <div className="flex flex-col lg:flex-row lg:items-center gap-2">
                                     <div className="flex items-center gap-2">
                                         <div
-                                            className={`bg-DarkGray ${user.avatar ? "" : "p-[10px]"} rounded-[50%] h-fit w-fit`}>
-                                        {user.avatar ?
+                                            className={`bg-DarkGray ${user?.avatar ? "" : "p-[10px]"} rounded-[50%] h-fit w-fit`}>
+                                        {user?.avatar ?
                                                 <div
                                                     className="relative rounded-[50%] overflow-hidden h-[40px] w-[40px] flex items-center">
                                                     <Image
-                                                        src={user.avatar}
+                                                        src={user?.avatar}
                                                         alt="user avatar"
                                                         className="object-cover"
                                                         fill
@@ -682,7 +742,7 @@ export default function CourseDetail(props: any) {
 
                                         <div className="flex flex-col justify-center">
                                         <span className="font-semibold">
-                                            {user.firstname + " " + user.lastname}
+                                            {user?.firstname + " " + user?.lastname}
                                         </span>
 
                                             <Rating

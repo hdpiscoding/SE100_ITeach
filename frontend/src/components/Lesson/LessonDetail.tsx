@@ -41,7 +41,7 @@ interface Chapter {
 }
 
 interface Teacher {
-    id: number;
+    id: string;
     firstName: string;
     lastName: string;
     email: string;
@@ -49,7 +49,7 @@ interface Teacher {
 }
 
 interface User {
-    id: number,
+    id: string,
     email: string,
     avatar: string,
     role: string
@@ -116,13 +116,7 @@ export default function LessonDetail(props: any) {
         fetchData();
     }, [currentLessonId]);
 
-    // Replace this with data from localStorage when finished login
-    const user: User = {
-        id: 7,
-        email: "hdp@gmail.com",
-        avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
-        role: props.role
-    }
+    const [user, setUser] = useState<User>();
 
     const [isBuy, setIsBuy] = useState<boolean>(true);
 
@@ -195,9 +189,13 @@ export default function LessonDetail(props: any) {
     const [tab, setTab] = useState<number>(0);
 
     useEffect(() => {
+        setUser(JSON.parse(localStorage.getItem("user") || "{}"));
+    }, []);
+
+    useEffect(() => {
         const fetchData = async () => {
             const [courseData, lessonData] = await Promise.all([
-                getCourses(String(courseId), String(user.id)),
+                getCourses(String(courseId), String(user?.id)),
                 getLessonDetail(String(lessonId))
             ]);
             setChapters(courseData.chapters);
@@ -211,8 +209,10 @@ export default function LessonDetail(props: any) {
             setTeacher(courseData.course.teacher);
         }
 
-        fetchData();
-    }, []);
+        if (user) {
+            fetchData();
+        }
+    }, [user]);
 
     return (
         <div className="grid grid-cols-[0.5fr_11fr_0.5fr] py-6">

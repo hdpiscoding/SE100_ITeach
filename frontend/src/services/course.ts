@@ -10,7 +10,13 @@ const getLessonDetail = async (lessonId: string) => {
     return response.data.data;
 }
 
+const checkIsEnrolled = async (studentId: string, courseId: string) => {
+    const response = await instance(`api/v1/check-student-is-buy-course?studentId=${studentId}&courseId=${courseId}`);
+    return response.data.check;
+}
+
 export {
     getCourses,
-    getLessonDetail
+    getLessonDetail,
+    checkIsEnrolled
 }
