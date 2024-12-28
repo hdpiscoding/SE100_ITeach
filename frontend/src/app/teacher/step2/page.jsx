@@ -7,7 +7,7 @@ import "react-markdown-editor-lite/lib/index.css";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useEffect } from "react";
-import { postAChapter, postALesson } from "@/services/teacher";
+import { postAChapter, postALesson, getDetailCourse } from "@/services/teacher";
 import { toast } from "react-toastify";
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 const Step2 = () => {
@@ -17,13 +17,44 @@ const Step2 = () => {
   const [activeTab, setActiveTab] = React.useState("content");
   const [imagePreview, setImagePreview] = React.useState(null);
   const fileInputRef = React.useRef(null);
-  const [markdownContent, setMarkdownContent] = React.useState("");
   const [lessonTitle, setLessonTitle] = useState("");
   const [lessonDuration, setLessonDuration] = useState("");
   const [hienFormChuongMoi, setHienFormChuongMoi] = useState(false);
   const [tenChuongMoi, setTenChuongMoi] = useState("");
   const [chapters, setChapters] = useState([]);
+  const [courseInfo, setCourseInfo] = useState(null);
   const [hidden, setHidden] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const fetchDetailCourse = async () => {
+    try {
+      setIsLoading(true);
+      const response = await getDetailCourse(courseId);
+      
+      if (response.data) {
+        console.log("Chapters:", response.data.data.chapters);
+        console.log("Data từ API:", response.data);
+      
+        setCourseInfo(response.data.data.course);
+        setChapters(response.data.data.chapters);
+       
+   
+      }
+    } catch (error) {
+      toast.error("Lỗi khi tải thông tin khóa học!");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (courseId) {
+         fetchDetailCourse();
+      }
+    };
+    fetchData();
+  }, []);
+  
   const xuLyThemChuong = () => {
     setHienFormChuongMoi(true);
   };
@@ -33,32 +64,29 @@ const Step2 = () => {
       return;
     }
 
-    // try {
-    //   const response = await postAChapter({
-    //     chapterName: tenChuongMoi,
-    //     courseId: courseId
-    //   });
-
-    //   if (response && response.data) {
-
-    //   }
-    // } catch (error) {
-    //   toast.error("Thêm chương mới thất bại!");
-    // }
-    setChapters([
-      ...chapters,
-      {
-        // id: response.data.id,
+    try {
+      const response = await postAChapter({
         chapterName: tenChuongMoi,
-        lessons: [],
-      },
-    ]);
+        courseId: courseId,
+      });
 
-    // Reset form
-    setHienFormChuongMoi(false);
-    setTenChuongMoi("");
+      if (response && response.data) {
+        setChapters([
+          ...chapters,
+          {
+            id: response.data.chapterId,
+            chapterName: tenChuongMoi,
+            lessons: [],
+          },
+        ]);
+        setHienFormChuongMoi(false);
+        setTenChuongMoi("");
 
-    toast.success("Thêm chương mới thành công!");
+        toast.success("Thêm chương mới thành công!");
+      }
+    } catch (error) {
+      toast.error("Thêm chương mới thất bại!");
+    }
   };
 
   function handleEditorChange({ html, text }) {
@@ -126,7 +154,7 @@ const Step2 = () => {
                   className="w-full h-[40px] border border-gray rounded-md p-2"
                 />
               </div>
-  
+
               <div className="col-span-1">
                 <label htmlFor="name">Thời lượng</label>
                 <div className="flex items-center">
@@ -144,49 +172,62 @@ const Step2 = () => {
           )}
 
           <div className="grid lg:grid-cols-2 md:grid-cols-1 grid-cols-1 gap-3 md:gap-5 lg:gap-7">
-          {!hidden && (
-            <div className="lg:col-span-1 md:col-span-1 col-span-1 h-fit">
-              <div
-                className="w-full lg:h-[300px] md:h-[200px] h-[100px] border border-gray rounded-md p-2 flex items-center justify-center cursor-pointer relative"
-                onClick={handleImageClick}
-              >
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleImageChange}
-                  accept="image/*"
-                  className="hidden"
-                />
+            {hidden ? (
+              <div></div>
+            ) : (
+              <div className="lg:col-span-1 md:col-span-1 col-span-1 h-fit">
+                <div
+                  className="w-full lg:h-[300px] md:h-[200px] h-[100px] border border-gray rounded-md p-2 flex items-center justify-center cursor-pointer relative"
+                  onClick={handleImageClick}
+                >
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleImageChange}
+                    accept="image/*"
+                    className="hidden"
+                  />
 
-                {imagePreview ? (
-                  <Image
-                    src={imagePreview}
-                    alt="Selected image"
-                    fill
-                    className="object-contain"
-                  />
-                ) : (
-                  <Image
-                    src="/assets/images/video.png"
-                    alt="image"
-                    width={40}
-                    height={30}
-                    className="lg:w-[40px] lg:h-[30px] md:w-[30px] md:h-[20px] w-[20px] h-[15px]"
-                  />
-                )}
+                  {imagePreview ? (
+                    <Image
+                      src={imagePreview}
+                      alt="Selected image"
+                      fill
+                      className="object-contain"
+                    />
+                  ) : (
+                    <Image
+                      src="/assets/images/video.png"
+                      alt="image"
+                      width={40}
+                      height={30}
+                      className="lg:w-[40px] lg:h-[30px] md:w-[30px] md:h-[20px] w-[20px] h-[15px]"
+                    />
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            )}
             <div className="lg:col-span-1 md:col-span-1 col-span-1">
               <div className="w-full border rounded-md">
-                {chapters.map((chapter, index) => (
-                  <div key={index} className="border-b last:border-b-0">
+              {isLoading ? (
+          
+          [...Array(3)].map((_, i) => (
+            <div key={i} className="border-b last:border-b-0 p-2 animate-pulse">
+              <div className="h-5 bg-gray-200 rounded w-3/4 mb-2"></div>
+              <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+            </div>
+          ))
+        ) : (
+                chapters?.map((chapter, index) => (
+                  <div key={chapter.id} className="border-b last:border-b-0">
                     <div
                       className="flex justify-between items-center p-2 cursor-pointer hover:bg-gray-50"
                       onClick={() => toggleChapter(index)}
                     >
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-bold truncate">{chapter.chapterName}</h3>
+                        <h3 className="font-bold truncate">
+                          {chapter.chapterName}
+                        </h3>
                         <span className="text-stroke1 text-sm">
                           {chapter.duration}
                         </span>
@@ -220,96 +261,9 @@ const Step2 = () => {
                         )}
                       </div>
                     </div>
-
-                    {chapter.isOpen && (
-                      <div className="px-4">
-                        {chapter.lessons.map((lesson, lessonIndex) => (
-                          <div
-                            key={lessonIndex}
-                            className="flex items-center justify-between py-3 border-t cursor-pointer hover:bg-gray-50"
-                            onClick={() => {
-                              setLessonTitle(lesson.title);
-                              setLessonDuration(
-                                lesson.duration.replace("m", "")
-                              );
-                            }}
-                          >
-                            <div className="flex items-center space-x-2 flex-1 min-w-0">
-                              <div className="flex-shrink-0">
-                                {lesson.completed ? (
-                                  <Image
-                                    src="/assets/images/play.png"
-                                    width={20}
-                                    height={20}
-                                    alt="check"
-                                  />
-                                ) : (
-                                  <Image
-                                    src="/assets/images/play1.png"
-                                    width={20}
-                                    height={20}
-                                    alt="play1"
-                                  />
-                                )}
-                              </div>
-                              <span className="truncate">{lesson.title}</span>
-                            </div>
-                            <span className="text-gray-500 text-sm flex-shrink-0">
-                              {lesson.duration}
-                            </span>
-                          </div>
-                        ))}
-                        <div className="py-3 border-t flex justify-between border-stroke1">
-                          <span className="text-stroke1 font-bold">
-                            Bài mới
-                          </span>
-                          <Image
-                           onClick={() => setHidden(!hidden)}
-                            src="/assets/images/add.png"
-                            width={25}
-                            height={20}
-                            alt="plus"
-                          />
-                        </div>
-                      </div>
-                    )}
                   </div>
-                ))}
-                <div>
-                  <div className="p-3 border-t flex justify-between">
-                    <span className="text-stroke1 font-bold">Chương mới</span>
-                    <Image
-                      src="/assets/images/add.png"
-                      width={25}
-                      height={20}
-                      alt="plus"
-                      className="cursor-pointer"
-                      onClick={xuLyThemChuong}
-                    />
-                  </div>
-                  {hienFormChuongMoi && (
-                    <div className="mt-4 p-4 border rounded-b-md ">
-                      <input
-                        type="text"
-                        placeholder="Nhập tên chương"
-                        value={tenChuongMoi}
-                        onChange={(e) => setTenChuongMoi(e.target.value)}
-                        className="w-full p-2 border rounded-md"
-                      />
-                      <div className="mt-2 flex justify-end space-x-2">
-                        <button onClick={() => setHienFormChuongMoi(false)}>
-                          Hủy
-                        </button>
-                        <button
-                          className="bg-stroke1 text-white px-5 py-1 rounded-sm"
-                          onClick={xuLyLuuChuong}
-                        >
-                          Lưu
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                ))
+              )}
               </div>
             </div>
           </div>
