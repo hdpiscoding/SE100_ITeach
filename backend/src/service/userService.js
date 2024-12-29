@@ -177,6 +177,7 @@ let changePassword = (data) => {
             errCode: 3,
             errMessage: "Mật khẩu hiện tại không chính xác",
           });
+          return;
         }
         user.password = bcrypt.hashSync(data.newPassword, salt);
         await user.save();

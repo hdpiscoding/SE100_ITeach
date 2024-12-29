@@ -22,7 +22,9 @@ export default function Cart() {
 
     useEffect(() => {
         const fetchCartItems = async () => {
-            const cartItems = await getCartItems(1);
+            const user = JSON.parse(localStorage.getItem("user") || "{}");
+            const id= user.id;
+            const cartItems = await getCartItems(id);
             console.log(cartItems);
             const tempOrderItems: Array<OrderItem> = [];
             if (cartItems.data) {
@@ -72,7 +74,7 @@ export default function Cart() {
     const handleClick = async () => {
         
         const data = {
-            userId: 7,
+            userId: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "{}").id : 0,
             totalCost: total,
             cartItems:orderItems
         }

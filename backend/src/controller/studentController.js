@@ -17,6 +17,7 @@ const handleGetStudentsOrders = async (req, res) => {
   }
 
   let response = await studentService.getStudentsOrders(req.query.id);
+
   return res.status(200).json(response);
 };
 const handleCheckStudentBuyCourse = async (req, res) => {

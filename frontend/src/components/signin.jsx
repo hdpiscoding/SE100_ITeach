@@ -1,10 +1,11 @@
 "use client"
-import React from 'react'
+import React, { useState } from 'react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { useRef } from 'react'
 import { createNewUser, login } from "@/services/auth";
 import { toast } from 'react-toastify';
+import { Eye, EyeOff } from "lucide-react";
 
 const SignIn = ({ isOpen, onClose, onSignIn ,setLogin}) => {
   if (!isOpen) return null;
@@ -14,6 +15,7 @@ const SignIn = ({ isOpen, onClose, onSignIn ,setLogin}) => {
   const firstNameRef = useRef();
   const lastNameRef = useRef();
   const [isTeacher, setIsTeacher] = React.useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const handleSubmit = () => {
     if(!emailRef.current.value || !passwordRef.current.value || !roleRef.current.value) {
       toast.error("Vui lòng nhập đầy đủ thông tin");
@@ -74,6 +76,8 @@ const SignIn = ({ isOpen, onClose, onSignIn ,setLogin}) => {
             onClose();
             setLogin(true);
             localStorage.setItem("token", response.access_token);
+            localStorage.setItem("isLogin", true);
+
           }
           else {
             toast.error(response?.message);
@@ -166,13 +170,24 @@ const SignIn = ({ isOpen, onClose, onSignIn ,setLogin}) => {
                   ref={emailRef}
                 />
               </div>
-              <div className="border-2 p-2 flex justify-between bg-MoreLightGray"> 
-                <input 
-                  className="outline-none w-full bg-transparent" 
-                  type="password" 
-                  placeholder="Mật khẩu" 
+              <div className="border-2 p-2 flex justify-between bg-MoreLightGray">
+                <input
+                  className="outline-none w-full bg-transparent"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Mật khẩu"
                   ref={passwordRef}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="focus:outline-none"
+                >
+                  {showPassword ? (
+                    <EyeOff className="inline-block" width={25} height={20} />
+                  ) : (
+                    <Eye className="inline-block" width={25} height={20} />
+                  )}
+                </button>
               </div>
              {
                 isTeacher && (

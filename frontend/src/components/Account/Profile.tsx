@@ -32,11 +32,12 @@ const formSchema = z.object({
 })
 
 export default function Profile(props: any) {
-    const [firstName, setFirstName] = React.useState("");
-    const [lastName, setLastName] = React.useState("");
-    const [phone, setPhone] = React.useState("");
-    const [email, setEmail] = React.useState("abc@gmail.com");
-    const [dob, setDob] = React.useState<Date | undefined>(new Date("2004-07-11"));
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    const [firstName, setFirstName] = React.useState(user.firstName);
+    const [lastName, setLastName] = React.useState( user.lastName);
+    const [phone, setPhone] = React.useState( user.phoneNumber);
+    const [email, setEmail] = React.useState( user.email);
+    const [dob, setDob] = React.useState<Date | undefined>(new Date( user.birthday));
     const [avatar, setAvatar] = React.useState<File | null>(null);
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,7 +66,7 @@ export default function Profile(props: any) {
     const handleConfirm =async () => {
         // Call API here
         const data = {
-            id:7, // id of user
+            id: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "{}").id : 0,
             firstName: form.getValues("firstName"),
             lastName: form.getValues("lastName"),
             email: form.getValues("email"),
@@ -80,6 +81,13 @@ export default function Profile(props: any) {
         else {
             toast.error("Cập nhật thông tin thất bại");
         }
+        const user = JSON.parse(localStorage.getItem("user") || "{}");
+        user.firstName = form.getValues("firstName");
+        user.lastName = form.getValues("lastName");
+        user.email = form.getValues("email");
+        user.phoneNumber = form.getValues("phone");
+        user.birthday = form.getValues("dob")?.toLocaleDateString("en-GB").replace(/\//g, "-") || "";
+        localStorage.setItem("user", JSON.stringify(user));
     };
 
   return (
