@@ -7,6 +7,7 @@ const nonSecurePaths = [
   "/api/auth/facebook",
   "/api/auth/facebook/callback",
   "/api/auth/login-success",
+  "/api/auth/login-fail",
 ];
 const studentPaths = [
   "/api/v1/get-all-courses",
@@ -59,6 +60,7 @@ const teacherPaths = [
   "/api/v1/delete-a-chapter",
   "/api/v1/get-detail-course-info",
   "/api/v1/get-ide-use-by-month",
+  "/api/v1/send-email",
 ];
 const adminPaths = [
   "/api/v1/get-all-teacher",

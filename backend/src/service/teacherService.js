@@ -3,6 +3,7 @@ import { where } from "sequelize";
 import course from "../models/course";
 const { Op, fn, col, literal } = require("sequelize");
 import db from "../models/index";
+import nodemailer from "nodemailer";
 let createNewCourse = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -504,7 +505,63 @@ let getIDEUseByMonth = (data) => {
     }
   });
 };
+const sendEmailToStudent = (courseId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let course = await db.Course.findOne({
+        where: { id: courseId },
+        raw: false,
+      });
+      let teacherId = course.teacherId;
+      let teacher = await db.User.findOne({
+        where: { id: teacherId },
+        raw: false,
+      });
+      let students = await db.MyCourse.findAll({
+        where: { courseId: courseId },
+        include: [
+          {
+            model: db.User,
+            attributes: ["email"],
+          },
+        ],
+        raw: true,
+        nest: true,
+      });
+      let studentEmails = students.map((student) => student.User.email);
 
+      let transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: "hung07092004@gmail.com",
+          pass: process.env.EMAIL_PASSWORD,
+        },
+      });
+
+      let mailOptions = {
+        from: "hung07092004@gmail.com",
+        to: studentEmails,
+        subject: `Thông báo ra mắt khóa học ${course.courseName}`,
+        html: `
+          <h1>Xin chào,</h1>
+          <p>Khóa học <strong>${course.courseName}</strong> của giáo viên <strong>${teacher.firstName} ${teacher.lastName}</strong> đã chính thức ra mắt.</p>
+          <p>Hãy truy cập vào hệ thống để bắt đầu học ngay hôm nay!</p>
+          <p>Trân trọng,</p>
+          <p>Đội ngũ ITeach</p>
+        `,
+      };
+
+      await transporter.sendMail(mailOptions);
+
+      resolve({
+        errCode: 0,
+        errMessage: "Emails sent successfully",
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 module.exports = {
   createNewCourse,
   getAllCourses,
@@ -523,4 +580,5 @@ module.exports = {
   putAChapter,
   deleteAChapter,
   getIDEUseByMonth,
+  sendEmailToStudent,
 };
