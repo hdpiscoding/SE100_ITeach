@@ -22,6 +22,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from '@mui/icons-material/Remove';
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 const Step2 = () => {
   const searchParams = useSearchParams();
@@ -421,9 +422,12 @@ const Step2 = () => {
                               <span className="text-sm text-gray-500">
                                 Thêm bài học mới
                               </span>
+                             
                               <button className="text-gray-500 bg-stroke1 rounded-sm">
                                 <AddIcon sx={{ color: "white" }} />
                               </button>
+                           
+                              
                             </div>
                           </div>
                         )}
