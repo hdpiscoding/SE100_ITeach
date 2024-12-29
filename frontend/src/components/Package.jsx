@@ -16,8 +16,8 @@ const Package = ({courseName, cost, discount, intro}) => {
             style={{ objectFit: 'cover' }}
           />
           <div className='bg-white rounded-xl absolute bottom-4 right-4 p-2 shadow-sm'>
-            <span className='text-orange font-semibold text-sm md:text-base lg:text-lg'> ${discount*cost}</span>
-            <span className='line-through text-gray-450 ml-2 text-sm md:text-base lg:text-lg'>${cost}</span>
+            <span className='text-orange font-semibold text-sm md:text-base lg:text-lg'> {discount*cost} đ</span>
+            <span className='line-through text-gray-450 ml-2 text-sm md:text-base lg:text-lg'>{cost} đ</span>
           </div>
         </div>
 

@@ -1,7 +1,8 @@
 import axios from "../utils/AxiosCustomized";
 const teacherToken =
   `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImVtYWlsIjoiaHVuZzA4MDkyMDA0QGdtYWlsLmNvbSIsInJvbGUiOiJSMiIsImV4cGlyZXNJbiI6IjMwZCIsImlhdCI6MTcyNzU5OTQ4N30.2sAjaVD3nZ0KCZ1abl_8d2XXQqVKeVrLaZKeFuueALI`;
-
+const studentToken =
+`Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Mjk1M2YxMS1hMTcyLTQwYTAtYWFjMy1hYmY5Y2FjZDVmOTMiLCJlbWFpbCI6Imh1bmcwNzA5MjAwNEBnbWFpbC5jb20iLCJyb2xlIjoiUjEiLCJleHBpcmVzSW4iOiIzMGQiLCJpYXQiOjE3MzUyMTYwOTF9.mYrELt6uppIVENTAZruH6XUx995VTD-uwd-goubzW1E`;
   const getMyAccount = async (teacherId) => {
     try {
       const response = await axios.get(`api/v1/get-my-account?teacherId=${teacherId}`,{
@@ -159,3 +160,17 @@ const getDetailCourse = async (courseId) => {
   }
 };
 export { getDetailCourse };
+ const getLessonContent = async (lessonId) => {
+  try {
+    const response = await axios.get(`api/v1/get-lesson-content?lessonId=${lessonId}`, {
+      headers: {
+        Authorization: studentToken,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error("Error while getting lesson content", error);
+    return null;
+  }
+};
+export { getLessonContent };

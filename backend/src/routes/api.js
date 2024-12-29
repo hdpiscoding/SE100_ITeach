@@ -70,6 +70,14 @@ const initARoutes = (app) => {
   router.put("/api/v1/stop-course", adminController.handleStopCourse);
 
   router.put("/api/v1/delete-course", adminController.handleDeleteCourse);
+  router.post(
+    "/api/v1/post-video-progess",
+    studentController.handlePostVideoProgess
+  );
+  router.get(
+    "/api/v1/get-video-progess-by-studentId",
+    studentController.handleGetVideoProgessByStudentId
+  );
   return app.use("/", router);
 };
 export default initARoutes;

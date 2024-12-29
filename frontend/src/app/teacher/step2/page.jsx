@@ -4,9 +4,8 @@ import Image from "next/image";
 import MarkdownIt from "markdown-it";
 import MdEditor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
-import { useEffect,useRef } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import {
   postAChapter,
   postALesson,
@@ -15,92 +14,182 @@ import {
   putAChapter,
   putALesson,
   deleteALesson,
+  getLessonContent,
 } from "@/services/teacher";
-import { toast } from "react-toastify";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from '@mui/icons-material/Remove';
+import {
+  Delete as DeleteIcon,
+  ExpandMore as ExpandMoreIcon,
+  ExpandLess as ExpandLessIcon,
+  Add as AddIcon,
+  Remove as RemoveIcon,
+  Check as CheckIcon,
+  Edit as EditIcon,
+} from "@mui/icons-material";
 const mdParser = new MarkdownIt(/* Markdown-it options */);
+const useCourseState = () => {
+  const [courseInfo, setCourseInfo] = useState(null);
+  const [chapters, setChapters] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  return {
+    courseInfo,
+    setCourseInfo,
+    chapters,
+    setChapters,
+    isLoading,
+    setIsLoading,
+  };
+};
+const useChapterState = () => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingChapterId, setEditingChapterId] = useState(null);
+  const [editingChapterName, setEditingChapterName] = useState("");
+  const [showNewChapterForm, setShowNewChapterForm] = useState(false);
+  const [newChapterName, setNewChapterName] = useState("");
+
+  return {
+    isEditing,
+    setIsEditing,
+    editingChapterId,
+    setEditingChapterId,
+    editingChapterName,
+    setEditingChapterName,
+    showNewChapterForm,
+    setShowNewChapterForm,
+    newChapterName,
+    setNewChapterName,
+  };
+};
+const useLessonState = () => {
+  const [activeTab, setActiveTab] = useState("content");
+  const [lessonTitle, setLessonTitle] = useState("");
+  const [lessonDuration, setLessonDuration] = useState("");
+  const [contentHtml, setContentHtml] = useState("");
+  const [contentMarkDown, setContentMarkDown] = useState("");
+  const [exerciseHtml, setExerciseHtml] = useState("");
+  const [exerciseMarkDown, setExerciseMarkDown] = useState("");
+  const [hidden, setHidden] = useState(true);
+
+  return {
+    activeTab,
+    setActiveTab,
+    lessonTitle,
+    setLessonTitle,
+    lessonDuration,
+    setLessonDuration,
+    contentHtml,
+    setContentHtml,
+    contentMarkDown,
+    setContentMarkDown,
+    exerciseHtml,
+    setExerciseHtml,
+    exerciseMarkDown,
+    setExerciseMarkDown,
+    hidden,
+    setHidden,
+  };
+};
+
 const Step2 = () => {
   const searchParams = useSearchParams();
   const courseId = searchParams.get("courseId");
   const router = useRouter();
-  const [activeTab, setActiveTab] = React.useState("content");
-  const [imagePreview, setImagePreview] = React.useState(null);
-  const fileInputRef = React.useRef(null);
-  const [lessonTitle, setLessonTitle] = useState("");
-  const [lessonDuration, setLessonDuration] = useState("");
-  const [hienFormChuongMoi, setHienFormChuongMoi] = useState(false);
-  const [tenChuongMoi, setTenChuongMoi] = useState("");
-  const [chapters, setChapters] = useState([]);
-  const [courseInfo, setCourseInfo] = useState(null);
-  const [hidden, setHidden] = useState(true);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editingChapterId, setEditingChapterId] = useState(null);
-  const [editingChapterName, setEditingChapterName] = useState("");
-  const contentMarkDown = useRef("");
-  const contentHtml = useRef("");
-  const exerciseMarkDown = useRef("");
-  const exerciseHtml = useRef("");
+  const fileInputRef = useRef(null);
 
-  const fetchDetailCourse = async () => {
+  const courseState = useCourseState();
+  const chapterState = useChapterState();
+  const lessonState = useLessonState();
+  const fetchDetailCourse = useCallback(async () => {
     try {
-      setIsLoading(true);
+      courseState.setIsLoading(true);
       const response = await getDetailCourse(courseId);
 
-      if (response.data) {
-        console.log("Chapters:", response.data.data.chapters);
-        console.log("Data từ API:", response.data);
+      if (response?.data?.data) {
+        const { course, chapters } = response.data.data;
+        courseState.setCourseInfo(course);
+        courseState.setChapters(chapters);
 
-        setCourseInfo(response.data.data.course);
-        setChapters(response.data.data.chapters);
+        // Fetch all lesson contents
+        chapters.forEach((chapter) => {
+          chapter.lessons?.forEach((lesson) => {
+            fetchGetLessonContent(lesson.id);
+          });
+        });
       }
     } catch (error) {
       toast.error("Lỗi khi tải thông tin khóa học!");
     } finally {
-      setIsLoading(false);
+      courseState.setIsLoading(false);
+    }
+  }, [courseId]);
+  const fetchGetLessonContent = async (lessonId) => {
+    try {
+      const response = await getLessonContent(lessonId);
+      if (response?.data) {
+        courseState.setChapters((prevChapters) =>
+          prevChapters.map((chapter) => ({
+            ...chapter,
+            lessons: chapter.lessons?.map((lesson) =>
+              lesson.id === lessonId
+                ? { ...lesson, content: response.data }
+                : lesson
+            ),
+          }))
+        );
+      }
+    } catch (error) {
+      toast.error("Lỗi khi tải nội dung bài học!");
     }
   };
+  const handleAddChapter = async () => {
+    if (!chapterState.newChapterName.trim()) {
+      toast.error("Vui lòng nhập tên chương!");
+      return;
+    }
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (courseId) {
-        fetchDetailCourse();
+    try {
+      const response = await postNewChapter({
+        courseId,
+        chapterName: chapterState.newChapterName,
+      });
+
+      if (response?.data) {
+        courseState.setChapters((prev) => [...prev, response.data]);
+        chapterState.setNewChapterName("");
+        chapterState.setShowNewChapterForm(false);
+        toast.success("Thêm chương thành công!");
       }
-    };
-    fetchData();
-  }, []);
-
-  const xuLyThemChuong = () => {
-    setHienFormChuongMoi(true);
+    } catch (error) {
+      toast.error("Thêm chương thất bại!");
+    }
   };
+  const xuLyThemChuong = () => {
+    chapterState.setShowNewChapterForm(true);
+  };
+
   const xuLyLuuChuong = async () => {
-    if (!tenChuongMoi.trim()) {
+    if (!chapterState.newChapterName.trim()) {
       toast.error("Vui lòng nhập tên chương!");
       return;
     }
 
     try {
       const response = await postAChapter({
-        chapterName: tenChuongMoi,
+        chapterName: chapterState.newChapterName,
         courseId: courseId,
       });
 
       if (response && response.data) {
-        setChapters([
-          ...chapters,
+        courseState.setChapters([
+          ...courseState.chapters,
           {
             id: response.data.chapterId,
-            chapterName: tenChuongMoi,
+            chapterName: chapterState.newChapterName,
             lessons: [],
           },
         ]);
-        setHienFormChuongMoi(false);
-        setTenChuongMoi("");
+        chapterState.setShowNewChapterForm(false);
+        chapterState.setNewChapterName("");
 
         toast.success("Thêm chương mới thành công!");
       }
@@ -108,19 +197,34 @@ const Step2 = () => {
       toast.error("Thêm chương mới thất bại!");
     }
   };
-
+  useEffect(() => {
+    if (lessonState.activeTab === "content") {
+      lessonState.setContentMarkDown(lessonState.contentMarkDown);
+    } else {
+      lessonState.setExerciseMarkDown(lessonState.exerciseMarkDown);
+    }
+  }, [lessonState.activeTab]);
+  useEffect(() => {
+    if (courseId) {
+      fetchDetailCourse();
+    }
+  }, [courseId, fetchDetailCourse]);
   function handleEditorChange({ html, text }) {
-   if(activeTab==="content")
-   {
-     contentHtml.current = html;
-     contentMarkDown.current = text;
-   }
-    else
-    {
-      exerciseHtml.current = html;
-      exerciseMarkDown.current = text
+    if (lessonState.activeTab === "content") {
+      lessonState.setContentHtml(html);
+      lessonState.setContentMarkDown(text);
+    } else {
+      lessonState.setExerciseHtml(html);
+      lessonState.setExerciseMarkDown(text);
     }
   }
+  const handleEditLesson = (lesson) => {
+    lessonState.setHidden(false);
+    lessonState.setLessonTitle(lesson.name);
+    lessonState.setLessonDuration(lesson.studyTime);
+    lessonState.setContentMarkDown(lesson.contentMarkDown);
+    lessonState.setExerciseMarkDown(lesson.exerciseMarkDown);
+  };
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -137,8 +241,8 @@ const Step2 = () => {
   };
 
   const toggleChapter = (index) => {
-    setChapters(
-      chapters.map((chapter, i) => ({
+    courseState.setChapters(
+      courseState.chapters.map((chapter, i) => ({
         ...chapter,
         isOpen: i === index ? !chapter.isOpen : chapter.isOpen,
       }))
@@ -149,7 +253,9 @@ const Step2 = () => {
       const response = await deleteAChapter(id);
       if (response.data) {
         toast.success("Xóa chương thành công!");
-        setChapters(chapters.filter((chapter) => chapter.id !== id));
+        courseState.setChapters(
+          courseState.chapters.filter((chapter) => chapter.id !== id)
+        );
       }
     } catch (error) {
       toast.error("Xóa chương thất bại!");
@@ -162,10 +268,11 @@ const Step2 = () => {
   };
   const handleEditChapter = (id, name, e) => {
     e.stopPropagation();
-    setEditingChapterId(id);
-    setEditingChapterName(name);
-    setIsEditing(true);
+    chapterState.setEditingChapterId(id);
+    chapterState.setEditingChapterName(name);
+    chapterState.setIsEditing(true);
   };
+
   const handleSaveEdit = async () => {
     if (!editingChapterName.trim()) {
       toast.error("Vui lòng nhập tên chương!");
@@ -209,8 +316,13 @@ const Step2 = () => {
       toast.error("Cập nhật chương thất bại!");
     }
   };
+  const handleHiddenBtn = () => {
+    setHidden(!hidden);
+    setHiddenBtn(!hiddenBtn);
+    setLessonTitle("");
+    setLessonDuration("");
+  };
   const handleAddLesson = async (chapterId) => {
-    setHidden(false);
     if (!lessonTitle.trim() || !lessonDuration.trim()) {
       toast.error("Vui lòng nhập đầy đủ thông tin!");
       return;
@@ -219,44 +331,55 @@ const Step2 = () => {
     try {
       const response = await postALesson({
         courseId: courseId,
-      chapter: chapterId,
-      studyTime: parseInt(lessonDuration),
-      video: "data.video", // Cần cập nhật theo dữ liệu thực tế
-      contentHtml: editorContent.current, // Nội dung HTML từ editor
-      contentMarkDown: "data.contentMarkDown", // Nội dung Markdown từ editor
-      exerciseHtml: "data.exerciseHtml", // Bài tập dạng HTML
-      exerciseMarkDown: "data.exerciseMarkDown" // Bài tập dạng Markdown
+        chapter: chapterId,
+        name: lessonTitle,
+        studyTime: parseInt(lessonDuration),
+        video: "data.video",
+        contentHtml: contentHtml,
+        contentMarkDown: contentMarkDown,
+        exerciseHtml: exerciseHtml,
+        exerciseMarkDown: exerciseMarkDown,
       });
+      console.log("Course ID:", courseId);
+      console.log("Chapter ID:", chapterId);
+      console.log("Lesson Title:", lessonTitle);
+      console.log("Lesson Duration:", lessonDuration);
+      console.log("Content HTML:", contentHtml);
+      console.log("Content Markdown:", contentMarkDown);
+      console.log("Exercise HTML:", exerciseHtml);
+      console.log("Exercise Markdown:", exerciseMarkDown);
 
       if (response && response.data) {
-        // const newLesson = {
-        //   id: response.data.lessonId,
-        //   name: lessonTitle,
-        //   studyTime: lessonDuration,
-        //   video: "data.video",
-        //   contentHtml: editorContent.current,
-        //   contentMarkDown: "data.contentMarkDown",
-        //   exerciseHtml: "data.exerciseHtml",
-        //   exerciseMarkDown: "data.exerciseMarkDown"
-        // };
+        setHidden(true);
+        const newLesson = {
+          id: response.data.lessonId,
+          name: lessonTitle,
+          studyTime: lessonDuration,
+          video: "data.video",
+          contentHtml: contentHtml,
+          contentMarkDown: contentMarkDown,
+          exerciseHtml: exerciseHtml,
+          exerciseMarkDown: exerciseMarkDown,
+        };
 
-        // setChapters(
-        //   chapters.map((chapter) =>
-        //     chapter.id === chapterId
-        //       ? {
-        //           ...chapter,
-        //           lessons: [...chapter.lessons, newLesson],
-        //         }
-        //       : chapter
-        //   )
-        // );
-
+        setChapters(
+          chapters.map((chapter) =>
+            chapter.id === chapterId
+              ? {
+                  ...chapter,
+                  lessons: [...chapter.lessons, newLesson],
+                }
+              : chapter
+          )
+        );
+        console.log("Chapters:", chapters);
         setLessonTitle("");
         setLessonDuration("");
 
         toast.success("Thêm bài học mới thành công!");
       }
     } catch (error) {
+      console.log("Error:", error);
       toast.error("Thêm bài học mới thất bại!");
     }
   };
@@ -279,7 +402,7 @@ const Step2 = () => {
             </span>
           </div>
 
-          {!hidden && (
+          {!lessonState.hidden && (
             <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-1 gap-3 md:gap-5 lg:gap-7 ">
               <div className="lg:col-span-1 md:col-span-2 col-span-2">
                 <label htmlFor="name">Tên bài giảng</label>
@@ -310,7 +433,7 @@ const Step2 = () => {
           )}
 
           <div className="grid lg:grid-cols-2 md:grid-cols-1 grid-cols-1 gap-3 md:gap-5 lg:gap-7">
-            {hidden ? (
+            {lessonState.hidden ? (
               <div></div>
             ) : (
               <div className="lg:col-span-1 md:col-span-1 col-span-1 h-fit">
@@ -347,12 +470,12 @@ const Step2 = () => {
             )}
             <div className="lg:col-span-1 md:col-span-1 col-span-1">
               <div className="w-full border rounded-md">
-                {isLoading ? (
+                {courseState.isLoading ? (
                   <span className="p-3"> Đang tải dữ liệu ....</span>
                 ) : (
                   <div className="border border-gray rounded-md p-5">
                     {/* Hiển thị các chương hiện có */}
-                    {chapters.map((chapter, index) => (
+                    {courseState.chapters.map((chapter, index) => (
                       <div
                         key={chapter.id}
                         className="border-b last:border-b-0"
@@ -399,13 +522,13 @@ const Step2 = () => {
                         </div>
                         {chapter.isOpen && (
                           <div className="pl-4 py-2 bg-gray-50">
-                            {/* Danh sách lessons hiện tại */}
                             {chapter.lessons &&
                               chapter.lessons.length > 0 &&
                               chapter.lessons.map((lesson) => (
                                 <div
+                                  onClick={() => handleEditLesson(lesson)}
                                   key={lesson.id}
-                                  className="flex justify-between items-center p-2 border-b last:border-b-0"
+                                  className="flex justify-between items-center p-2 border-b last:border-b-0 cursor-pointer hover:bg-gray-100"
                                 >
                                   <span className="text-sm">{lesson.name}</span>
                                   <span className="text-xs text-gray-500">
@@ -415,25 +538,40 @@ const Step2 = () => {
                               ))}
 
                             {/* Nút thêm lesson mới */}
-                            <div
-                              className="flex justify-between items-center p-2 mt-2 cursor-pointer hover:bg-gray-100 border-t"
-                              onClick={() => handleAddLesson(chapter.id)}
-                            >
+                            <div className="flex justify-between items-center p-2 mt-2 cursor-pointer hover:bg-gray-100 border-t">
                               <span className="text-sm text-gray-500">
                                 Thêm bài học mới
                               </span>
-                             
-                              <button className="text-gray-500 bg-stroke1 rounded-sm">
-                                <AddIcon sx={{ color: "white" }} />
-                              </button>
-                           
-                              
+                              {lessonState.hiddenBtn ? (
+                                <button
+                                  onClick={() => handleHiddenBtn()}
+                                  className="text-gray-500 bg-stroke1 rounded-sm "
+                                >
+                                  <AddIcon sx={{ color: "white" }} />
+                                </button>
+                              ) : (
+                                <div className="flex space-x-4">
+                                  <button
+                                    onClick={() => handleAddLesson(chapter.id)}
+                                    className="text-gray-500 bg-stroke1 rounded-sm "
+                                  >
+                                    <CheckIcon sx={{ color: "white" }} />
+                                  </button>
+
+                                  <button
+                                    onClick={() => handleHiddenBtn()}
+                                    className="text-gray-500 bg-red-600 rounded-sm "
+                                  >
+                                    <RemoveIcon sx={{ color: "white" }} />
+                                  </button>
+                                </div>
+                              )}
                             </div>
                           </div>
                         )}
                       </div>
                     ))}
-                    {isEditing && (
+                    {chapterState.isEditing && (
                       <div className="mt-4 space-y-2 p-4 border rounded-md">
                         <span>Nhập tên chương mới</span>
                         <input
@@ -472,27 +610,31 @@ const Step2 = () => {
                     </div>
 
                     {/* Form thêm chương mới */}
-                    {hienFormChuongMoi && (
+                    {chapterState.showNewChapterForm && (
                       <div className="mt-4 p-4 border rounded-md">
                         <input
                           type="text"
-                          placeholder="Nhập tên chương"
-                          value={tenChuongMoi}
-                          onChange={(e) => setTenChuongMoi(e.target.value)}
-                          className="w-full p-2 border rounded-md"
+                          value={chapterState.newChapterName}
+                          onChange={(e) =>
+                            chapterState.setNewChapterName(e.target.value)
+                          }
+                          placeholder="Nhập tên chương mới"
+                          className="w-full p-2 border rounded-md mb-2"
                         />
-                        <div className="mt-2 flex justify-end space-x-2">
-                          <button
-                            onClick={() => setHienFormChuongMoi(false)}
-                            className="px-4 py-2 border rounded hover:bg-gray-50"
-                          >
-                            Hủy
-                          </button>
+                        <div className="flex space-x-2 justify-end">
                           <button
                             onClick={xuLyLuuChuong}
-                            className="px-4 py-2 bg-stroke1 text-white rounded hover:bg-orange-600"
+                            className="px-4 py-2 bg-stroke1 text-white rounded-md"
                           >
                             Lưu
+                          </button>
+                          <button
+                            onClick={() =>
+                              chapterState.setShowNewChapterForm(false)
+                            }
+                            className="px-4 py-2 bg-red-500 text-white rounded-md"
+                          >
+                            Hủy
                           </button>
                         </div>
                       </div>
@@ -508,7 +650,7 @@ const Step2 = () => {
               onClick={() => setActiveTab("content")}
             >
               <h1>Nội dung</h1>
-              {activeTab === "content" && (
+              {useLessonState.activeTab === "content" && (
                 <Image
                   src="/assets/images/lineorange.png"
                   width={80}
@@ -522,7 +664,7 @@ const Step2 = () => {
               onClick={() => setActiveTab("exercise")}
             >
               <h1>Bài tập</h1>
-              {activeTab === "exercise" && (
+              {useLessonState.activeTab === "exercise" && (
                 <Image
                   src="/assets/images/lineorange.png"
                   width={60}
@@ -534,6 +676,11 @@ const Step2 = () => {
           </div>
           <div className="border border-gray rounded-md p-5">
             <MdEditor
+              value={
+                useLessonState.activeTab === "content"
+                  ? contentMarkDown
+                  : useLessonState.exerciseMarkDown
+              }
               style={{ height: "500px" }}
               renderHTML={(text) => mdParser.render(text)}
               onChange={handleEditorChange}

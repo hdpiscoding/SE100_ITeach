@@ -105,9 +105,11 @@ const Home = () => {
 
         <div className="grid md:grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 grid-cols-2 gap-6 mt-10 ">
           {courseCategory.map((category) => (
-            <Coursecardnoprice
-             key={category.id}
-              categoryName={category.categoryName} />
+           <div className="w-full">
+              <Coursecardnoprice
+               key={category.id}
+                categoryName={category.categoryName} />
+           </div>
           ))}
         </div>
 
@@ -128,7 +130,7 @@ const Home = () => {
             alt="banner"
             className="absolute right-0 bottom-0  hidden md:block  h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] "
           />
-          <div className="w-full md:w-[500px] p-8 md:p-14 relative z-10 space-y-4">
+          <div className="w-full md:w-[600px] p-8 md:p-14 relative z-10 space-y-4">
             <h1 className="font-bold text-base md:text-4xl text-white">
               Tại sao bạn nên tham gia khóa học của ITeach ?
             </h1>
@@ -142,8 +144,7 @@ const Home = () => {
                   alt="star"
                 />
                 <span className="text-xs md:text-base lg:text-lg text-white">
-                  Teachers don't get lost in the grid view and have a dedicated
-                  Podium space.
+                Học cùng giảng viên tận tâm, luôn đồng hành và giải đáp mọi thắc mắc của bạn
                 </span>
               </div>
               <div className="flex items-start gap-2">
@@ -155,8 +156,7 @@ const Home = () => {
                   alt="star"
                 />
                 <span className="text-xs md:text-base lg:text-lg text-white">
-                  Teachers don't get lost in the grid view and have a dedicated
-                  Podium space.
+                Học nhanh - Hiểu sâu - Áp dụng ngay! 
                 </span>
               </div>
               <div className="flex items-start gap-2">
@@ -168,13 +168,12 @@ const Home = () => {
                   alt="star"
                 />
                 <span className="text-xs md:text-base lg:text-lg text-white">
-                  Teachers don't get lost in the grid view and have a dedicated
-                  Podium space.
+                Học tập hiệu quả mà không lo chi phí! Khóa học với mức giá phù hợp cho mọi người
                 </span>
               </div>
             </div>
             <button className="text-SignUp lg:rounded-lg md:rounded-lg sm:rounded-lg rounded-sm bg-white  lg:py-3 lg:px-7 md:py-2 md:px-5 sm:py-2 sm:px-4 py-2 px-3 text-xs md:text-base lg:text-lg hover:bg-SignUp hover:text-white ">
-              BUY NOW
+             Mua ngay
             </button>
           </div>
         </div>
