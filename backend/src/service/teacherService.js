@@ -255,6 +255,7 @@ let PostALesson = (data) => {
       resolve({
         errCode: 0,
         errMessage: "OK",
+        lessonId: latestLesson.id,
       });
     } catch (error) {
       reject(error);
