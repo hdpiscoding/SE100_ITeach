@@ -16,7 +16,7 @@ import {CartesianGrid, Legend, Line, LineChart, XAxis, Label, Pie, PieChart} fro
 import {Button} from "@/components/ui/button";
 import {DataTable} from "@/components/ui/data-table";
 import {columns} from "@/components/Course/Analysis/column";
-import {useParams} from "next/navigation";
+import {useParams, useRouter} from "next/navigation";
 import {getCourses} from "@/services/course";
 import {Skeleton} from "@/components/ui/skeleton";
 import {getIDEUsed, getStudentsOfCourse} from "@/services/courseAnalysis";
@@ -38,27 +38,6 @@ interface PieChartData {
     amount: number;
     fill: string;
 }
-
-// interface Student {
-//     id: string;
-//     userId: string;
-//     courseId: string;
-//     currentLessonId: string;
-//     numberOfProcess: number;
-//     progress?: number;
-//     User: {
-//         id: string;
-//         email: string;
-//         firstName: string | null;
-//         lastName: string | null;
-//         phoneNumber: string | null;
-//         avatar: string | null;
-//         birthday: string | null;
-//         totalCourseNumber: number | null;
-//         totalStudentNumber: number | null;
-//         role: string;
-//     };
-// }
 
 const transformPieData = (students: any[], totalLesson: number): PieChartData[] => {
     const result = [
@@ -203,105 +182,10 @@ interface Student {
     birthday: string //dd/MM/yyyy
     progress: number
 }
-//
-// const students: Student[] = [
-//     {
-//         id: "1",
-//         firstName: "Nguyễn",
-//         lastName: "Minh Tuấn",
-//         phone: "0912345678",
-//         email: "tuan.nguyen@example.com",
-//         birthday: "",
-//         progress: 85
-//     },
-//     {
-//         id: "2",
-//         firstName: "Lê",
-//         lastName: "Thị Lan",
-//         phone: "0987654321",
-//         email: "lan.le@example.com",
-//         birthday: "22/02/2006",
-//         progress: 90
-//     },
-//     {
-//         id: "3",
-//         firstName: "",
-//         lastName: "",
-//         phone: "0934567890",
-//         email: "bao.ngoc.tran@example.com",
-//         birthday: "03/03/2005",
-//         progress: 78
-//     },
-//     {
-//         id: "4",
-//         firstName: "Phạm",
-//         lastName: "Thùy Linh",
-//         phone: "0911223344",
-//         email: "thuy.linh.pham@example.com",
-//         birthday: "14/04/2004",
-//         progress: 92
-//     },
-//     {
-//         id: "5",
-//         firstName: "Vũ",
-//         lastName: "Quốc Duy",
-//         phone: "0988999988",
-//         email: "quoc.duy.vu@example.com",
-//         birthday: "27/05/2003",
-//         progress: 80
-//     },
-//     {
-//         id: "6",
-//         firstName: "Đặng",
-//         lastName: "Thanh Bình",
-//         phone: "0922334455",
-//         email: "thanh.binh.dang@example.com",
-//         birthday: "12/06/2005",
-//         progress: 88
-//     },
-//     {
-//         id: "7",
-//         firstName: "Hoàng",
-//         lastName: "Quang Huy",
-//         phone: "0933777888",
-//         email: "quang.huy.hoang@example.com",
-//         birthday: "25/07/2006",
-//         progress: 75
-//     },
-//     {
-//         id: "8",
-//         firstName: "Bùi",
-//         lastName: "Thanh Hà",
-//         phone: "0944556677",
-//         email: "thanh.ha.bui@example.com",
-//         birthday: "09/08/2005",
-//         progress: 95
-//     },
-//     {
-//         id: "9",
-//         firstName: "Cao",
-//         lastName: "Thanh Hương",
-//         phone: "0955667788",
-//         email: "thanh.huong.cao@example.com",
-//         birthday: "19/09/2004",
-//         progress: 70
-//     },
-//     {
-//         id: "10",
-//         firstName: "Lý",
-//         lastName: "Kim Anh",
-//         phone: "0919988776",
-//         email: "kim.anh.ly@example.com",
-//         birthday: "30/10/2005",
-//         progress: 84
-//     }
-// ]
 
-
-
-
-export default function CourseAnalysis() {
+export default function CourseAnalysis(props: any) {
     const { courseId } = useParams();
+    const router = useRouter();
     const [user, setUser] = useState<User>();
 
     const [courseName, setCourseName] = useState<string>("");
@@ -420,7 +304,7 @@ export default function CourseAnalysis() {
                     <div className="flex flex-col gap-4">
                         <div className="flex items-center gap-2">
                             <ArrowLeft className="h-7 w-7 cursor-pointer text-DarkGreen" onClick={() => {
-                                //router.push(`/${props.role}/course/${courseId}`)
+                                router.push(`/${props.role}/course/${courseId}`)
                             }}/>
 
                             {courseName
