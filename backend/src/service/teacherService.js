@@ -6,7 +6,7 @@ import db from "../models/index";
 let createNewCourse = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
-      await db.Course.create({
+      let newCourse = await db.Course.create({
         courseName: data.courseName,
         courseCategoryId: data.courseCategoryId,
         cost: data.cost,
@@ -28,11 +28,7 @@ let createNewCourse = (data) => {
         teacher.totalCourseNumber += 1;
         await teacher.save();
       }
-      let newCourse = await db.Course.findOne({
-        where: { courseName: data.courseName },
-        order: [["createdAt", "DESC"]],
-        attributes: ["id"],
-      });
+
       let newCourseId = newCourse ? newCourse.id : null;
 
       resolve({
@@ -204,28 +200,11 @@ let PutALesson = (data) => {
 let PostALesson = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
-      await db.Lesson.create(
-        {
-          name: data.name,
-          courseId: data.courseId,
-          chapter: data.chapter,
-          studyTime: data.studyTime,
-        },
-        {
-          returning: [
-            "id",
-            "courseId",
-            "name",
-            "chapter",
-            "studyTime",
-            "createdAt",
-            "updatedAt",
-          ], // Exclude "course"
-        }
-      );
-      let latestLesson = await db.Lesson.findOne({
-        where: { courseId: data.courseId },
-        order: [["id", "DESC"]],
+      let latestLesson = await db.Lesson.create({
+        name: data.name,
+        courseId: data.courseId,
+        chapter: data.chapter,
+        studyTime: data.studyTime,
       });
       await db.LessonContent.create({
         lessonId: latestLesson.id,
@@ -247,6 +226,7 @@ let PostALesson = (data) => {
       resolve({
         errCode: 0,
         errMessage: "OK",
+        lessonId: latestLesson.id,
       });
     } catch (error) {
       reject(error);
@@ -404,15 +384,11 @@ let getAllStudentOfCourse = (data) => {
 let createNewChapter = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
-      await db.Chapter.create({
+      let newChapter = await db.Chapter.create({
         chapterName: data.chapterName,
         courseId: data.courseId,
       });
-      let newChapter = await db.Chapter.findOne({
-        where: { chapterName: data.chapterName, courseId: data.courseId },
-        order: [["createdAt", "DESC"]],
-        attributes: ["id"],
-      });
+
       let newChapterId = newChapter ? newChapter.id : null;
       resolve({
         errCode: 0,
