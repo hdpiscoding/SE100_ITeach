@@ -12,7 +12,7 @@ The models/index file will call this method automatically.*/
         foreignKey: "chapter",
         as: "lessons",
       });
-      Lesson.hasMany(models.VideoProgess, {
+      Lesson.hasMany(models.VideoProgress, {
         foreignKey: "lessonId",
         as: "lesson",
       });
@@ -33,6 +33,10 @@ The models/index file will call this method automatically.*/
       chapter: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
+      },
+      lessonOrder: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
       },
       studyTime: DataTypes.DOUBLE,
     },

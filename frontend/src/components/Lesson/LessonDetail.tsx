@@ -225,11 +225,28 @@ export default function LessonDetail(props: any) {
 
     useEffect(() => {
         const fetchData = async () => {
-            const [courseData, lessonData, isEnrolled] = await Promise.all([
-                getCourses(String(courseId), String(user?.id)),
-                getLessonDetail(String(lessonId)),
-                checkIsEnrolled(String(user?.id), String(courseId))
-            ]);
+            let courseData;
+            let lessonData;
+            let isEnrolled;
+            if (props.role === "student") {
+                const [course, lesson, enroll] = await Promise.all([
+                    getCourses(String(courseId), String(user?.id)),
+                    getLessonDetail(String(lessonId)),
+                    checkIsEnrolled(String(user?.id), String(courseId))
+                ]);
+                courseData = course;
+                lessonData = lesson;
+                isEnrolled = enroll;
+            }
+            else {
+                const [course, lesson] = await Promise.all([
+                    getCourses(String(courseId), String(user?.id)),
+                    getLessonDetail(String(lessonId))
+                ]);
+                courseData = course;
+                lessonData = lesson;
+            }
+
             if(props.role === "student") {
                 setIsBuy(isEnrolled);
             }

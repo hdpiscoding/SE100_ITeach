@@ -36,8 +36,8 @@ const studentPaths = [
 
   "/api/v1/post-ide-use",
   "/api/v1/get-all-student-of-course",
-  "/api/v1/post-video-progess",
-  "/api/v1/get-video-progess-by-studentId",
+  "/api/v1/post-video-progress",
+  "/api/v1/get-video-progress-by-studentId",
 ];
 const teacherPaths = [
   "/api/v1/create-new-course",
@@ -57,6 +57,8 @@ const teacherPaths = [
   "/api/v1/put-a-chapter",
   "/api/v1/delete-a-chapter",
   "/api/v1/get-detail-course-info",
+  "/api/v1/get-lesson-content",
+  "/api/v1/post-lesson-comments",
   "/api/v1/get-ide-use-by-month",
 ];
 const adminPaths = [
@@ -73,6 +75,7 @@ const adminPaths = [
   "/api/v1/get-ide-use",
   "/api/v1/get-all-student-of-course",
   "/api/v1/get-detail-course-info",
+  "/api/v1/get-lesson-content",
   "/api/v1/get-ide-use-by-month",
   "/api/v1/create-new-course-category",
 ];

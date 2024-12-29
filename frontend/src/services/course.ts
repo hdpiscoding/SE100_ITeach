@@ -34,10 +34,21 @@ const completeLesson = async (lessonId: string, studentId: string, courseId: str
     return response.data.data;
 }
 
+const createCourseReview = async (courseId: string, userId: string, rating: number, content: string) => {
+    const response = await instance.post(`api/v1/post-review`, {
+        userId: userId,
+        courseId: courseId,
+        star: rating,
+        content: content
+    });
+    return response.data;
+}
+
 export {
     getCourses,
     getLessonDetail,
     checkIsEnrolled,
     createLessonComment,
-    completeLesson
+    completeLesson,
+    createCourseReview
 }

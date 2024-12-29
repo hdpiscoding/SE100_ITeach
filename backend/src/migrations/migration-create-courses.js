@@ -26,7 +26,7 @@ module.exports = {
         type: Sequelize.DOUBLE,
       },
       totalStars: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.DOUBLE,
       },
       reviewers: {
         type: Sequelize.INTEGER,

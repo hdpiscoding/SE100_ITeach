@@ -19,9 +19,9 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "userId",
         as: "userInfo",
       });
-      User.hasOne(models.VideoProgess, {
+      User.hasOne(models.VideoProgress, {
         foreignKey: "userId",
-        as: "videoProgess",
+        as: "videoProgress",
       });
     }
   }

@@ -354,12 +354,31 @@ let postLessonComments = (data) => {
 let postReview = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
+      // Tạo review mới
       await db.Review.create({
         userId: data.userId,
         courseId: data.courseId,
         star: data.star,
         content: data.content,
       });
+
+      // Tính toán lại tổng số sao (totalStars) của khóa học
+      const reviews = await db.Review.findAll({
+        where: { courseId: data.courseId },
+        attributes: ['star'], // Chỉ lấy cột star
+      });
+
+      // Tính giá trị trung bình số sao
+      const totalStars =
+          reviews.reduce((sum, review) => sum + review.star, 0) / reviews.length;
+
+      // Cập nhật totalStars cho bảng Course
+      await db.Course.update(
+          { totalStars: totalStars },
+          {
+            where: { id: data.courseId },
+          }
+      );
       resolve({
         errCode: 0,
         errMessage: "OK",
@@ -447,7 +466,7 @@ let getDetailCourseInfo = (id, userId) => {
           {
             model: db.Lesson,
             as: "lessons",
-            attributes: ["id", "name", "studyTime"],
+            attributes: ["id", "name", "studyTime", "lessonOrder"],
             order: [["createdAt", "ASC"]], // Order lessons from oldest to newest
           },
         ],
@@ -640,9 +659,14 @@ let completeLesson = (data) => {
         where: { userId: data.studentId, courseId: data.courseId },
         raw: false,
       });
+      const lessonCount = await db.Lesson.count({
+        where: { courseId: data.courseId },
+      });
       if (myCourse) {
-        myCourse.numberOfProcess += 1;
-        myCourse.currentLessonId = data.lessonId;
+        if (myCourse.numberOfProcess < lessonCount) {
+          myCourse.numberOfProcess += 1;
+          myCourse.currentLessonId = data.lessonId;
+        }
         await myCourse.save();
       }
       resolve({
@@ -867,39 +891,70 @@ const getATeacher = (id) => {
     }
   });
 };
-const postVideoProgess = (data) => {
+const postVideoProgress = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
-      await db.VideoProgess.create({
-        userId: data.userId,
-        lessonId: data.lessonId,
-        progess: data.progess,
+      // Kiểm tra xem có bản ghi nào với userId và lessonId đã tồn tại chưa
+      let existingProgress = await db.VideoProgress.findOne({
+        where: {
+          userId: data.userId,
+          lessonId: data.lessonId,
+        },
       });
-      resolve({
-        errCode: 0,
-        errMessage: "OK",
-      });
+
+      if (existingProgress) {
+        // Nếu đã tồn tại, cập nhật progress
+        await db.VideoProgress.update(
+            { progress: data.progress }, // Cập nhật progress mới
+            {
+              where: {
+                userId: data.userId,
+                lessonId: data.lessonId,
+              },
+            }
+        );
+        resolve({
+          errCode: 0,
+          errMessage: "Progress updated successfully",
+        });
+      } else {
+        // Nếu chưa tồn tại, tạo mới progress
+        await db.VideoProgress.create({
+          userId: data.userId,
+          lessonId: data.lessonId,
+          progress: data.progress,
+        });
+        resolve({
+          errCode: 0,
+          errMessage: "Progress created successfully",
+        });
+      }
     } catch (e) {
-      reject(e);
+      reject({
+        errCode: 1,
+        errMessage: "Failed to process video progress",
+        error: e,
+      });
     }
   });
 };
-const getVideoProgessByStudentId = (studentId) => {
+
+const getVideoProgressByStudentId = (studentId, lessonId) => {
   return new Promise(async (resolve, reject) => {
     try {
-      let videoProgess = await db.VideoProgess.findAll({
-        where: { userId: studentId },
+      let videoProgress = await db.VideoProgress.findAll({
+        where: { userId: studentId, lessonId: lessonId },
         raw: true,
       });
-      if (videoProgess) {
+      if (videoProgress) {
         resolve({
           errCode: 0,
-          videoProgess: videoProgess,
+          videoProgress: videoProgress,
         });
       } else {
         resolve({
           errCode: 1,
-          errMessage: "No video progess found",
+          errMessage: "No video progress found",
         });
       }
     } catch (e) {
@@ -933,7 +988,7 @@ module.exports = {
   deleteAllCartItems,
   postPayment,
   getATeacher,
-  postVideoProgess,
+  postVideoProgress,
 
-  getVideoProgessByStudentId,
+  getVideoProgressByStudentId,
 };

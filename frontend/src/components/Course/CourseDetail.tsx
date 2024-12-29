@@ -22,7 +22,7 @@ import { Textarea } from "@/components/ui/textarea"
 import {useParams, useRouter} from "next/navigation";
 import Markdown from "react-markdown";
 import { Skeleton } from "@/components/ui/skeleton"
-import {checkIsEnrolled, getCourses} from "@/services/course";
+import {checkIsEnrolled, createCourseReview, getCourses} from "@/services/course";
 import Loading from "@/app/loading";
 import {addToCart, getCartByStudentId} from "@/services/cart";
 import {toast} from "react-toastify";
@@ -169,23 +169,33 @@ export default function CourseDetail(props: any) {
     useEffect(() => {
         console.log(user);
         const fetchData = async () => {
-            const [data, isEnrolled] = await Promise.all([
-                getCourses(String(courseId), String(user?.id)),
-                checkIsEnrolled(String(user?.id), String(courseId))
-            ]);
+            let isEnrolled = false;
+            let courseData;
+            if (props.role === "student") {
+                const [data, enroll] = await Promise.all([
+                    getCourses(String(courseId), String(user?.id)),
+                    checkIsEnrolled(String(user?.id), String(courseId))
+                ]);
+                courseData = data;
+                isEnrolled = enroll;
+            }
+            else {
+                courseData = await getCourses(String(courseId), String(user?.id));
+            }
+
             if(props.role === "student") {
                 setIsBuy(isEnrolled);
             }
-            setName(data.course.courseName);
-            setDescription(data.course.intro);
-            setIntro(data.course.gioiThieu);
-            setPrice(data.course.cost);
-            setImage(data.course.anhBia);
-            if (data.course.finishTime) {
-                setTotalTime(data.course.finishTime);
+            setName(courseData.course.courseName);
+            setDescription(courseData.course.intro);
+            setIntro(courseData.course.gioiThieu);
+            setPrice(courseData.course.cost);
+            setImage(courseData.course.anhBia);
+            if (courseData.course.finishTime) {
+                setTotalTime(courseData.course.finishTime);
             }
             else {
-                const totalDuration = data.chapters?.reduce((total: number, chapter: Chapter) => {
+                const totalDuration = courseData.chapters?.reduce((total: number, chapter: Chapter) => {
                     const chapterDuration = chapter.lessons?.reduce((lessonTotal: number, lesson: Lesson) => {
                         return lessonTotal + lesson.studyTime;
                     }, 0);
@@ -194,21 +204,21 @@ export default function CourseDetail(props: any) {
                 }, 0);
                 setTotalTime(totalDuration);
             }
-            setTotalChapter(data.chapters?.length);
-            setTotalLecture(data.course.totalLesson);
-            if (data.course.discount) {
-                setDiscount(data.course.discount);
+            setTotalChapter(courseData.chapters?.length);
+            setTotalLecture(courseData.course.totalLesson);
+            if (courseData.course.discount) {
+                setDiscount(courseData.course.discount);
             }
             else {
                 setDiscount(0);
             }
-            setStudents(data.course.totalStudent);
-            setTeacher(data.course.teacher);
-            setChapters(data.chapters);
-            setAverageRating(data.course.totalStars);
-            setRatingCount(data.reviews?.length);
-            if (data.reviews?.length > 0) {
-                setRatingValueList(data.reviews.reduce((counts: number[], review: Review) => {
+            setStudents(courseData.course.totalStudent);
+            setTeacher(courseData.course.teacher);
+            setChapters(courseData.chapters);
+            setAverageRating(courseData.course.totalStars);
+            setRatingCount(courseData.reviews?.length);
+            if (courseData.reviews?.length > 0) {
+                setRatingValueList(courseData.reviews.reduce((counts: number[], review: Review) => {
                     const index = 5 - review.star; // Tính index tương ứng (5 sao = index 0)
                     counts[index] += 1;
                     return counts;
@@ -217,9 +227,9 @@ export default function CourseDetail(props: any) {
             else{
                 setRatingValueList([0, 0, 0, 0, 0]);
             }
-            setReviews(data.reviews);
-            setIsReviewed(isUserInReviews(user?.id, data.reviews));
-            setCertificate(data.course.chungchiId);
+            setReviews(courseData.reviews);
+            setIsReviewed(isUserInReviews(user?.id, courseData.reviews));
+            setCertificate(courseData.course.chungchiId);
         }
 
         if (user) {
@@ -236,6 +246,55 @@ export default function CourseDetail(props: any) {
         const indexOfFirstItem = indexOfLastItem - itemsPerPage;
         setCurrentReviews(reviews?.slice(indexOfFirstItem, indexOfLastItem));
     }, [reviews, page]);
+
+    const handleReview = async () => {
+        try {
+            const response = await createCourseReview(String(courseId), String(user?.id), rating ?? 5, comment);
+            if (response.errMessage === "OK") {
+                toast.success("Đánh giá thành công");
+                setIsReviewed(true);
+                setComment("");
+                const data = await getCourses(String(courseId), String(user?.id));
+                setAverageRating(data.course.totalStars);
+                setRatingCount(data.reviews?.length);
+                setReviews(data.reviews);
+                setIsReviewed(isUserInReviews(user?.id, data.reviews));
+            }
+            else {
+                toast.error("Đã có lỗi xảy ra");
+            }
+        }
+        catch (error) {
+            console.error(error);
+        }
+    }
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const data = await getCourses(String(courseId), String(user?.id));
+                setAverageRating(data.course.totalStars);
+                setRatingCount(data.reviews?.length);
+                if (data.reviews?.length > 0) {
+                    setRatingValueList(data.reviews.reduce((counts: number[], review: Review) => {
+                        const index = 5 - review.star; // Tính index tương ứng (5 sao = index 0)
+                        counts[index] += 1;
+                        return counts;
+                    }, [0, 0, 0, 0, 0]))
+                }
+                else{
+                    setRatingValueList([0, 0, 0, 0, 0]);
+                }
+                setReviews(data.reviews);
+            }
+            catch (error) {
+                console.error(error);
+            }
+        }
+        if (user) {
+            fetchData();
+        }
+    }, [isReviewed, user]);
 
     const handleAddToCart = async () => {
         try {
@@ -742,7 +801,7 @@ export default function CourseDetail(props: any) {
 
                                         <div className="flex flex-col justify-center">
                                         <span className="font-semibold">
-                                            {user?.firstname + " " + user?.lastname}
+                                            {user?.email}
                                         </span>
 
                                             <Rating
@@ -761,9 +820,13 @@ export default function CourseDetail(props: any) {
                                             onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
                                                 setComment(event.target.value);
                                             }}
-                                            className="resize-none lg:w-[700px] w-[450px]"/>
+                                            className="resize-none lg:w-[550px] w-[450px]"/>
                                         <Button className={`bg-DarkGreen hover:bg-DarkGreen_Hover w-fit`}
-                                                disabled={comment === ""}>Đăng tải</Button>
+                                                disabled={comment === ""}
+                                                onClick={handleReview}
+                                        >
+                                            Đăng tải
+                                        </Button>
                                     </div>
                                 </div>}
 

@@ -71,12 +71,12 @@ const initARoutes = (app) => {
 
   router.put("/api/v1/delete-course", adminController.handleDeleteCourse);
   router.post(
-    "/api/v1/post-video-progess",
-    studentController.handlePostVideoProgess
+    "/api/v1/post-video-progress",
+    studentController.handlePostVideoProgress
   );
   router.get(
-    "/api/v1/get-video-progess-by-studentId",
-    studentController.handleGetVideoProgessByStudentId
+    "/api/v1/get-video-progress-by-studentId",
+    studentController.handleGetVideoProgressByStudentId
   );
   return app.use("/", router);
 };

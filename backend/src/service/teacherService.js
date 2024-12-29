@@ -6,7 +6,7 @@ import db from "../models/index";
 let createNewCourse = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
-      await db.Course.create({
+      let newCourse = await db.Course.create({
         courseName: data.courseName,
         courseCategoryId: data.courseCategoryId,
         cost: data.cost,
@@ -28,11 +28,7 @@ let createNewCourse = (data) => {
         teacher.totalCourseNumber += 1;
         await teacher.save();
       }
-      let newCourse = await db.Course.findOne({
-        where: { courseName: data.courseName },
-        order: [["createdAt", "DESC"]],
-        attributes: ["id"],
-      });
+
       let newCourseId = newCourse ? newCourse.id : null;
 
       resolve({
@@ -204,11 +200,17 @@ let PutALesson = (data) => {
 let PostALesson = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
+      let order = await db.Lesson.findOne({
+        where: { courseId: data.courseId },
+        order: [["lessonOrder", "DESC"]],
+      });
+
       await db.Lesson.create(
         {
           name: data.name,
           courseId: data.courseId,
           chapter: data.chapter,
+          lessonOrder: order ? order.lessonOrder + 1 : 0,
           studyTime: data.studyTime,
         },
         {
@@ -217,6 +219,7 @@ let PostALesson = (data) => {
             "courseId",
             "name",
             "chapter",
+            "lessonOrder",
             "studyTime",
             "createdAt",
             "updatedAt",
@@ -225,7 +228,7 @@ let PostALesson = (data) => {
       );
       let latestLesson = await db.Lesson.findOne({
         where: { courseId: data.courseId },
-        order: [["createdAt", "ASC"]],
+        order: [["createdAt", "DESC"]],
       });
       await db.LessonContent.create({
         lessonId: latestLesson.id,
@@ -235,12 +238,17 @@ let PostALesson = (data) => {
         exerciseHtml: data.exerciseHtml,
         exerciseMarkDown: data.exerciseMarkDown,
       });
+
+      const lessonCount = await db.Lesson.count({
+        where: { courseId: data.courseId },
+      });
+
       let course = await db.Course.findOne({
         where: { id: data.courseId },
         raw: false,
       });
       if (course) {
-        course.totalLesson += 1;
+        course.totalLesson = lessonCount;
         await course.save();
       }
 
@@ -269,6 +277,20 @@ let deleteALesson = (data) => {
       await db.LessonContent.destroy({
         where: { lessonId: data.id },
       });
+
+        const lessonCount = await db.Lesson.count({
+            where: { courseId: Lesson.courseId },
+        });
+
+        let course = await db.Course.findOne({
+            where: { id: Lesson.courseId },
+            raw: false,
+        });
+
+        if (course) {
+            course.totalLesson = lessonCount;
+            await course.save();
+        }
       resolve({
         errCode: 0,
         errMessage: "Deleted",
@@ -404,14 +426,9 @@ let getAllStudentOfCourse = (data) => {
 let createNewChapter = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
-      await db.Chapter.create({
+      let newChapter = await db.Chapter.create({
         chapterName: data.chapterName,
         courseId: data.courseId,
-      });
-      let newChapter = await db.Chapter.findOne({
-        where: { chapterName: data.chapterName, courseId: data.courseId },
-        order: [["createdAt", "DESC"]],
-        attributes: ["id"],
       });
       let newChapterId = newChapter ? newChapter.id : null;
       resolve({
