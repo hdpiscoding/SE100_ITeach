@@ -105,9 +105,9 @@ const Login = ({ isOpen, onClose, onLogin, setLogin, setRole }) => {
                   className="focus:outline-none"
                 >
                   {showPassword ? (
-                    <EyeOff className="inline-block" width={25} height={20} />
-                  ) : (
                     <Eye className="inline-block" width={25} height={20} />
+                  ) : (
+                    < EyeOff className="inline-block" width={25} height={20} />
                   )}
                 </button>
               </div>
@@ -124,7 +124,12 @@ const Login = ({ isOpen, onClose, onLogin, setLogin, setRole }) => {
               <h1 className="text-sm md:text-base">Hoặc</h1>
             </div>
 
-            <div className="bg-xanhface flex p-2 justify-center rounded-2xl space-x-2 my-3 cursor-pointer">
+            <div
+              className="bg-xanhface flex p-2 justify-center rounded-2xl space-x-2 my-3 cursor-pointer"
+              onClick={() => {
+                window.open("http://localhost:8080/api/auth/facebook", "_self");
+              }}
+            >
               <Image
                 className="inline-block"
                 src="/assets/images/facebook.png"
@@ -136,7 +141,10 @@ const Login = ({ isOpen, onClose, onLogin, setLogin, setRole }) => {
               </h1>
             </div>
 
-            <div className="bg-white flex p-2 justify-center rounded-2xl space-x-2 border-2 border-gray mt-3 cursor-pointer hover:bg-MoreLightGray">
+            <div className="bg-white flex p-2 justify-center rounded-2xl space-x-2 border-2 border-gray mt-3 cursor-pointer hover:bg-MoreLightGray"
+              onClick={() => {
+                window.open("http://localhost:8080/api/auth/google", "_self");
+              }}>
               <Image
                 className="inline-block"
                 src="/assets/images/google.png"

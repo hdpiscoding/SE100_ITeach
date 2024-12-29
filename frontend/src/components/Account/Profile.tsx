@@ -38,7 +38,7 @@ export default function Profile(props: any) {
     const [phone, setPhone] = React.useState( user.phoneNumber);
     const [email, setEmail] = React.useState( user.email);
     const [dob, setDob] = React.useState<Date | undefined>(new Date( user.birthday));
-    const [avatar, setAvatar] = React.useState<File | null>(null);
+    const [avatar, setAvatar] = useState<File | string>(user.avatar || null);
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
@@ -211,7 +211,7 @@ export default function Profile(props: any) {
                                       ?
                                       <div className="relative rounded-[50%] overflow-hidden h-[192px] w-[192px]">
                                           <Image
-                                              src={URL.createObjectURL(avatar)}
+                                              src={typeof avatar === "string" ? avatar : URL.createObjectURL(avatar)}
                                               alt="user avatar"
                                               className="object-cover"
                                               fill

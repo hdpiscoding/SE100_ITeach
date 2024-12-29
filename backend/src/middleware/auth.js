@@ -6,6 +6,7 @@ const nonSecurePaths = [
   "/api/auth/google/callback",
   "/api/auth/facebook",
   "/api/auth/facebook/callback",
+  "/api/auth/login-success",
 ];
 const studentPaths = [
   "/api/v1/get-all-courses",

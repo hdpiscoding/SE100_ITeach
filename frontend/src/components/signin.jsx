@@ -130,7 +130,7 @@ const SignIn = ({ isOpen, onClose, onSignIn ,setLogin}) => {
             </h1>
 
           
-            <div className="bg-xanhface flex p-2 justify-center rounded-2xl space-x-2 my-3 cursor-pointer">
+            {/* <div className="bg-xanhface flex p-2 justify-center rounded-2xl space-x-2 my-3 cursor-pointer">
               <Image 
                 alt="facebook" 
                 className="inline-block" 
@@ -154,11 +154,11 @@ const SignIn = ({ isOpen, onClose, onSignIn ,setLogin}) => {
               <h1 className="font-bold text-black text-sm md:text-base">
                 Đăng nhập bằng Google
               </h1>
-            </div>
-
+            </div> */}
+{/* 
             <div className="flex justify-center mt-2">
               <h1 className="text-sm md:text-base">Hoặc</h1>
-            </div>
+            </div> */}
 
           
             <div className="space-y-2 mt-5">
@@ -183,9 +183,9 @@ const SignIn = ({ isOpen, onClose, onSignIn ,setLogin}) => {
                   className="focus:outline-none"
                 >
                   {showPassword ? (
-                    <EyeOff className="inline-block" width={25} height={20} />
-                  ) : (
                     <Eye className="inline-block" width={25} height={20} />
+                  ) : (
+                    < EyeOff className="inline-block" width={25} height={20} />
                   )}
                 </button>
               </div>
