@@ -73,7 +73,8 @@ const SignIn = ({ isOpen, onClose, onSignIn ,setLogin}) => {
           if (response?.errCode === 0) {
             onClose();
             setLogin(true);
-            localStorage.setItem("token", response.access_token);
+            localStorage.setItem("access_token", response.access_token);
+            localStorage.setItem("user", JSON.stringify(response.user));
           }
           else {
             toast.error(response?.message);

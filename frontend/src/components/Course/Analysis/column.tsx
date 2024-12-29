@@ -12,19 +12,19 @@ const parseDate = (dateStr: string) => {
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export type Student = {
+interface Student {
     id: string
-    firstName: string | null
-    lastName: string | null
-    phone: string | null
+    firstName: string
+    lastName: string
+    phone: string
     email: string
-    birthday: string | null //dd/MM/yyyy
+    birthday: string //dd/MM/yyyy
     progress: number
 }
 
 export const columns: ColumnDef<Student>[] = [
     {
-        accessorKey: "firstName",
+        accessorKey: "User.firstName",
         header: ({column }) => {
             return (
                 <div className="hidden sm:table-cell min-w-[150px]">
@@ -64,9 +64,9 @@ export const columns: ColumnDef<Student>[] = [
         cell: ({ row }) => <span className="hidden sm:table-cell min-w-[150px]">{row.getValue("lastName")}</span>
     },
     {
-        accessorKey: "phone",
+        accessorKey: "phoneNumber",
         header: () => <div className="hidden sm:table-cell min-w-[150px]">Số điện thoại</div>,
-        cell: ({ row }) => <span className="hidden sm:table-cell min-w-[150px]">{row.getValue("phone")}</span>
+        cell: ({ row }) => <span className="hidden sm:table-cell min-w-[150px]">{row.getValue("phoneNumber")}</span>
     },
     {
         accessorKey: "email",

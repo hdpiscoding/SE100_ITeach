@@ -40,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
       cost: DataTypes.DOUBLE,
       level: DataTypes.STRING,
       discount: DataTypes.DOUBLE,
-      totalStars: DataTypes.INTEGER,
+      totalStars: DataTypes.DOUBLE,
       reviewers: DataTypes.INTEGER,
       courseStatus: DataTypes.STRING,
       intro: DataTypes.TEXT,
