@@ -68,6 +68,16 @@ interface Review {
     user: User;
 }
 
+interface MyCourse {
+    id: string;
+    userId: string;
+    courseId: string;
+    currentLessonId: string;
+    numberOfProcess: number;
+    createdAt: string;
+    updatedAt: string;
+}
+
 const isUserInReviews = (userId: string | undefined, reviews: Review[]): boolean => {
     return reviews.some((review) => review.user.id === userId);
 }
@@ -122,6 +132,7 @@ export default function CourseDetail(props: any) {
 
     const [isBuy, setIsBuy] = useState<boolean>(true);
     const [isFinish, setIsFinish] = useState<boolean>(false);
+    const [myCourse, setMyCourse] = useState<MyCourse>();
 
     // State for rating
     const [averageRating, setAverageRating] = useState<number>();
@@ -230,6 +241,7 @@ export default function CourseDetail(props: any) {
             setReviews(courseData.reviews);
             setIsReviewed(isUserInReviews(user?.id, courseData.reviews));
             setCertificate(courseData.course.chungchiId);
+            setMyCourse(courseData.mycourse);
         }
 
         if (user) {
@@ -864,7 +876,29 @@ export default function CourseDetail(props: any) {
                                 CHỨNG CHỈ
                             </span>
 
-                            <div className="bg-LighterGray rounded-2xl p-4 flex flex-col justify-center lg:flex-row items-center">
+                            {myCourse && props.role === "student"
+                                &&
+                                <div className="grid grid-cols-1 lg:grid-cols-[15%_2%_83%] items-center gap-4">
+                                    <span className="lg:col-start-1 font-semibold">
+                                        Tiến độ khóa học
+                                    </span>
+
+                                    <div className="lg:col-start-3 grid grid-cols-[85%_2%_13%] items-center">
+                                        <div className="col-start-1">
+                                            <Progress indicatorColor={"bg-DarkGreen"} value={Number((myCourse?.numberOfProcess / (totalLecture ?? 1)).toFixed(2)) * 100}/>
+                                        </div>
+
+                                        <span className="col-start-3">
+                                            {Number((myCourse?.numberOfProcess / (totalLecture ?? 1)).toFixed(2)) * 100}%
+                                        </span>
+                                    </div>
+
+                                </div>
+                            }
+
+
+                            <div
+                                className="bg-LighterGray rounded-2xl p-4 flex flex-col justify-center lg:flex-row items-center">
                                 <div className="flex flex-col gap-6 lg:pr-10">
                                     <span className="text-xl font-semibold">
                                         Chứng nhận hoàn thành khóa học
