@@ -12,13 +12,17 @@ let handleGetPopularCourse = async (req, res) => {
   return res.status(200).json(data);
 };
 let handleGetAnalysisInformation = async (req, res) => {
-  if (!req.body.year) {
+  if (!req.query.year) {
     return res.status(500).json({
       errCode: 1,
       message: "Missing required parameters",
     });
   }
-  let data = await adminService.getAnalysisInformation(req.body);
+  const input = {
+    year: req.query.year,
+    month: req.query.month,
+  };
+  let data = await adminService.getAnalysisInformation(input);
   return res.status(200).json(data);
 };
 let handleGetAllReivews = async (req, res) => {
@@ -75,6 +79,17 @@ const handleCreateNewCourseCategory = async (req, res) => {
   let data = await adminService.createNewCourseCategory(req.body);
   return res.status(200).json(data);
 };
+const handleGetChartData = async (req, res) => {
+  if (!req.query.year) {
+    return res.status(500).json({
+      errCode: 1,
+      message: "Missing required parameters",
+    });
+  }
+  let data = await adminService.getChartData(req.query.year);
+  return res.status(200).json(data);
+};
+
 module.exports = {
   handleGetAllTeacher,
   handleGetPopularTeacher,
@@ -86,4 +101,5 @@ module.exports = {
   handleDeleteCourse,
   handleGetAllCourseOfTeacher,
   handleCreateNewCourseCategory,
+  handleGetChartData,
 };

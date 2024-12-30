@@ -97,6 +97,38 @@ const getAllCourseOfATeacher = async (teacherId) => {
     throw error;
   }
 };
+const getAnalysisInfo = async (year, month) => {
+  try {
+    const response = await axios.get(
+      `api/v1/get-analysis-information?year=${year}&month=${month}`,
+      {
+        headers: {
+          Authorization: admintoken,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching analysis info:", error);
+    throw error;
+  }
+};
+const getChartData = async (year) => {
+  try {
+    const response = await axios.get(`api/v1/chart-data?year=${year}`, {
+      headers: {
+        Authorization: admintoken,
+      },
+    });
+    let data = response.data.data.map((item) => {
+      return { y: item.totalCost, x: item.month };
+    });
+    return data;
+  } catch (error) {
+    console.error("Error fetching chart data:", error);
+    throw error;
+  }
+};
 
 export {
   getTeachers,
@@ -106,4 +138,6 @@ export {
   StopCourse,
   delteCourse,
   getAllCourseOfATeacher,
+  getAnalysisInfo,
+  getChartData,
 };

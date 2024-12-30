@@ -18,4 +18,15 @@ const createNewUser = async (data) => {
     return null;
   }
 };
-export { login, createNewUser };
+const loginSuccess = async (userId) => {
+  try {
+    const response = await axios.post(
+      `api/auth/login-success?userId=${userId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error while logging in", error);
+    return null;
+  }
+};
+export { login, createNewUser, loginSuccess };

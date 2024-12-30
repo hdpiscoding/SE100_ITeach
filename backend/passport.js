@@ -13,7 +13,8 @@ passport.use(
       //add user
       //nào gọi từ client thì xem video này :
       //https://www.youtube.com/watch?v=0V3Cf0bko7k&list=PLGcINiGdJE90yhXdDBNnfMcEjTZdeeJ1L&index=3
-      console.log(profile);
+      //console.log(profile);
+
       return cb(null, profile);
     }
   )

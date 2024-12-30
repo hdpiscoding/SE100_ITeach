@@ -19,6 +19,7 @@ const Process = () => {
   let [chungchi, setChungchi] = useState(0);
   const [activeTab, setActiveTab] = useState("registered");
   const studentId = 7;
+  const isLogin=localStorage.getItem("isLogin")
   useEffect(() => {
     const getData = async () => {
       const response = await getStudentCertificates(7);
@@ -49,7 +50,9 @@ const Process = () => {
         setSuggestedCourses(suggest);
       }
     };
-    getData();
+    if (isLogin==="true") {
+      getData();
+    }
   }, []);
   const renderContent = () => {
     if (activeTab === "certificate") {
@@ -81,7 +84,13 @@ const Process = () => {
     }
   };
   return (
-    <div className="">
+    <>
+      {
+        isLogin==="false"?(
+          <div className="flex justify-center items-center h-screen">
+            <h1 className="text-4xl font-bold text-orange">Vui lòng đăng nhập</h1>
+          </div>
+        ):(<><div className="">
       <div className="relative w-full h-[30vh] md:h-[50vh] lg:h-[70vh]">
         <Image
           src="/assets/images/bg_aboutus.png"
@@ -142,7 +151,11 @@ const Process = () => {
         </div>
         <div></div>
       </div>
-    </div>
+    </div></>)
+      }
+      
+    </>
+   
   );
 };
 

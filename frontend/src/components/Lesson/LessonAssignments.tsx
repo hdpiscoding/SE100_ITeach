@@ -240,7 +240,7 @@ export default function LessonAssignments(props: any) {
                     </div>
 
                     <Textarea className={`h-[100px] resize-none ${error ? "text-Red" : "text-black"}`}
-                              value={error || output}
+                              defaultValue={error || output}
                               />
 
                 </div>

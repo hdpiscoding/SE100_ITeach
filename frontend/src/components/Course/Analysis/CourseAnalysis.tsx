@@ -17,9 +17,9 @@ import {Button} from "@/components/ui/button";
 import {DataTable} from "@/components/ui/data-table";
 import {columns} from "@/components/Course/Analysis/column";
 import {useParams, useRouter} from "next/navigation";
-import {getCourses, getLessonDetail} from "@/services/course";
+import {getCourses} from "@/services/course";
 import {Skeleton} from "@/components/ui/skeleton";
-import {getIDEUsed} from "@/services/courseAnalysis";
+import {getIDEUsed, getStudentsOfCourse} from "@/services/courseAnalysis";
 
 interface RawData {
     id: number;
@@ -31,6 +31,35 @@ interface RawData {
 interface MonthlyData {
     date: string;
     IDE_used_count: number;
+}
+
+interface PieChartData {
+    status: string;
+    amount: number;
+    fill: string;
+}
+
+const transformPieData = (students: any[], totalLesson: number): PieChartData[] => {
+    const result = [
+        { status: "finished", amount: 0, fill: "#0B7077" },
+        { status: "overhalf", amount: 0, fill: "#4db8b4" },
+        { status: "other", amount: 0, fill: "#80c9c6" },
+    ];
+
+    students.forEach((student) => {
+        const progress = student.numberOfProcess / totalLesson;
+        console.log(student.id + ": " + progress);
+
+        if (progress === 1.0) {
+            result[0].amount += 1; // "finished"
+        } else if (progress >= 0.5 && progress < 1.0) {
+            result[1].amount += 1; // "overhalf"
+        } else if (progress < 0.5) {
+            result[2].amount += 1; // "other"
+        }
+    });
+
+    return result;
 }
 
 function transformRawDataToCurrentMonthData(rawData: RawData[], year: number, month: number): MonthlyData[] {
@@ -45,7 +74,7 @@ function transformRawDataToCurrentMonthData(rawData: RawData[], year: number, mo
 
     // Chuyển đổi rawData thành map để dễ tra cứu
     const rawDataMap: { [key: string]: number } = {};
-    rawData.forEach((item) => {
+    rawData?.forEach((item) => {
         const itemDate = parseISO(item.date); // Chuyển đổi ISO date thành đối tượng Date
         const itemYear = itemDate.getFullYear();
         const itemMonth = itemDate.getMonth() + 1;
@@ -69,57 +98,6 @@ function transformRawDataToCurrentMonthData(rawData: RawData[], year: number, mo
 
     return currentMonthData;
 }
-
-// const currentMonthData = [
-//     { date: "01", IDE_used_count: 5 },
-//     { date: "02", IDE_used_count: 8 },
-//     { date: "03", IDE_used_count: 4 },
-//     { date: "04", IDE_used_count: 7 },
-//     { date: "05", IDE_used_count: 6 },
-//     { date: "06", IDE_used_count: 3 },
-//     { date: "07", IDE_used_count: 9 },
-//     { date: "08", IDE_used_count: 2 },
-//     { date: "09", IDE_used_count: 4 },
-//     { date: "10", IDE_used_count: 5 },
-//     { date: "11", IDE_used_count: 6 },
-//     { date: "12", IDE_used_count: 7 },
-//     { date: "13", IDE_used_count: 3 },
-//     { date: "14", IDE_used_count: 4 },
-//     { date: "15", IDE_used_count: 8 },
-//     { date: "16", IDE_used_count: 9 },
-//     { date: "17", IDE_used_count: 10 },
-//     { date: "18", IDE_used_count: 2 },
-//     { date: "19", IDE_used_count: 3 },
-//     { date: "20", IDE_used_count: 4 },
-//     { date: "21", IDE_used_count: 6 },
-//     { date: "22", IDE_used_count: 8 },
-//     { date: "23", IDE_used_count: 5 },
-//     { date: "24", IDE_used_count: 4 },
-//     { date: "25", IDE_used_count: 3 },
-//     { date: "26", IDE_used_count: 7 },
-//     { date: "27", IDE_used_count: 6 },
-//     { date: "28", IDE_used_count: 9 },
-//     { date: "29", IDE_used_count: 2 },
-//     { date: "30", IDE_used_count: 5 },
-//     { date: "31", IDE_used_count: 4 },
-// ];
-
-const pieChartData = [
-    {
-        status: "finished",
-        amount: 120,
-        fill: "#0B7077",
-    },
-    {
-        status: "overhalf",
-        amount: 75,
-        fill: "#4db8b4",
-    },
-    {
-        status: "other",
-        amount: 45,
-        fill: "#80c9c6",
-    }]
 
 const pieChartConfig = {
     amount: {
@@ -155,28 +133,32 @@ const updateDateWithMonthAndYear = (currentMonth: Date | undefined, data: Array<
 
 interface User {
     id: string,
-    email: string,
     firstName: string,
     lastName: string,
+    email: string,
     avatar: string,
     role: string
 }
 
+interface Lesson {
+    id: string;
+    name: string;
+    studyTime: number;
+}
+
+interface Chapter {
+    id: string;
+    chapterName: string;
+    courseId: string;
+    lessons: Lesson[];
+}
+
 interface Teacher {
-    id: number;
+    id: string;
     firstName: string;
     lastName: string;
     email: string;
     avatar: string;
-}
-
-const user: User = {
-    id: "1",
-    firstName: "Cristiano",
-    lastName: "Ronaldo dos Santos Aveiro",
-    email: "hdp@gmail.com",
-    avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
-    role: "teacher"
 }
 
 const convertMinutesVN = (minutes: number): string => {
@@ -201,102 +183,10 @@ interface Student {
     progress: number
 }
 
-const students: Student[] = [
-    {
-        id: "1",
-        firstName: "Nguyễn",
-        lastName: "Minh Tuấn",
-        phone: "0912345678",
-        email: "tuan.nguyen@example.com",
-        birthday: "15/01/2005",
-        progress: 85
-    },
-    {
-        id: "2",
-        firstName: "Lê",
-        lastName: "Thị Lan",
-        phone: "0987654321",
-        email: "lan.le@example.com",
-        birthday: "22/02/2006",
-        progress: 90
-    },
-    {
-        id: "3",
-        firstName: "",
-        lastName: "",
-        phone: "0934567890",
-        email: "bao.ngoc.tran@example.com",
-        birthday: "03/03/2005",
-        progress: 78
-    },
-    {
-        id: "4",
-        firstName: "Phạm",
-        lastName: "Thùy Linh",
-        phone: "0911223344",
-        email: "thuy.linh.pham@example.com",
-        birthday: "14/04/2004",
-        progress: 92
-    },
-    {
-        id: "5",
-        firstName: "Vũ",
-        lastName: "Quốc Duy",
-        phone: "0988999988",
-        email: "quoc.duy.vu@example.com",
-        birthday: "27/05/2003",
-        progress: 80
-    },
-    {
-        id: "6",
-        firstName: "Đặng",
-        lastName: "Thanh Bình",
-        phone: "0922334455",
-        email: "thanh.binh.dang@example.com",
-        birthday: "12/06/2005",
-        progress: 88
-    },
-    {
-        id: "7",
-        firstName: "Hoàng",
-        lastName: "Quang Huy",
-        phone: "0933777888",
-        email: "quang.huy.hoang@example.com",
-        birthday: "25/07/2006",
-        progress: 75
-    },
-    {
-        id: "8",
-        firstName: "Bùi",
-        lastName: "Thanh Hà",
-        phone: "0944556677",
-        email: "thanh.ha.bui@example.com",
-        birthday: "09/08/2005",
-        progress: 95
-    },
-    {
-        id: "9",
-        firstName: "Cao",
-        lastName: "Thanh Hương",
-        phone: "0955667788",
-        email: "thanh.huong.cao@example.com",
-        birthday: "19/09/2004",
-        progress: 70
-    },
-    {
-        id: "10",
-        firstName: "Lý",
-        lastName: "Kim Anh",
-        phone: "0919988776",
-        email: "kim.anh.ly@example.com",
-        birthday: "30/10/2005",
-        progress: 84
-    }
-]
-
-export default function CourseAnalysis() {
+export default function CourseAnalysis(props: any) {
     const { courseId } = useParams();
     const router = useRouter();
+    const [user, setUser] = useState<User>();
 
     const [courseName, setCourseName] = useState<string>("");
     const [totalStudent, setTotalStudent] = useState<number>();
@@ -305,6 +195,8 @@ export default function CourseAnalysis() {
     const [chapterCount, setChapterCount] = useState<number>();
     const [lessonCount, setLessonCount] = useState<number>();
     const [teacher, setTeacher] = useState<Teacher>();
+    const [students, setStudents] = useState<Student[]>([]);
+    const [pieChartData, setPieChartData] = useState<PieChartData[]>([]);
 
     const [isShowDetail, setIsShowDetail] = useState<boolean>(false);
     const [currentMonth, setCurrentMonth] = useState<Date | undefined>(new Date(Date.now()));
@@ -317,7 +209,7 @@ export default function CourseAnalysis() {
 
     const totalStudents = useMemo(() => {
         return pieChartData.reduce((acc, curr) => acc + curr.amount, 0)
-    }, [])
+    }, [pieChartData])
 
     const chartConfig = {
         IDE_used_count: {
@@ -335,27 +227,71 @@ export default function CourseAnalysis() {
     }, [currentMonth]);
 
     useEffect(() => {
+        setUser(JSON.parse(localStorage.getItem("user") || "{}"));
+    }, []);
+
+    function mapStudents(data: any[], totalLesson: number): Student[] {
+        return data.map(student => {
+            const user = student.User;
+            return {
+                id: student.id,
+                firstName: user.firstName || "",
+                lastName: user.lastName || "",
+                phone: user.phoneNumber || "",
+                email: user.email,
+                birthday: user.birthday
+                    ? new Date(user.birthday).toLocaleDateString("vi-VN") // Format: dd/MM/yyyy
+                    : "",
+                progress: totalLesson > 0
+                    ? Math.round((student.numberOfProcess / totalLesson) * 100)
+                    : 0
+            };
+        });
+    }
+    useEffect(() => {
         const today = new Date(Date.now());
         const fetchData = async () => {
-            const [rawData, courseData] = await Promise.all([
+            const [rawData, courseData, studentData] = await Promise.all([
                 getIDEUsed(String(courseId), Number(today.getMonth()) + 1, Number(today.getFullYear() || 0)),
-                getCourses(String(courseId), String(user.id))
+                getCourses(String(courseId), String(user?.id)),
+                getStudentsOfCourse(String(courseId))
             ]);
+
             //const courseData = await getCourses(String(courseId), String(user.id));
             setCurrentMonth(today);
             setCourseName(courseData.course.courseName);
             setTotalStudent(courseData.course.totalStudent);
             setAverageRating(courseData.course.totalStars);
-            setFinishTime(courseData.course.finishTime);
+            if(courseData.course.finishTime) {
+                setFinishTime(courseData.course.finishTime);
+            }
+            else {
+                setFinishTime(courseData.chapters?.reduce((acc: number, chapter: Chapter) => {
+                    const duration = chapter.lessons?.reduce((acc: number, lesson: Lesson) => {
+                        const duration = lesson.studyTime || 0;
+                        return acc + duration;
+                    }, 0) || 0;
+                    return acc + duration;
+                }, 0) || 0);
+            }
             setChapterCount(courseData.chapters?.length);
             setLessonCount(courseData.course.totalLesson);
             setTeacher(courseData.course.teacher);
+            setStudents(mapStudents(studentData, courseData.course.totalLesson));
+            setPieChartData(transformPieData(studentData, courseData.course.totalLesson));
 
             setCurrentMonthData(transformRawDataToCurrentMonthData(rawData, today.getFullYear(), today.getMonth() + 1));
         }
 
-        fetchData();
-    }, []);
+        if (user) {
+            fetchData();
+        }
+    }, [user]);
+
+    useEffect(() => {
+        console.log(students);
+    }, [students, lessonCount]);
+
 
     useEffect(() => {
         setLineChartData(updateDateWithMonthAndYear(currentMonth, currentMonthData));
@@ -368,7 +304,7 @@ export default function CourseAnalysis() {
                     <div className="flex flex-col gap-4">
                         <div className="flex items-center gap-2">
                             <ArrowLeft className="h-7 w-7 cursor-pointer text-DarkGreen" onClick={() => {
-                                //router.push(`/${props.role}/course/${courseId}`)
+                                router.push(`/${props.role}/course/${courseId}`)
                             }}/>
 
                             {courseName

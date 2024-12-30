@@ -218,6 +218,16 @@ let handleGetIDEUseByMonth = async (req, res) => {
   let data = await teacherService.getIDEUseByMonth(req.body);
   return res.status(200).json(data);
 };
+const handleSendEmailToStudent = async (req, res) => {
+  if (!req.query.courseId) {
+    return res.status(500).json({
+      errCode: 1,
+      message: "Missing required fields",
+    });
+  }
+  let data = await teacherService.sendEmailToStudent(req.query.courseId);
+  return res.status(200).json(data);
+};
 module.exports = {
   handleCreateNewCourse,
   handleGetAllCourse,
@@ -236,4 +246,5 @@ module.exports = {
   handlePutAChapter,
   handleDeleteAChapter,
   handleGetIDEUseByMonth,
+  handleSendEmailToStudent,
 };

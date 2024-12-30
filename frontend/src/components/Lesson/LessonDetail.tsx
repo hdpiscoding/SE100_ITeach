@@ -15,7 +15,9 @@ import {useParams, useRouter} from "next/navigation";
 import LessonComment from "@/components/Lesson/LessonComment";
 import LessonAssignments from "@/components/Lesson/LessonAssignments";
 import {Skeleton} from "@/components/ui/skeleton";
-import {getCourses, getLessonDetail} from "@/services/course";
+import {checkIsEnrolled, completeLesson, getCourses, getLessonDetail} from "@/services/course";
+import {addToCart, getCartByStudentId} from "@/services/cart";
+import {toast} from "react-toastify";
 const ReactPlayer = dynamic(() => import('react-player'), {
     ssr: false, // Tắt server-side rendering cho ReactPlayer
 });
@@ -29,19 +31,21 @@ interface LessonContent {
     exerciseMarkDown: string;
 }
 
+interface Lesson {
+    id: string;
+    name: string;
+    studyTime: number;
+}
+
 interface Chapter {
     id: string;
     chapterName: string;
     courseId: string;
-    lessons:[{
-        id: string;
-        name: string;
-        studyTime: number;
-    }];
+    lessons: Lesson[];
 }
 
 interface Teacher {
-    id: number;
+    id: string;
     firstName: string;
     lastName: string;
     email: string;
@@ -49,10 +53,22 @@ interface Teacher {
 }
 
 interface User {
-    id: number,
+    id: string,
+    firstName: string,
+    lastName: string,
     email: string,
     avatar: string,
     role: string
+}
+
+interface LessonComment {
+    id: string;
+    userInfo: User;
+    userId: string;
+    content: string;
+    createdAt: string;
+    parrentCommentId?: string | null;
+    children?: LessonComment[];
 }
 
 function findChapterByLessonId(chapters: Chapter[] | undefined, lessonId: string | undefined) {
@@ -101,6 +117,7 @@ export default function LessonDetail(props: any) {
     const [chapterCount, setChapterCount] = useState<number>();
     const [lessonCount, setLessonCount] = useState<number>();
     const [teacher, setTeacher] = useState<Teacher>();
+    const [comments, setComments] = useState<LessonComment[]>([]);
 
     useEffect(() => {
         const foundLesson = chapters?.flatMap(chapter => chapter.lessons).find(lesson => lesson.id === lessonId);
@@ -116,15 +133,9 @@ export default function LessonDetail(props: any) {
         fetchData();
     }, [currentLessonId]);
 
-    // Replace this with data from localStorage when finished login
-    const user: User = {
-        id: 7,
-        email: "hdp@gmail.com",
-        avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
-        role: props.role
-    }
+    const [user, setUser] = useState<User>();
 
-    const [isBuy, setIsBuy] = useState<boolean>(true);
+    const [isBuy, setIsBuy] = useState<boolean>();
 
     // State cho player
     const [isPlayerReady, setIsPlayerReady] = useState<boolean>(false);
@@ -136,8 +147,12 @@ export default function LessonDetail(props: any) {
     const playerRef = useRef(null);
 
     const handleProgress = (state: any) => {
-        setProgress(state.playedSeconds);
+        setProgress((state.played).toFixed(2));
     }
+
+    useEffect(() => {
+        console.log(progress);
+    }, [progress]);
 
     // const saveProgress = () => {
     //     // Lưu tiến trình video vào localStorage hoặc gọi API để lưu
@@ -168,12 +183,22 @@ export default function LessonDetail(props: any) {
         setIsPause(value);
     }
 
+    const handleFinishLesson = async () => {
+        try {
+            await completeLesson(String(lessonId), String(user?.id), String(courseId));
+        }
+        catch (error) {
+            console.error(error);
+        }
+    }
+
     const handleStart = () => {
         setIsStarted(true);
     }
 
-    const handleFinish = () => {
+    const handleFinish = async () => {
         setIsFinished(true);
+        await handleFinishLesson();
     }
 
     const handlePlayerReady = () => {
@@ -195,24 +220,88 @@ export default function LessonDetail(props: any) {
     const [tab, setTab] = useState<number>(0);
 
     useEffect(() => {
+        setUser(JSON.parse(localStorage.getItem("user") || "{}"));
+    }, []);
+
+    useEffect(() => {
         const fetchData = async () => {
-            const [courseData, lessonData] = await Promise.all([
-                getCourses(String(courseId), String(user.id)),
-                getLessonDetail(String(lessonId))
-            ]);
+            let courseData;
+            let lessonData;
+            let isEnrolled;
+            if (props.role === "student") {
+                const [course, lesson, enroll] = await Promise.all([
+                    getCourses(String(courseId), String(user?.id)),
+                    getLessonDetail(String(lessonId)),
+                    checkIsEnrolled(String(user?.id), String(courseId))
+                ]);
+                courseData = course;
+                lessonData = lesson;
+                isEnrolled = enroll;
+            }
+            else {
+                const [course, lesson] = await Promise.all([
+                    getCourses(String(courseId), String(user?.id)),
+                    getLessonDetail(String(lessonId))
+                ]);
+                courseData = course;
+                lessonData = lesson;
+            }
+
+            if(props.role === "student") {
+                setIsBuy(isEnrolled);
+            }
             setChapters(courseData.chapters);
             setCourseName(courseData.course.courseName);
             setTotalStudent(courseData.course.totalStudent);
             setAverageRating(courseData.course.totalStars);
-            setFinishTime(courseData.course.finishTime);
+            if(courseData.course.finishTime) {
+                setFinishTime(courseData.course.finishTime);
+            }
+            else {
+                setFinishTime(courseData.chapters?.reduce((acc: number, chapter: Chapter) => {
+                    const duration = chapter.lessons?.reduce((acc: number, lesson: Lesson) => {
+                        const duration = lesson.studyTime || 0;
+                        return acc + duration;
+                    }, 0) || 0;
+                    return acc + duration;
+                }, 0) || 0);
+            }
             setChapterCount(courseData.chapters?.length);
             setLessonCount(courseData.course.totalLesson);
             setCurrentLesson(lessonData.content);
             setTeacher(courseData.course.teacher);
+            setComments(lessonData.comments);
         }
 
-        fetchData();
-    }, []);
+        if (user) {
+            fetchData();
+        }
+    }, [user]);
+
+    useEffect(() => {
+        console.log(comments);
+    }, [comments]);
+
+    const handleAddToCart = async () => {
+        try {
+            const cartItems = await getCartByStudentId(String(user?.id));
+            if (cartItems.some((item: any) => item.courseId === courseId)) {
+                toast.error("Khóa học đã có trong giỏ hàng");
+            }
+            else {
+                const response = await addToCart(String(courseId), String(user?.id));
+                if (response.errMessage === "OK") {
+                    toast.success("Thêm vào giỏ hàng thành công");
+                }
+                else {
+                    toast.error("Đã có lỗi xảy ra");
+                }
+            }
+        }
+        catch (error) {
+            console.error(error);
+        }
+    }
 
     return (
         <div className="grid grid-cols-[0.5fr_11fr_0.5fr] py-6">
@@ -301,7 +390,7 @@ export default function LessonDetail(props: any) {
                         {!isBuy && props.role === "student"
                             &&
                             <div className="flex items-center justify-end">
-                                <Button className="bg-DarkGreen hover:bg-DarkGreen_Hover font-semibold">
+                                <Button className="bg-DarkGreen hover:bg-DarkGreen_Hover font-semibold" onClick={handleAddToCart}>
                                     Thêm vào giỏ hàng
                                 </Button>
                             </div>}
@@ -360,7 +449,7 @@ export default function LessonDetail(props: any) {
                             onStart={handleStart}
                             onEnded={handleFinish}
                             onProgress={handleProgress}
-                            progressInterval={1000}/>
+                            progressInterval={500}/>
                     </div>
 
                     <div className="lg:col-start-3">
@@ -384,7 +473,7 @@ export default function LessonDetail(props: any) {
                                                 <AccordionContent key={String(lesson.id)} id={String(lesson.id)} onClick={() => {
                                                     router.push(`/${props.role}/course/${courseId}/lesson/${lesson.id}`);
                                                 }}>
-                                                    <LessonListItem type="lesson" index={index + 1} name={lesson.name} duration={lesson.studyTime} isStarted={isStarted} isPlaying={!isPause} isChosen={currentLesson?.lessonId === lesson.id} isFinished={false}/>
+                                                    <LessonListItem type="lesson" index={index + 1} name={lesson.name} duration={lesson.studyTime} isStarted={isStarted} isPlaying={!isPause} isChosen={currentLesson?.lessonId === lesson.id} isFinished={isFinished}/>
                                                 </AccordionContent>
                                             ))}
                                         </AccordionItem>
@@ -441,7 +530,7 @@ export default function LessonDetail(props: any) {
                 </div>
 
                 <div className={`${tab === 2 ? 'block' : 'hidden'}`}>
-                    <LessonComment user={user} lessonId={currentLesson?.lessonId}/>
+                    <LessonComment user={user} lessonId={currentLesson?.lessonId} rawComments={comments}/>
                 </div>
             </div>
         </div>

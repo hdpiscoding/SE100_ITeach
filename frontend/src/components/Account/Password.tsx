@@ -53,13 +53,14 @@ export default function Password(props: any) {
     const handleConfirm = async () => {
         try {
             const data = {
-                id: 2,
+                id:  localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "{}").id : 0,
                 oldPassword: form.getValues("currentPassword"),
                 newPassword: form.getValues("newPassword"),
             }
             const res=await changePassword(data);
-            form.reset();
+            
             if (res.errCode === 0) {
+                form.reset();
                 toast.success(res.errMessage);
             }
             else {

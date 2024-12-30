@@ -15,6 +15,10 @@ module.exports = {
       chapter: {
         type: Sequelize.UUID,
       },
+      lessonOrder: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0,
+      },
       name: {
         type: Sequelize.STRING,
       },
