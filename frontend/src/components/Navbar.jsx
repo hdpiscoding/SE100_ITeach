@@ -165,7 +165,7 @@ const Navbar = () => {
                                       router.push("/");
                                       setRole("student");
                                       localStorage.setItem("isLogin", "false");
-
+                                      localStorage.removeItem("user");
                                       localStorage.removeItem("access_token");
                                     }}
                                   >

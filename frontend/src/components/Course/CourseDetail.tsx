@@ -20,12 +20,13 @@ import {Pagination, Stack} from "@mui/material";
 import {FaUser} from "react-icons/fa";
 import { Textarea } from "@/components/ui/textarea"
 import {useParams, useRouter} from "next/navigation";
-import Markdown from "react-markdown";
 import { Skeleton } from "@/components/ui/skeleton"
 import {checkIsEnrolled, createCourseReview, getCourses} from "@/services/course";
 import Loading from "@/app/loading";
 import {addToCart, getCartByStudentId} from "@/services/cart";
 import {toast} from "react-toastify";
+import AlertModal from "@/components/AlertDialog2/AlertModal";
+import InfoModal from "@/components/AlertDialog2/InfoModal";
 
 
 interface Teacher {
@@ -130,7 +131,7 @@ export default function CourseDetail(props: any) {
         }
     }, [tab]);
 
-    const [isBuy, setIsBuy] = useState<boolean>(true);
+    const [isBuy, setIsBuy] = useState<boolean>(false);
     const [isFinish, setIsFinish] = useState<boolean>(false);
     const [myCourse, setMyCourse] = useState<MyCourse>();
 
@@ -171,7 +172,12 @@ export default function CourseDetail(props: any) {
     const [certificate, setCertificate] = useState<string>();
 
     const [intro, setIntro] = useState<string>();
+
+    // State for loading
     const [isPending, setIsPending] = useState(false);
+
+    // State for info modal
+    const triggerRef = useRef<HTMLButtonElement | null>(null);
 
     useEffect(() => {
         setUser(JSON.parse(localStorage.getItem("user") || "{}"));
@@ -617,32 +623,8 @@ export default function CourseDetail(props: any) {
 
                             {intro
                                 ?
-                                // eslint-disable-next-line react/no-children-prop
-                                <Markdown children={intro}
-                                          className="space-y-4"
-                                          components={{
-                                               blockquote: ({node, ...props}) => (
-                                                   <blockquote className="border-l-[3px] border-blue-500 pl-4 italic bg-LightGray p-2" {...props} />
-                                               ),
-                                               ul: ({node, ...props}) => (
-                                                   <ul className="list-disc pl-6" {...props} />
-                                               ),
-                                               ol: ({node, ...props}) => (
-                                                   <ol className="list-decimal pl-6" {...props} />
-                                               ),
-                                               h1: ({ children }) => (
-                                                   <h1 className="text-4xl font-bold my-4">{children}</h1>
-                                               ),
-                                               h2: ({ children }) => (
-                                                   <h2 className="text-3xl font-semibold my-3">{children}</h2>
-                                               ),
-                                               h3: ({ children }) => (
-                                                   <h3 className="text-2xl font-medium my-2">{children}</h3>
-                                               ),
-                                               h4: ({ children }) => (
-                                                   <h4 className="text-xl font-light text-red-400 my-1">{children}</h4>
-                                               ),
-                                          }}/> :
+                                intro
+                                :
                                 <div className="flex flex-col gap-4">
                                     <Skeleton className="bg-gray h-[24px] w-full"/>
                                     <Skeleton className="bg-gray h-[24px] w-full"/>
@@ -677,8 +659,14 @@ export default function CourseDetail(props: any) {
 
                                                 {chapter.lessons?.map((lesson, index) => (
                                                     <AccordionContent key={String(lesson.id)} id={String(lesson.id)} onClick={() => {
+                                                        if (props.role === "student" && !isBuy) {
+                                                            triggerRef.current?.click();
+                                                        }
+                                                        else {
                                                             setIsPending(true);
                                                             router.push(`/${props.role}/course/${courseId}/lesson/${lesson.id}`);
+                                                        }
+
                                                     }}>
                                                         <LessonListItem type="course" index={index + 1} name={lesson.name} duration={lesson.studyTime}/>
                                                     </AccordionContent>
@@ -928,7 +916,16 @@ export default function CourseDetail(props: any) {
                     </div>
                 </div>
             </div>
-
+            <InfoModal
+                title="Thông báo"
+                description="Bạn phải đăng ký khóa học để có thể xem bài giảng!"
+                trigger={
+                    <button
+                        ref={triggerRef}
+                        style={{ display: "none" }} // Ẩn trigger button
+                    />
+                }
+            />
             {isPending && <Loading/>}
         </div>
     );
