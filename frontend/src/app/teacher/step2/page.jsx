@@ -26,11 +26,14 @@ import {
   Check as CheckIcon,
   Edit as EditIcon,
 } from "@mui/icons-material";
+import { set } from "date-fns";
 const mdParser = new MarkdownIt(/* Markdown-it options */);
+
 const useCourseState = () => {
   const [courseInfo, setCourseInfo] = useState(null);
   const [chapters, setChapters] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  
 
   return {
     courseInfo,
@@ -74,7 +77,8 @@ const useLessonState = () => {
   const [videoPreview, setVideoPreview] = useState(null);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [videoUrl, setVideoUrl] = useState("");
-
+  const [lessonContent, setLessonContent] = useState(null);
+  const [hiddenEdit, setHiddenEdit] = useState(true);
   return {
     activeTab,
     setActiveTab,
@@ -100,10 +104,16 @@ const useLessonState = () => {
     setIsVideoEnabled,
     videoUrl,
     setVideoUrl,
+    lessonContent,
+    setLessonContent,
+    hiddenEdit,
+    setHiddenEdit,
   };
 };
 
 const Step2 = () => {
+  const [nowChapterID, setNowChapterID] = useState(null);
+  const [nowLessonID, setNowLessonID] = useState(null);
   const searchParams = useSearchParams();
   const courseId = searchParams.get("courseId");
   const router = useRouter();
@@ -112,6 +122,7 @@ const Step2 = () => {
   const courseState = useCourseState();
   const chapterState = useChapterState();
   const lessonState = useLessonState();
+  // course API
   const fetchDetailCourse = useCallback(async () => {
     try {
       courseState.setIsLoading(true);
@@ -121,8 +132,6 @@ const Step2 = () => {
         const { course, chapters } = response.data.data;
         courseState.setCourseInfo(course);
         courseState.setChapters(chapters);
-
-        // Fetch all lesson contents
         chapters.forEach((chapter) => {
           chapter.lessons?.forEach((lesson) => {
             fetchGetLessonContent(lesson.id);
@@ -135,103 +144,7 @@ const Step2 = () => {
       courseState.setIsLoading(false);
     }
   }, [courseId]);
-  const fetchGetLessonContent = async (lessonId) => {
-    try {
-      const response = await getLessonContent(lessonId);
-      if (response?.data) {
-        courseState.setChapters((prevChapters) =>
-          prevChapters.map((chapter) => ({
-            ...chapter,
-            lessons: chapter.lessons?.map((lesson) =>
-              lesson.id === lessonId
-                ? { ...lesson, content: response.data }
-                : lesson
-            ),
-          }))
-        );
-      }
-    } catch (error) {
-      toast.error("Lỗi khi tải nội dung bài học!");
-    }
-  };
-  const xuLyThemChuong = () => {
-    chapterState.setShowNewChapterForm(true);
-  };
-  const handleImageClick = () => {
-    // Reset file input value to allow selecting same file
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-    fileInputRef.current.click();
-  };
-
-  const xuLyLuuChuong = async () => {
-    if (!chapterState.newChapterName.trim()) {
-      toast.error("Vui lòng nhập tên chương!");
-      return;
-    }
-    const isDuplicate = courseState.chapters.some(
-      (chapter) =>
-        chapter.chapterName.toLowerCase() ===
-        chapterState.newChapterName.trim().toLowerCase()
-    );
-
-    if (isDuplicate) {
-      toast.error("Tên chương đã tồn tại!");
-      return;
-    }
-    try {
-      const response = await postAChapter({
-        chapterName: chapterState.newChapterName,
-        courseId: courseId,
-      });
-
-      if (response && response.data) {
-        courseState.setChapters([
-          ...courseState.chapters,
-          {
-            id: response.data.chapterId,
-            chapterName: chapterState.newChapterName,
-            lessons: [],
-          },
-        ]);
-        chapterState.setShowNewChapterForm(false);
-        chapterState.setNewChapterName("");
-
-        toast.success("Thêm chương mới thành công!");
-      }
-    } catch (error) {
-      toast.error("Thêm chương mới thất bại!");
-    }
-  };
-  useEffect(() => {
-    if (lessonState.activeTab === "content") {
-      lessonState.setContentMarkDown(lessonState.contentMarkDown);
-    } else {
-      lessonState.setExerciseMarkDown(lessonState.exerciseMarkDown);
-    }
-  }, [lessonState.activeTab]);
-  useEffect(() => {
-    if (courseId) {
-      fetchDetailCourse();
-    }
-  }, [courseId, fetchDetailCourse]);
-  function handleEditorChange({ html, text }) {
-    if (lessonState.activeTab === "content") {
-      lessonState.setContentHtml(html);
-      lessonState.setContentMarkDown(text);
-    } else {
-      lessonState.setExerciseHtml(html);
-      lessonState.setExerciseMarkDown(text);
-    }
-  }
-  const handleEditLesson = (lesson) => {
-    lessonState.setHidden(false);
-    lessonState.setLessonTitle(lesson.name);
-    lessonState.setLessonDuration(lesson.studyTime);
-    lessonState.setContentMarkDown(lesson.contentMarkDown);
-    lessonState.setExerciseMarkDown(lesson.exerciseMarkDown);
-  };
+  //Chapter API
   const toggleChapter = (index) => {
     courseState.setChapters(
       courseState.chapters.map((chapter, i) => ({
@@ -264,22 +177,50 @@ const Step2 = () => {
     chapterState.setEditingChapterName(name);
     chapterState.setIsEditing(true);
   };
-  const handleVideoChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      // Cleanup old URL
-      if (lessonState.videoPreview) {
-        URL.revokeObjectURL(lessonState.videoPreview);
+  const xuLyThemChuong = () => {
+    chapterState.setShowNewChapterForm(true);
+  };
+  const xuLyLuuChuong = async () => {
+    if (!chapterState.newChapterName.trim()) {
+      toast.error("Vui lòng nhập tên chương!");
+      return;
+    }
+    const isDuplicate = courseState.chapters.some(
+      chapter => chapter.chapterName.toLowerCase() === chapterState.newChapterName.trim().toLowerCase()
+    );
+  
+    if (isDuplicate) {
+      toast.error("Tên chương đã tồn tại!");
+      return;
+    }
+    try {
+      const response = await postAChapter({
+        chapterName: chapterState.newChapterName,
+        courseId: courseId,
+      });
+  
+      // Sửa điều kiện kiểm tra response
+      if (response?.data?.errCode === 0) { // Thêm kiểm tra errCode
+        courseState.setChapters([
+          ...courseState.chapters, // Sửa từ chapters thành courseState.chapters
+          {
+            id: response.data.chapterId,
+            chapterName: chapterState.newChapterName,
+            lessons: [],
+          },
+        ]);
+        chapterState.setShowNewChapterForm(false);
+        chapterState.setNewChapterName("");
+        toast.success("Thêm chương mới thành công!");
+      } else {
+        toast.error(response?.data?.errMessage || "Thêm chương thất bại!");
       }
-
-      // Create and set new URL
-      const videoUrl = URL.createObjectURL(file);
-      lessonState.setVideoPreview(null); // Force re-render
-      setTimeout(() => {
-        lessonState.setVideoPreview(videoUrl);
-      }, 0);
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Thêm chương thất bại!");
     }
   };
+
   const handleSaveEdit = async () => {
     if (!chapterState.editingChapterName.trim()) {
       toast.error("Vui lòng nhập tên chương!");
@@ -326,54 +267,106 @@ const Step2 = () => {
       toast.error("Cập nhật chương thất bại!");
     }
   };
-  const handleHiddenBtn = () => {
-    lessonState.setHidden(!lessonState.hidden);
-    lessonState.setHiddenBtn(!lessonState.hiddenBtn);
-    lessonState.setLessonTitle("");
-    lessonState.setLessonDuration("");
+  //Lesson API
+  const fetchGetLessonContent = async (lessonId) => {
+    try {
+      const response = await getLessonContent(lessonId);
+      if (response?.data) {
+        courseState.setChapters((prevChapters) =>
+          prevChapters.map((chapter) => ({
+            ...chapter,
+            lessons: chapter.lessons?.map((lesson) =>
+              lesson.id === lessonId
+                ? { ...lesson, content: response.data.data.content }
+                : lesson
+            ),
+          }))
+        );
+      }
+    } catch (error) {
+      toast.error("Lỗi khi tải nội dung bài học!");
+    }
+  };
+  const handleEditLesson = (lesson,chapterId) => {
+    setNowChapterID(chapterId);
+    setNowLessonID(lesson.id);
+    console.log("Chapter ID:", chapterId);
+    console.log("Lesson ID:", lesson.id);
+    if(!lesson.hiddenBtn)
+    {
+      lessonState.setHiddenBtn(!lesson.hiddenBtn);
+    }
+    lessonState.setHiddenEdit(false);
+    lessonState.setHidden(false);
+    lessonState.setLessonTitle(lesson.name);
+    if (lesson.content && lesson.content.video) {
+      console.log("Video URL from content:", lesson.content.video);
+      lessonState.setVideoUrl(lesson.content.video);
+      lessonState.setIsVideoEnabled(false); // Enable input when there's a video URL
+    } else {
+      lessonState.setVideoUrl("");
+      lessonState.setIsVideoEnabled(true);
+    }
+    lessonState.setLessonDuration(lesson.studyTime);
+    if (lesson.content) {
+      lessonState.setContentMarkDown(lesson.content.contentMarkDown || "");
+      lessonState.setExerciseMarkDown(lesson.content.exerciseMarkDown || "");
+      lessonState.setContentHtml(mdParser.render(lesson.content.contentMarkDown || ""));
+      lessonState.setExerciseHtml(mdParser.render(lesson.content.exerciseMarkDown || ""));
+    }
+    else {
+
+      setTimeout(async () => {
+        try {
+          const response = await getLessonContent(lesson.id);
+          if (response?.data?.data?.content) {
+            lessonState.setContentMarkDown(response.data.data.content.contentMarkDown || "");
+            lessonState.setExerciseMarkDown(response.data.data.content.exerciseMarkDown || "");
+          }
+        } catch (error) {
+          toast.error("Lỗi khi tải nội dung bài học!");
+        }
+      }, 1000); 
+    }
   };
   const handleAddLesson = async (chapterId) => {
-    if (!lessonTitle.trim() || !lessonDuration.trim()) {
+    const videoValue = !lessonState.isVideoEnabled ? lessonState.videoUrl : "file video";
+    if (!lessonState.lessonTitle.trim() || !lessonState.lessonDuration.trim()
+      || !lessonState.contentHtml.trim() || !lessonState.contentMarkDown.trim()
+     || !lessonState.exerciseHtml.trim() || !lessonState.exerciseMarkDown.trim()
+    || !videoValue.trim()) {
       toast.error("Vui lòng nhập đầy đủ thông tin!");
       return;
     }
-
+    
     try {
       const response = await postALesson({
         courseId: courseId,
         chapter: chapterId,
-        name: lessonTitle,
-        studyTime: parseInt(lessonDuration),
-        video: "data.video",
-        contentHtml: contentHtml,
-        contentMarkDown: contentMarkDown,
-        exerciseHtml: exerciseHtml,
-        exerciseMarkDown: exerciseMarkDown,
+        name: lessonState.lessonTitle,
+        studyTime: parseInt(lessonState.lessonDuration),
+        video: videoValue,
+        contentHtml: lessonState.contentHtml,
+        contentMarkDown: lessonState.contentMarkDown,
+        exerciseHtml: lessonState.exerciseHtml,
+        exerciseMarkDown: lessonState.exerciseMarkDown,
       });
-      console.log("Course ID:", courseId);
-      console.log("Chapter ID:", chapterId);
-      console.log("Lesson Title:", lessonTitle);
-      console.log("Lesson Duration:", lessonDuration);
-      console.log("Content HTML:", contentHtml);
-      console.log("Content Markdown:", contentMarkDown);
-      console.log("Exercise HTML:", exerciseHtml);
-      console.log("Exercise Markdown:", exerciseMarkDown);
-
+     
       if (response && response.data) {
-        setHidden(true);
+        lessonState.setHidden(true);
         const newLesson = {
           id: response.data.lessonId,
-          name: lessonTitle,
-          studyTime: lessonDuration,
-          video: "data.video",
-          contentHtml: contentHtml,
-          contentMarkDown: contentMarkDown,
-          exerciseHtml: exerciseHtml,
-          exerciseMarkDown: exerciseMarkDown,
+          name: lessonState.lessonTitle,
+          studyTime: lessonState.lessonDuration,
+          video: videoValue,
+          contentHtml: lessonState.contentHtml,
+          contentMarkDown: lessonState.contentMarkDown,
+          exerciseHtml: lessonState.exerciseHtml,
+          exerciseMarkDown: lessonState.exerciseMarkDown,
         };
 
-        setChapters(
-          chapters.map((chapter) =>
+        courseState.setChapters(
+          courseState.chapters.map((chapter) =>
             chapter.id === chapterId
               ? {
                   ...chapter,
@@ -382,16 +375,164 @@ const Step2 = () => {
               : chapter
           )
         );
-        console.log("Chapters:", chapters);
-        setLessonTitle("");
-        setLessonDuration("");
-
+        console.log("Chapters:", courseState.chapters);
+        lessonState.setLessonTitle("");
+        lessonState.setLessonDuration("");
+        lessonState.setContentHtml("");
+        lessonState.setContentMarkDown("");
+        lessonState.setExerciseHtml("");
+        lessonState.setExerciseMarkDown("");
+        lessonState.setVideoUrl("");
         toast.success("Thêm bài học mới thành công!");
       }
     } catch (error) {
       console.log("Error:", error);
       toast.error("Thêm bài học mới thất bại!");
     }
+  };
+  const handleSaveEditLesson = async () => {
+    
+    if (!lessonState.lessonTitle.trim() || !String(lessonState.lessonDuration).trim()
+      || !lessonState.contentHtml.trim() || !lessonState.contentMarkDown.trim()
+     || !lessonState.exerciseHtml.trim() || !lessonState.exerciseMarkDown.trim()
+    ||  !lessonState.videoUrl.trim()) {
+      toast.error("Vui lòng nhập đầy đủ thông tin!");
+      return;
+    }
+    const videoValue = !lessonState.isVideoEnabled ? lessonState.videoUrl : "";
+    try {
+      const response = await putALesson({
+        id: nowLessonID,
+        courseId: courseId,
+        chapter: nowChapterID,
+        name: lessonState.lessonTitle,
+        studyTime: parseInt(lessonState.lessonDuration),
+        video: videoValue,
+        contentHtml: lessonState.contentHtml,
+        contentMarkDown: lessonState.contentMarkDown,
+        exerciseHtml: lessonState.exerciseHtml,
+        exerciseMarkDown: lessonState.exerciseMarkDown,
+      });
+      if (response && response.data) {
+        const updatedLesson = {
+          id: nowLessonID,
+          name: lessonState.lessonTitle,
+          studyTime: lessonState.lessonDuration,
+          video: videoValue,
+          contentHtml: lessonState.contentHtml,
+          contentMarkDown: lessonState.contentMarkDown,
+          exerciseHtml: lessonState.exerciseHtml,
+          exerciseMarkDown: lessonState.exerciseMarkDown,
+        };
+        courseState.setChapters(
+          courseState.chapters.map((chapter) => ({
+            ...chapter,
+            lessons: chapter.lessons.map((lesson) =>
+              lesson.id === nowLessonID
+                ? updatedLesson
+                : lesson
+            ),
+          }))
+        );
+        
+        toast.success("Cập nhật bài học thành công!");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Cập nhật bài học thất bại!");
+    }
+  };
+  const handleDeleteLesson = async ( e) => {
+    let lessonId=nowLessonID;
+    e.stopPropagation();
+    try {
+      const response = await deleteALesson(lessonId);
+      if (response.data) {
+        courseState.setChapters(
+          courseState.chapters.map((chapter) => ({
+            ...chapter,
+            lessons: chapter.lessons.filter((lesson) => lesson.id !== lessonId),
+          }))
+        );
+        toast.success("Xóa bài học thành công!");
+        lessonState.setHidden(true);
+        lessonState.setHiddenEdit(true);
+      }
+    } catch (error) {
+      toast.error("Xóa bài học thất bại!");
+    }
+  };
+  // Handle Video
+  const handleImageClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    fileInputRef.current.click();
+  };
+  const handleVideoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+     
+      if (lessonState.videoPreview) {
+        URL.revokeObjectURL(lessonState.videoPreview);
+      }
+      const videoUrl = URL.createObjectURL(file);
+      lessonState.setVideoPreview(null); // Force re-render
+      setTimeout(() => {
+        lessonState.setVideoPreview(videoUrl);
+      }, 0);
+    }
+  };
+  
+//////////////
+  useEffect(() => {
+    if (lessonState.activeTab === "content") {
+      lessonState.setContentMarkDown(lessonState.contentMarkDown);
+    } else {
+      lessonState.setExerciseMarkDown(lessonState.exerciseMarkDown);
+    }
+  }, [lessonState.activeTab]);
+  useEffect(() => {
+    if (courseId) {
+      fetchDetailCourse();
+    }
+  }, [courseId, fetchDetailCourse]);
+  function handleEditorChange({ html, text }) {
+    if (lessonState.activeTab === "content") {
+      lessonState.setContentHtml(html);
+      lessonState.setContentMarkDown(text);
+    } else {
+      lessonState.setExerciseHtml(html);
+      lessonState.setExerciseMarkDown(text);
+    }
+  }
+
+
+  const handleHiddenBtn = (num) => {
+    lessonState.setHiddenEdit(!lessonState.hiddenEdit);
+    if(num===2)
+    {
+      lessonState.setHidden(!lessonState.hidden);
+      lessonState.setHiddenBtn(!lessonState.hiddenBtn);
+      return;
+    }
+    if(!lessonState.hidden)
+    {
+      lessonState.setHiddenBtn(!lessonState.hiddenBtn);
+      lessonState.setLessonTitle("");
+      lessonState.setLessonDuration("");
+      lessonState.setContentHtml("");
+      lessonState.setContentMarkDown("");
+      lessonState.setExerciseHtml("");
+      lessonState.setExerciseMarkDown("");
+      lessonState.setVideoUrl("");
+      return;
+    }
+   
+    lessonState.setHidden(!lessonState.hidden);
+    lessonState.setHiddenBtn(!lessonState.hiddenBtn);
+    lessonState.setLessonTitle("");
+    lessonState.setLessonDuration("");
   };
   return (
     <div className="mb-20">
@@ -420,7 +561,7 @@ const Step2 = () => {
                   type="text"
                   id="name"
                   value={lessonState.lessonTitle}
-                  onChange={(e) => setLessonTitle(e.target.value)}
+                  onChange={(e) => lessonState.setLessonTitle(e.target.value)}
                   placeholder="Tên bài"
                   className="w-full h-[40px] border border-gray rounded-md p-2"
                 />
@@ -433,10 +574,10 @@ const Step2 = () => {
                     type="text"
                     id="name"
                     value={lessonState.lessonDuration}
-                    onChange={(e) => setLessonDuration(e.target.value)}
+                    onChange={(e) => lessonState.setLessonDuration(e.target.value)}
                     className="w-full h-[40px] border border-gray rounded-md p-2"
                   />
-                  <span className="ml-2">min</span>
+                  <span className="ml-2">phút</span>
                 </div>
               </div>
             </div>
@@ -510,13 +651,22 @@ const Step2 = () => {
                   <input
                     type="text"
                     placeholder="Nhập đường dẫn video"
-                    value={lessonState.videoUrl || ""}
+                    value={lessonState.videoUrl}
                     onChange={(e) => lessonState.setVideoUrl(e.target.value)}
                     disabled={lessonState.isVideoEnabled}
                     className="w-full h-[40px] border border-gray rounded-md p-2"
                   />
                 </div>
+                { !lessonState.hiddenEdit &&  (
+               <div className="flex justify-end items-end 1 p-2 rounded-md mt-2">
+                  <button onClick={handleSaveEditLesson} className=" bg-orange py-2 px-10 rounded-md mt-2 text-white hover:bg-orangeHover hover:border-orangeHover
+                  " >
+                    Lưu
+                  </button>
+               </div>
+                )}
               </div>
+                
             )}
             <div className="lg:col-span-1 md:col-span-1 col-span-1">
               <div className="w-full border rounded-md">
@@ -576,7 +726,7 @@ const Step2 = () => {
                               chapter.lessons.length > 0 &&
                               chapter.lessons.map((lesson) => (
                                 <div
-                                  onClick={() => handleEditLesson(lesson)}
+                                  onClick={() => handleEditLesson(lesson,chapter.id)}
                                   key={lesson.id}
                                   className="flex justify-between items-center p-2 border-b last:border-b-0 cursor-pointer hover:bg-gray-100"
                                 >
@@ -594,7 +744,7 @@ const Step2 = () => {
                               </span>
                               {lessonState.hiddenBtn ? (
                                 <button
-                                  onClick={() => handleHiddenBtn()}
+                                  onClick={() => handleHiddenBtn(1)}
                                   className="text-gray-500 bg-stroke1 rounded-sm "
                                 >
                                   <AddIcon sx={{ color: "white" }} />
@@ -609,7 +759,7 @@ const Step2 = () => {
                                   </button>
 
                                   <button
-                                    onClick={() => handleHiddenBtn()}
+                                    onClick={() => handleHiddenBtn(2)}
                                     className="text-gray-500 bg-red-600 rounded-sm "
                                   >
                                     <RemoveIcon sx={{ color: "white" }} />
@@ -697,10 +847,10 @@ const Step2 = () => {
           <div className="flex justify-start items-center space-x-10 my-10 lg:text-xl md:text-lg text-xs">
             <div
               className="inline-block cursor-pointer"
-              onClick={() => setActiveTab("content")}
+              onClick={() => lessonState.setActiveTab("content")}
             >
               <h1>Nội dung</h1>
-              {useLessonState.activeTab === "content" && (
+              {lessonState.activeTab === "content" && (
                 <Image
                   src="/assets/images/lineorange.png"
                   width={80}
@@ -711,10 +861,10 @@ const Step2 = () => {
             </div>
             <div
               className="inline-block cursor-pointer"
-              onClick={() => setActiveTab("exercise")}
+              onClick={() => lessonState.setActiveTab("exercise")}
             >
               <h1>Bài tập</h1>
-              {useLessonState.activeTab === "exercise" && (
+              {lessonState.activeTab === "exercise" && (
                 <Image
                   src="/assets/images/lineorange.png"
                   width={60}
@@ -727,22 +877,22 @@ const Step2 = () => {
           <div className="border border-gray rounded-md p-5">
             <MdEditor
               value={
-                useLessonState.activeTab === "content"
-                  ? contentMarkDown
-                  : useLessonState.exerciseMarkDown
+              lessonState.activeTab === "content"
+                  ? lessonState.contentMarkDown
+                  : lessonState.exerciseMarkDown
               }
-              style={{ height: "500px" }}
+              style={{ height: "300px" }}
               renderHTML={(text) => mdParser.render(text)}
               onChange={handleEditorChange}
             />
           </div>
           <div className="flex justify-end space-x-3">
-            <button className="bg-white text-orange px-5 py-2 rounded-md border border-orange">
+            <button onClick={handleDeleteLesson} className="bg-white text-orange px-5 py-2 rounded-md border border-orange hover:bg-lightOrangeHover">
               Xóa bài học
             </button>
             <button
               onClick={() => router.push("/step2")}
-              className="bg-orange text-white px-10 py-2 rounded-md"
+              className="bg-orange text-white px-10 py-2 rounded-md hover:bg-orangeHover hover:border-orangeHover"
             >
               Hoàn thành
             </button>

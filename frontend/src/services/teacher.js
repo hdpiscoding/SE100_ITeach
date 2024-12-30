@@ -1,8 +1,8 @@
 import axios from "../utils/AxiosCustomized";
 const teacherToken =
   `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImVtYWlsIjoiaHVuZzA4MDkyMDA0QGdtYWlsLmNvbSIsInJvbGUiOiJSMiIsImV4cGlyZXNJbiI6IjMwZCIsImlhdCI6MTcyNzU5OTQ4N30.2sAjaVD3nZ0KCZ1abl_8d2XXQqVKeVrLaZKeFuueALI`;
-const studentToken =
-`Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Mjk1M2YxMS1hMTcyLTQwYTAtYWFjMy1hYmY5Y2FjZDVmOTMiLCJlbWFpbCI6Imh1bmcwNzA5MjAwNEBnbWFpbC5jb20iLCJyb2xlIjoiUjEiLCJleHBpcmVzSW4iOiIzMGQiLCJpYXQiOjE3MzUyMTYwOTF9.mYrELt6uppIVENTAZruH6XUx995VTD-uwd-goubzW1E`;
+// const studentToken =
+// `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Mjk1M2YxMS1hMTcyLTQwYTAtYWFjMy1hYmY5Y2FjZDVmOTMiLCJlbWFpbCI6Imh1bmcwNzA5MjAwNEBnbWFpbC5jb20iLCJyb2xlIjoiUjEiLCJleHBpcmVzSW4iOiIzMGQiLCJpYXQiOjE3MzUyMTYwOTF9.mYrELt6uppIVENTAZruH6XUx995VTD-uwd-goubzW1E`;
   const getMyAccount = async (teacherId) => {
     try {
       const response = await axios.get(`api/v1/get-my-account?teacherId=${teacherId}`,{
@@ -134,7 +134,7 @@ const putALesson = async (data) => {
 export { putALesson };
 const deleteALesson = async (lessonId) => {
   try {
-    const response = await axios.delete(`api/v1/delete-a-lesson?lessonId=${lessonId}`, {
+    const response = await axios.delete(`api/v1/delete-a-lesson?id=${lessonId}`, {
       headers: {
         Authorization: teacherToken,
       },
@@ -164,7 +164,7 @@ export { getDetailCourse };
   try {
     const response = await axios.get(`api/v1/get-lesson-content?lessonId=${lessonId}`, {
       headers: {
-        Authorization: studentToken,
+        Authorization: teacherToken,
       },
     });
     return response;
