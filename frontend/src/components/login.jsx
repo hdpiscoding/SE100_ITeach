@@ -37,16 +37,20 @@ const Login = ({ isOpen, onClose, onLogin, setLogin, setRole }) => {
       if (response?.errCode === 0) {
         onClose();
         setLogin(true);
-        router.push("/");
         localStorage.setItem("access_token", response.access_token);
         localStorage.setItem("user", JSON.stringify(response.user));
         localStorage.setItem("isLogin", "true");
         if (response.user.role === "R1") {
+          router.push("/");
           setRole("student");
+          localStorage.setItem("role", "student");
         } else if (response.user.role === "R2") {
           setRole("teacher");
+          localStorage.setItem("role", "teacher");
         } else {
+          router.push("/admin/statistics");
           setRole("admin");
+          localStorage.setItem("role", "admin");
         }
       } else {
         toast.error(response?.message);

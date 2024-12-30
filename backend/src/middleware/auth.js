@@ -83,6 +83,7 @@ const adminPaths = [
   "/api/v1/get-lesson-content",
   "/api/v1/get-ide-use-by-month",
   "/api/v1/create-new-course-category",
+  "/api/v1/chart-data",
 ];
 const commonPaths = [
   "/api/v1/update-user-info",

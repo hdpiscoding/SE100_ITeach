@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Menu, X } from "lucide-react";
@@ -19,6 +19,17 @@ const Navbar = () => {
 
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignInModal, setShowSignInModal] = useState(false);
+  const [isLogin, setIsLogin] = useState(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const roleLocal = localStorage.getItem("role");
+      if (roleLocal) {
+        setRole(roleLocal);
+      }
+      setIsLogin(localStorage.getItem("isLogin"));
+    }
+  }, []);
 
   const getNavLinks = (role) => {
     switch (role) {
@@ -62,7 +73,6 @@ const Navbar = () => {
     setRole(role);
 
   }
-  const isLogin = localStorage.getItem("isLogin");
 
   return (
     <>

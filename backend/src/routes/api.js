@@ -79,6 +79,7 @@ const initARoutes = (app) => {
     studentController.handleGetVideoProgressByStudentId
   );
   router.post("/api/v1/send-email", teacherController.handleSendEmailToStudent);
+  router.get("/api/v1/chart-data", adminController.handleGetChartData);
   return app.use("/", router);
 };
 export default initARoutes;
