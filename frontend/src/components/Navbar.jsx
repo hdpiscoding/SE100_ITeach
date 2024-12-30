@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Menu, X } from "lucide-react";
@@ -14,11 +14,16 @@ const Navbar = () => {
   const router = useRouter();
   const [login, setLogin] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const [role, setRole] = useState("student");
-
+  const [role, setRole] = useState("guest");
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignInModal, setShowSignInModal] = useState(false);
+  const [isLogin, setIsLogin] = useState(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsLogin(localStorage.getItem("isLogin"));
+    }
+  }, []);
 
   const getNavLinks = (role) => {
     switch (role) {
@@ -39,6 +44,12 @@ const Navbar = () => {
           { href: "/admin/statistics", label: "Trang chủ" },
           { href: "/admin/teacherAdmin", label: "Giáo viên" },
           { href: "/admin/course", label: "Quản lý khóa học" },
+        ];
+      case "guest":
+        return [
+          { href: "/", label: "Trang chủ" },
+          { href: "/student/course", label: "Khóa học" },
+          { href: "/aboutus", label: "Về chúng tôi" },
         ];
       default:
         return [
@@ -104,7 +115,7 @@ const Navbar = () => {
                 </ul>
 
                 <div className="hidden sm:block sm:w-[125px] md:w-[150px] lg:w-[175px]">
-                  {!login ? (
+                  {isLogin === "false" ? (
                     <div className=" grid grid-cols-2 lg:gap-x-2 sm:gap-x-1 md:gap-x-2">
                       <Button
                         onClick={() => setShowLoginModal(true)}
@@ -161,8 +172,8 @@ const Navbar = () => {
                                       setLogin(false);
                                       setIsMenuOpen(false);
                                       router.push("/");
-                                      setRole("student");
-
+                                      setRole("guest");
+                                      localStorage.setItem("isLogin", "false");
                                       localStorage.removeItem("access_token");
                                     }}
                                   >
@@ -207,8 +218,10 @@ const Navbar = () => {
                                       setLogin(false);
                                       setIsMenuOpen(false);
                                       router.push("/");
-                                      setRole("student");
+                                      setRole("guest");
                                       localStorage.removeItem("access_token");
+                                      localStorage.setItem("isLogin", "false");
+
                                     }}
                                   >
                                     Đăng xuất
@@ -243,7 +256,8 @@ const Navbar = () => {
                                       setLogin(false);
                                       setIsMenuOpen(false);
                                       router.push("/");
-                                      setRole("student");
+                                      setRole("guest");
+                                      localStorage.setItem("isLogin", "false");
 
                                       localStorage.removeItem("access_token");
                                     }}
@@ -313,6 +327,8 @@ const Navbar = () => {
                                     onClick={() => {
                                       setLogin(false);
                                       setIsMenuOpen(false);
+                                      localStorage.setItem("isLogin", "false");
+
                                     }}
                                   >
                                     Đăng xuất
@@ -354,6 +370,8 @@ const Navbar = () => {
                                     onClick={() => {
                                       setLogin(false);
                                       setIsMenuOpen(false);
+                                      localStorage.setItem("isLogin", "false");
+                                      
                                     }}
                                   >
                                     Đăng xuất
@@ -387,6 +405,7 @@ const Navbar = () => {
                                     onClick={() => {
                                       setLogin(false);
                                       setIsMenuOpen(false);
+                                      localStorage.setItem("isLogin", "false");
                                     }}
                                   >
                                     Đăng xuất
