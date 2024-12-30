@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const instance = axios.create({
-  baseURL: "http://localhost:7777/",
+  baseURL: "http://localhost:8080/",
   timeout: 10000,
   headers: {
     "Content-Type": "application/json; charset=utf-8",
@@ -12,14 +12,14 @@ const instance = axios.create({
 instance.interceptors.request.use(
   function (config) {
     // Do something before request is sent
-      // Temporary solution for token (Neu chua lam login thi vao postman call API login de lay token roi quang no vao localStorage voi key la: 'token')
-      if (typeof window !== 'undefined') {
-        const token = localStorage.getItem("access_token");
-        if (token) {
-          console.log("token", token);
-          config.headers["Authorization"] = `Bearer ${token}`;
-        }
+    // Temporary solution for token (Neu chua lam login thi vao postman call API login de lay token roi quang no vao localStorage voi key la: 'token')
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("access_token");
+      if (token) {
+        console.log("token", token);
+        config.headers["Authorization"] = `Bearer ${token}`;
       }
+    }
     return config;
   },
   function (error) {
