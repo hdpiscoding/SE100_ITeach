@@ -80,6 +80,7 @@ const initARoutes = (app) => {
   );
   router.post("/api/v1/send-email", teacherController.handleSendEmailToStudent);
   router.get("/api/v1/chart-data", adminController.handleGetChartData);
+  router.get("/api/v1/get-my-course-chapters", studentController.handleGetMyCourseChapter);
   return app.use("/", router);
 };
 export default initARoutes;

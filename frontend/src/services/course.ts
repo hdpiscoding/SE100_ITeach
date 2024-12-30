@@ -26,7 +26,7 @@ const createLessonComment = async (lessonId: string, userId: string, content: st
 }
 
 const completeLesson = async (lessonId: string, studentId: string, courseId: string) => {
-    const response = await instance.post(`api/v1/complete-the-lesson`, {
+    const response = await instance.put(`api/v1/complete-the-lesson`, {
         studentId: studentId,
         lessonId: lessonId,
         courseId: courseId
@@ -44,11 +44,42 @@ const createCourseReview = async (courseId: string, userId: string, rating: numb
     return response.data;
 }
 
+const saveLessonProgress = async (userId: string, lessonId: string, progress: number) => {
+    try {
+        await instance.post(`api/v1/post-video-progress`, {
+            userId: userId,
+            lessonId: lessonId,
+            progress: progress
+        });
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+
+const getLessonProgress = async (userId: string, lessonId: string) => {
+    try {
+        const response = await instance(`api/v1/get-video-progress-by-studentId?userId=${userId}&lessonId=${lessonId}`);
+        return response.data.videoProgress;
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+
+const getMyCourseChapters = async (courseId: string, userId: string) => {
+    const response = await instance(`api/v1/get-my-course-chapters?studentId=${userId}&courseId=${courseId}`);
+    return response.data.data;
+}
+
 export {
     getCourses,
     getLessonDetail,
     checkIsEnrolled,
     createLessonComment,
     completeLesson,
-    createCourseReview
+    createCourseReview,
+    saveLessonProgress,
+    getLessonProgress,
+    getMyCourseChapters
 }

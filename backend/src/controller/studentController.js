@@ -279,6 +279,20 @@ const handleGetVideoProgressByStudentId = async (req, res) => {
   return res.status(200).json(response);
 };
 
+const handleGetMyCourseChapter = async (req, res) => {
+    if (!req.query.courseId || !req.query.studentId) {
+        return res.status(500).json({
+        errCode: 1,
+        errMessage: "Missing required parameter",
+        });
+    }
+    let response = await studentService.getMyCourseChapters(
+        req.query.studentId,
+        req.query.courseId
+    );
+
+    return res.status(200).json(response);
+}
 module.exports = {
   handleGetAllCourses,
   handleGetAllCoursesCategories,
@@ -301,10 +315,10 @@ module.exports = {
   handleDeleteCartItem,
   handleDeleteAllCartItems,
   handlePostPayment,
-
   handleGetStudentCertificates,
   handleGetACertificate,
   handleGetATeacher,
   handlePostVideoProgress,
   handleGetVideoProgressByStudentId,
+  handleGetMyCourseChapter
 };
