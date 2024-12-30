@@ -1,10 +1,11 @@
 "use client"
-import React from 'react'
+import React, { useState } from 'react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { useRef } from 'react'
 import { createNewUser, login } from "@/services/auth";
 import { toast } from 'react-toastify';
+import { Eye, EyeOff } from "lucide-react";
 
 const SignIn = ({ isOpen, onClose, onSignIn ,setLogin}) => {
   if (!isOpen) return null;
@@ -14,6 +15,7 @@ const SignIn = ({ isOpen, onClose, onSignIn ,setLogin}) => {
   const firstNameRef = useRef();
   const lastNameRef = useRef();
   const [isTeacher, setIsTeacher] = React.useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const handleSubmit = () => {
     if(!emailRef.current.value || !passwordRef.current.value || !roleRef.current.value) {
       toast.error("Vui lòng nhập đầy đủ thông tin");
@@ -73,9 +75,11 @@ const SignIn = ({ isOpen, onClose, onSignIn ,setLogin}) => {
           if (response?.errCode === 0) {
             onClose();
             setLogin(true);
-            localStorage.setItem("access_token", response.access_token);
+             localStorage.setItem("access_token", response.access_token);
             localStorage.setItem("user", JSON.stringify(response.user));
-          }
+             localStorage.setItem("isLogin", true);
+
+           }
           else {
             toast.error(response?.message);
           }
@@ -127,7 +131,7 @@ const SignIn = ({ isOpen, onClose, onSignIn ,setLogin}) => {
             </h1>
 
           
-            <div className="bg-xanhface flex p-2 justify-center rounded-2xl space-x-2 my-3 cursor-pointer">
+            {/* <div className="bg-xanhface flex p-2 justify-center rounded-2xl space-x-2 my-3 cursor-pointer">
               <Image 
                 alt="facebook" 
                 className="inline-block" 
@@ -151,11 +155,11 @@ const SignIn = ({ isOpen, onClose, onSignIn ,setLogin}) => {
               <h1 className="font-bold text-black text-sm md:text-base">
                 Đăng nhập bằng Google
               </h1>
-            </div>
-
+            </div> */}
+{/* 
             <div className="flex justify-center mt-2">
               <h1 className="text-sm md:text-base">Hoặc</h1>
-            </div>
+            </div> */}
 
           
             <div className="space-y-2 mt-5">
@@ -167,13 +171,24 @@ const SignIn = ({ isOpen, onClose, onSignIn ,setLogin}) => {
                   ref={emailRef}
                 />
               </div>
-              <div className="border-2 p-2 flex justify-between bg-MoreLightGray"> 
-                <input 
-                  className="outline-none w-full bg-transparent" 
-                  type="password" 
-                  placeholder="Mật khẩu" 
+              <div className="border-2 p-2 flex justify-between bg-MoreLightGray">
+                <input
+                  className="outline-none w-full bg-transparent"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Mật khẩu"
                   ref={passwordRef}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="focus:outline-none"
+                >
+                  {showPassword ? (
+                    <Eye className="inline-block" width={25} height={20} />
+                  ) : (
+                    < EyeOff className="inline-block" width={25} height={20} />
+                  )}
+                </button>
               </div>
              {
                 isTeacher && (

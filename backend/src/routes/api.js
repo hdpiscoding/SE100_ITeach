@@ -78,6 +78,7 @@ const initARoutes = (app) => {
     "/api/v1/get-video-progress-by-studentId",
     studentController.handleGetVideoProgressByStudentId
   );
+  router.post("/api/v1/send-email", teacherController.handleSendEmailToStudent);
   return app.use("/", router);
 };
 export default initARoutes;
