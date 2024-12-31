@@ -176,7 +176,7 @@ export default function CourseDetail(props: any) {
     const [students, setStudents] = useState<number>();
     const [teacher, setTeacher] = useState<Teacher>();
     const [chapters, setChapters] = useState<Array<Chapter>>();
-    const [certificate, setCertificate] = useState<string>();
+    const [certificate, setCertificate] = useState<string | null>(null);
 
     const [intro, setIntro] = useState<string>();
 
@@ -258,7 +258,8 @@ export default function CourseDetail(props: any) {
             }
             setReviews(courseData.reviews);
             setIsReviewed(isUserInReviews(user?.id, courseData.reviews));
-            setCertificate(courseData.course.chungchiId);
+            setCertificate(courseData.certificateId);
+            console.log(courseData.certificateId);
             setMyCourse(courseData.mycourse);
         }
 
@@ -344,6 +345,15 @@ export default function CourseDetail(props: any) {
         }
         catch (error) {
             console.error(error);
+        }
+    }
+
+    const handleCertificate = () => {
+        if (props.role === "student" && certificate) {
+            console.log("Redirect to certificate");
+            setIsPending(true);
+            console.log(certificate);
+            router.push(`/student/certificates?id=${certificate}`);
         }
     }
 
@@ -539,7 +549,10 @@ export default function CourseDetail(props: any) {
 
                             {props.role === "teacher" &&
                                 <div className="flex items-center gap-4">
-                                    <Button className="bg-orange text-white hover:bg-Orange_Hover rounded-2xl">
+                                    <Button className="bg-orange text-white hover:bg-Orange_Hover rounded-2xl" onClick={() => {
+                                        setIsPending(true);
+                                        router.push(`/teacher/course/${courseId}/step1`);
+                                    }}>
                                         <span className="font-semibold">
                                             Chỉnh sửa
                                         </span>
@@ -919,7 +932,7 @@ export default function CourseDetail(props: any) {
                                             Trạng thái
                                         </span>
 
-                                        <Button className={`${isFinish && isBuy ? "bg-DarkGreen hover:bg-DarkGreen_Hover" : "bg-gray text-black"}`} disabled={!isFinish}>
+                                        <Button className={`${certificate !== null ? "bg-DarkGreen text-White hover:bg-DarkGreen_Hover" : "bg-gray text-black"}`} disabled={!(certificate !== null)} onClick={handleCertificate}>
                                             Xem chứng chỉ
                                         </Button>
                                     </div>

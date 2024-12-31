@@ -168,7 +168,6 @@ export default function LessonDetail(props: any) {
     const [isStarted, setIsStarted] = useState<boolean>(false);
     const [isFinished, setIsFinished] = useState<boolean>(false);
     const [progress, setProgress] = useState<number | null>();
-    const [isProgressSaved, setIsProgressSaved] = useState<boolean>(false);
     const playerRef = useRef<ReactPlayer | null>(null);
     const handleProgress = (value: number) => {
         setProgress(value);
@@ -184,15 +183,17 @@ export default function LessonDetail(props: any) {
 
     const handleFinishLesson = async () => {
         try {
-            await Promise.all([
-                completeLesson(String(lessonId), String(user?.id), String(courseId)),
-                saveLessonProgress(String(user?.id), String(lessonId), 1.0)
-            ]);
-            console.log("Hoàn thành bài học với id: " + lessonId);
-
             if (props.role === "student") {
-                const chapters = await getMyCourseChapters(String(courseId), String(user?.id));
-                setChapters(chapters);
+                if (chapters?.find(chapter => chapter.lessons.find(lesson => lesson.id === lessonId)?.isFinished === false)) {
+                    await Promise.all([
+                        completeLesson(String(lessonId), String(user?.id), String(courseId)),
+                        saveLessonProgress(String(user?.id), String(lessonId), 1.0)
+                    ]);
+                    console.log("Hoàn thành bài học với id: " + lessonId);
+
+                    const chaptersData = await getMyCourseChapters(String(courseId), String(user?.id));
+                    setChapters(chaptersData);
+                }
             }
         }
         catch (error) {
@@ -205,7 +206,6 @@ export default function LessonDetail(props: any) {
     }
 
     const handleFinish = async (value: boolean) => {
-        setIsFinished(value);
         await handleFinishLesson();
     }
 

@@ -119,7 +119,6 @@ let editACourse = (data) => {
         course.finishTime = data.finishTime;
         course.gioiThieu = data.gioiThieu;
         course.anhBia = data.anhBia;
-        course.chungchiId = data.chungchiId;
         await course.save(); // Save the instance
         resolve({
           errCode: 0,
