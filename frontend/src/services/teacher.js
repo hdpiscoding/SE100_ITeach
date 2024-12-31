@@ -1,8 +1,17 @@
 import axios from "../utils/AxiosCustomized";
 const teacherToken =
   `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImVtYWlsIjoiaHVuZzA4MDkyMDA0QGdtYWlsLmNvbSIsInJvbGUiOiJSMiIsImV4cGlyZXNJbiI6IjMwZCIsImlhdCI6MTcyNzU5OTQ4N30.2sAjaVD3nZ0KCZ1abl_8d2XXQqVKeVrLaZKeFuueALI`;
-// const studentToken =
-// `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Mjk1M2YxMS1hMTcyLTQwYTAtYWFjMy1hYmY5Y2FjZDVmOTMiLCJlbWFpbCI6Imh1bmcwNzA5MjAwNEBnbWFpbC5jb20iLCJyb2xlIjoiUjEiLCJleHBpcmVzSW4iOiIzMGQiLCJpYXQiOjE3MzUyMTYwOTF9.mYrELt6uppIVENTAZruH6XUx995VTD-uwd-goubzW1E`;
+  const getAllCoursesCategories = async () => {
+    try {
+      const response = await axios.get("api/v1/get-all-courses-categories", {
+      });
+      return response;
+    } catch (error) {
+      console.error("Error fetching courses categories:", error);
+      throw error;
+    }
+  };
+  export { getAllCoursesCategories };
   const getMyAccount = async (teacherId) => {
     try {
       const response = await axios.get(`api/v1/get-my-account?teacherId=${teacherId}`,{
@@ -149,9 +158,6 @@ export { deleteALesson };
 const getDetailCourse = async (courseId) => {
   try {
     const response = await axios.get(`api/v1/get-detail-course-info?id=${courseId}`, {
-      headers: {
-        Authorization: teacherToken,
-      },
     });
     return response;
   } catch (error) {

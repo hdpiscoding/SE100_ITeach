@@ -13,7 +13,7 @@ import { Pagination, Navigation } from "swiper/modules";
 import Banner from "@/components/Banner";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { getAllCourseCategory, getAllCourse } from "@/services/student";
+import { getAllCourseCategory, getAllCourse } from "@/services/teacher";
 import { useEffect } from "react";
 
 const Home = () => {
@@ -21,20 +21,22 @@ const Home = () => {
   const router = useRouter();
   const [courseCategory, setCourseCategory] = useState([]);
   const [allCourse, setAllCourse] = useState([]);
+  const fetchCourseCategory = async () => {
+    const response = await getAllCourseCategory();
+    setCourseCategory(response.data);
+  };
   useEffect(() => {
-    const fetchCourseCategory = async () => {
-      const response = await getAllCourseCategory();
-      setCourseCategory(response.data);
-    };
+    
     fetchCourseCategory();
   }, []);
+  const fetchAllCourse = async () => {
+    const response = await getAllCourse();
+   
+    setAllCourse(response.data);
+  };
   console.log(courseCategory);
   useEffect(() => {
-    const fetchAllCourse = async () => {
-      const response = await getAllCourse();
-     
-      setAllCourse(response.data);
-    };
+   
     fetchAllCourse();
   }, []);
 

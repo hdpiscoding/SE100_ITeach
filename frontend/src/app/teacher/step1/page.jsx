@@ -6,7 +6,7 @@ import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
 import { useRouter } from "next/navigation";
 import{createNewCourse} from "@/services/teacher";
-import { getAllCourseCategory } from "@/services/student";
+import { getAllCourseCategory } from "@/services/teacher";
 import { useState,useEffect,useRef} from "react";
 import { toast } from 'react-toastify';
 const mdParser = new MarkdownIt(/* Markdown-it options */);

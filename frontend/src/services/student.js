@@ -157,19 +157,7 @@ const getACertificate = async (id) => {
     throw error;
   }
 };
-const getAllCoursesCategories = async () => {
-  try {
-    const response = await axios.get("api/v1/get-all-courses-categories", {
-      headers: {
-        Authorization: studenttoken,
-      },
-    });
-    return response;
-  } catch (error) {
-    console.error("Error fetching courses categories:", error);
-    throw error;
-  }
-};
+
 const getATeacherInfo = async (id) => {
   try {
     const response = await axios.get("api/v1/get-a-teacher-info?id=" + id, {
@@ -202,9 +190,6 @@ export {
 const getAllCourseCategory = async () => {
   try {
     const response = await axios.get("api/v1/get-all-courses-categories", {
-      headers: {
-        Authorization: `Bearer ${studentToken}`
-      }
     });
     return response.data;
   } catch (error) {
@@ -216,9 +201,6 @@ export { getAllCourseCategory };
 const getAllCourse = async () => {
   try {
     const response = await axios.get("api/v1/get-all-courses", {
-      headers: {
-        Authorization: `Bearer ${studentToken}`
-      }
     });
     return response.data;
   } catch (error) {
