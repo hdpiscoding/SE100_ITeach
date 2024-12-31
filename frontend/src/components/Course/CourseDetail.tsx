@@ -539,7 +539,10 @@ export default function CourseDetail(props: any) {
 
                             {props.role === "teacher" &&
                                 <div className="flex items-center gap-4">
-                                    <Button className="bg-orange text-white hover:bg-Orange_Hover rounded-2xl">
+                                    <Button className="bg-orange text-white hover:bg-Orange_Hover rounded-2xl" onClick={() => {
+                                        setIsPending(true);
+                                        //router.push(`/teacher/step1`);
+                                    }}>
                                         <span className="font-semibold">
                                             Chỉnh sửa
                                         </span>
