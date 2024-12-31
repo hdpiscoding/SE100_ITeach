@@ -327,17 +327,24 @@ let postLessonComments = (data) => {
     });
 
     let createdComment = await db.LessonComment.findOne({
-        where: { id: newComment.id },
-        attributes: ["id", "content", "userId", "parrentCommentId", "createdAt"],
-        include: [
-            {
-            model: db.User,
-            as: "userInfo",
-            attributes: ["id", "firstName", "lastName", "avatar", "email", "role"],
-            },
-        ],
-        nest: true,
-        raw: true,
+      where: { id: newComment.id },
+      attributes: ["id", "content", "userId", "parrentCommentId", "createdAt"],
+      include: [
+        {
+          model: db.User,
+          as: "userInfo",
+          attributes: [
+            "id",
+            "firstName",
+            "lastName",
+            "avatar",
+            "email",
+            "role",
+          ],
+        },
+      ],
+      nest: true,
+      raw: true,
     });
 
     resolve({
@@ -365,19 +372,19 @@ let postReview = (data) => {
       // Tính toán lại tổng số sao (totalStars) của khóa học
       const reviews = await db.Review.findAll({
         where: { courseId: data.courseId },
-        attributes: ['star'], // Chỉ lấy cột star
+        attributes: ["star"], // Chỉ lấy cột star
       });
 
       // Tính giá trị trung bình số sao
       const totalStars =
-          reviews.reduce((sum, review) => sum + review.star, 0) / reviews.length;
+        reviews.reduce((sum, review) => sum + review.star, 0) / reviews.length;
 
       // Cập nhật totalStars cho bảng Course
       await db.Course.update(
-          { totalStars: totalStars },
-          {
-            where: { id: data.courseId },
-          }
+        { totalStars: totalStars },
+        {
+          where: { id: data.courseId },
+        }
       );
       resolve({
         errCode: 0,
@@ -602,7 +609,14 @@ let getLessonContent = (lessonId) => {
           {
             model: db.User,
             as: "userInfo",
-            attributes: ["id", "firstName", "lastName", "avatar", "email", "role"],
+            attributes: [
+              "id",
+              "firstName",
+              "lastName",
+              "avatar",
+              "email",
+              "role",
+            ],
           },
         ],
         nest: true,
@@ -671,7 +685,14 @@ let completeLesson = (data) => {
           myCourse.currentLessonId = data.lessonId;
         }
         await myCourse.save();
+        if (myCourse.numberOfProcess == lessonCount) {
+          await db.Certificate.create({
+            userId: data.studentId,
+            courseId: data.courseId,
+          });
+        }
       }
+
       resolve({
         errCode: 0,
         errMessage: "OK",
@@ -910,21 +931,20 @@ const postVideoProgress = (data) => {
       if (data.progress >= 1.0) {
         progress = 0.0;
         isFinished = true;
-      }
-      else {
-          progress = data.progress;
+      } else {
+        progress = data.progress;
       }
 
       if (existingProgress) {
         // Nếu đã tồn tại, cập nhật progress
         await db.VideoProgress.update(
-            { progress: progress, isFinished: isFinished }, // Cập nhật progress mới
-            {
-              where: {
-                userId: data.userId,
-                lessonId: data.lessonId,
-              },
-            }
+          { progress: progress, isFinished: isFinished }, // Cập nhật progress mới
+          {
+            where: {
+              userId: data.userId,
+              lessonId: data.lessonId,
+            },
+          }
         );
         resolve({
           errCode: 0,
@@ -992,43 +1012,46 @@ const getMyCourseChapters = (userId, courseId) => {
             attributes: ["id", "name", "studyTime", "lessonOrder"],
           },
         ],
-        order: [["createdAt", "ASC"], [{ model: db.Lesson, as: "lessons" }, "lessonOrder", "ASC"]],
+        order: [
+          ["createdAt", "ASC"],
+          [{ model: db.Lesson, as: "lessons" }, "lessonOrder", "ASC"],
+        ],
         raw: true,
         nest: true,
       });
 
       // Group lessons by chapter
       const chapters = Object.values(
-          rawChapters.reduce((acc, curr) => {
-            const chapterId = curr.id;
+        rawChapters.reduce((acc, curr) => {
+          const chapterId = curr.id;
 
-            if (!acc[chapterId]) {
-              acc[chapterId] = {
-                id: curr.id,
-                chapterName: curr.chapterName,
-                courseId: curr.courseId,
-                lessons: [], // Initialize with empty array
-              };
-            }
+          if (!acc[chapterId]) {
+            acc[chapterId] = {
+              id: curr.id,
+              chapterName: curr.chapterName,
+              courseId: curr.courseId,
+              lessons: [], // Initialize with empty array
+            };
+          }
 
-            // Only add lesson if it has an id (not null)
-            if (curr.lessons && curr.lessons.id) {
-              acc[chapterId].lessons.push({
-                id: curr.lessons.id,
-                name: curr.lessons.name,
-                studyTime: curr.lessons.studyTime,
-                lessonOrder: curr.lessons.lessonOrder,
-              });
-            }
+          // Only add lesson if it has an id (not null)
+          if (curr.lessons && curr.lessons.id) {
+            acc[chapterId].lessons.push({
+              id: curr.lessons.id,
+              name: curr.lessons.name,
+              studyTime: curr.lessons.studyTime,
+              lessonOrder: curr.lessons.lessonOrder,
+            });
+          }
 
-            return acc;
-          }, {})
+          return acc;
+        }, {})
       );
 
       // Tách lessonIds từ chapters
       const lessonIds = chapters
-          .flatMap((chapter) => chapter.lessons)
-          .map((lesson) => lesson.id);
+        .flatMap((chapter) => chapter.lessons)
+        .map((lesson) => lesson.id);
 
       // Lấy progress của các lessons theo userId
       const videoProgresses = await db.VideoProgress.findAll({
