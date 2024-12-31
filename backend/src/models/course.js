@@ -47,6 +47,7 @@ module.exports = (sequelize, DataTypes) => {
       finishTime: DataTypes.STRING,
       gioiThieu: DataTypes.TEXT("long"),
       anhBia: DataTypes.STRING,
+      markDown: DataTypes.STRING,
       chungchiId: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
