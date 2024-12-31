@@ -9,6 +9,9 @@ const nonSecurePaths = [
   "/api/auth/login-success",
   "/api/auth/login-fail",
   "/api/v1/get-all-courses",
+  "/api/v1/get-all-courses-categories",
+  "/api/v1/get-detail-course-info",
+  "/api/v1/get-list-chapters",
 ];
 const studentPaths = [
   "/api/v1/get-all-courses",
