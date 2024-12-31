@@ -41,6 +41,7 @@ const studentPaths = [
   "/api/v1/get-all-student-of-course",
   "/api/v1/post-video-progress",
   "/api/v1/get-video-progress-by-studentId",
+  "/api/v1/get-my-course-chapters",
 ];
 const teacherPaths = [
   "/api/v1/create-new-course",
@@ -65,6 +66,7 @@ const teacherPaths = [
   "/api/v1/get-ide-use-by-month",
   "/api/v1/send-email",
   "/api/v1/get-lesson-content",
+  "/api/v1/get-all-courses-categories",
 ];
 const adminPaths = [
   "/api/v1/get-all-teacher",

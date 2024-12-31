@@ -905,10 +905,20 @@ const postVideoProgress = (data) => {
         },
       });
 
+      let progress;
+      let isFinished = existingProgress?.isFinished || false;
+      if (data.progress >= 1.0) {
+        progress = 0.0;
+        isFinished = true;
+      }
+      else {
+          progress = data.progress;
+      }
+
       if (existingProgress) {
         // Nếu đã tồn tại, cập nhật progress
         await db.VideoProgress.update(
-            { progress: data.progress }, // Cập nhật progress mới
+            { progress: progress, isFinished: isFinished }, // Cập nhật progress mới
             {
               where: {
                 userId: data.userId,
@@ -925,7 +935,8 @@ const postVideoProgress = (data) => {
         await db.VideoProgress.create({
           userId: data.userId,
           lessonId: data.lessonId,
-          progress: data.progress,
+          progress: progress,
+          isFinished: isFinished,
         });
         resolve({
           errCode: 0,
@@ -933,6 +944,7 @@ const postVideoProgress = (data) => {
         });
       }
     } catch (e) {
+      console.log(e);
       reject({
         errCode: 1,
         errMessage: "Failed to process video progress",
@@ -945,7 +957,7 @@ const postVideoProgress = (data) => {
 const getVideoProgressByStudentId = (studentId, lessonId) => {
   return new Promise(async (resolve, reject) => {
     try {
-      let videoProgress = await db.VideoProgress.findAll({
+      let videoProgress = await db.VideoProgress.findOne({
         where: { userId: studentId, lessonId: lessonId },
         raw: true,
       });
@@ -962,6 +974,102 @@ const getVideoProgressByStudentId = (studentId, lessonId) => {
       }
     } catch (e) {
       reject(e);
+    }
+  });
+};
+
+const getMyCourseChapters = (userId, courseId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      // Lấy danh sách chapters theo courseId
+      const rawChapters = await db.Chapter.findAll({
+        where: { courseId },
+        attributes: ["id", "chapterName", "courseId"],
+        include: [
+          {
+            model: db.Lesson,
+            as: "lessons",
+            attributes: ["id", "name", "studyTime", "lessonOrder"],
+          },
+        ],
+        order: [["createdAt", "ASC"], [{ model: db.Lesson, as: "lessons" }, "lessonOrder", "ASC"]],
+        raw: true,
+        nest: true,
+      });
+
+      // Group lessons by chapter
+      const chapters = Object.values(
+          rawChapters.reduce((acc, curr) => {
+            const chapterId = curr.id;
+
+            if (!acc[chapterId]) {
+              acc[chapterId] = {
+                id: curr.id,
+                chapterName: curr.chapterName,
+                courseId: curr.courseId,
+                lessons: [], // Initialize with empty array
+              };
+            }
+
+            // Only add lesson if it has an id (not null)
+            if (curr.lessons && curr.lessons.id) {
+              acc[chapterId].lessons.push({
+                id: curr.lessons.id,
+                name: curr.lessons.name,
+                studyTime: curr.lessons.studyTime,
+                lessonOrder: curr.lessons.lessonOrder,
+              });
+            }
+
+            return acc;
+          }, {})
+      );
+
+      // Tách lessonIds từ chapters
+      const lessonIds = chapters
+          .flatMap((chapter) => chapter.lessons)
+          .map((lesson) => lesson.id);
+
+      // Lấy progress của các lessons theo userId
+      const videoProgresses = await db.VideoProgress.findAll({
+        where: {
+          userId,
+          lessonId: {
+            [Op.in]: lessonIds,
+          },
+        },
+        attributes: ["lessonId", "isFinished"],
+      });
+
+      // Mapping progress để tiện lookup
+      const progressMap = videoProgresses.reduce((acc, progress) => {
+        acc[progress.lessonId] = progress.isFinished;
+        return acc;
+      }, {});
+
+      // Map dữ liệu lessons và thêm thuộc tính isFinished
+      const result = chapters.map((chapter) => {
+        const lessons = chapter.lessons.map((lesson) => ({
+          ...lesson, // Giữ nguyên các thuộc tính của bài học
+          isFinished: progressMap[lesson.id] || false, // Thêm thuộc tính isFinished
+        }));
+
+        return {
+          ...chapter, // Giữ nguyên các thuộc tính của chapter
+          lessons, // Cập nhật lessons đã thêm isFinished
+        };
+      });
+
+      resolve({
+        errCode: 0,
+        data: result,
+      });
+    } catch (error) {
+      console.error("Error fetching chapters:", error);
+      reject({
+        errCode: 1,
+        message: "Failed to fetch course chapters",
+      });
     }
   });
 };
@@ -992,6 +1100,6 @@ module.exports = {
   postPayment,
   getATeacher,
   postVideoProgress,
-
   getVideoProgressByStudentId,
+  getMyCourseChapters,
 };
