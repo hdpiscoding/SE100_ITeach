@@ -21,7 +21,7 @@ import {FaUser} from "react-icons/fa";
 import { Textarea } from "@/components/ui/textarea"
 import {useParams, useRouter} from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton"
-import {checkIsEnrolled, createCourseReview, getCourses} from "@/services/course";
+import {checkIsEnrolled, createCourseReview, getCourses, getMyCourseChapters} from "@/services/course";
 import Loading from "@/app/loading";
 import {addToCart, getCartByStudentId} from "@/services/cart";
 import {toast} from "react-toastify";
@@ -41,8 +41,9 @@ interface Lesson {
     id: string;
     name: string;
     studyTime: number;
+    lessonOrder: number;
+    isFinished?: boolean;
 }
-
 interface Chapter {
     id: number;
     chapterName: string;
@@ -94,6 +95,12 @@ const convertMinutes = (minutes: number): string => {
     }
     return `${hours} giờ ${remainingMinutes} phút`;
 }
+
+const findLessonByOrder = (data: Chapter[], lessonOrder: number): Lesson | undefined => {
+    return data
+        .flatMap((chapter: Chapter) => chapter.lessons) // Gộp tất cả các lessons từ các chapter vào một mảng
+        .find((lesson: Lesson) => lesson.lessonOrder === lessonOrder); // Tìm lesson có lessonOrder cụ thể
+};
 
 export default function CourseDetail(props: any) {
     const {courseId} = useParams();
@@ -178,6 +185,7 @@ export default function CourseDetail(props: any) {
 
     // State for info modal
     const triggerRef = useRef<HTMLButtonElement | null>(null);
+    const lessonTriggerRef = useRef<HTMLButtonElement | null>(null);
 
     useEffect(() => {
         setUser(JSON.parse(localStorage.getItem("user") || "{}"));
@@ -188,16 +196,20 @@ export default function CourseDetail(props: any) {
         const fetchData = async () => {
             let isEnrolled = false;
             let courseData;
+            let chapterData;
             if (props.role === "student") {
-                const [data, enroll] = await Promise.all([
+                const [data, enroll, chapters] = await Promise.all([
                     getCourses(String(courseId), String(user?.id)),
-                    checkIsEnrolled(String(user?.id), String(courseId))
+                    checkIsEnrolled(String(user?.id), String(courseId)),
+                    getMyCourseChapters(String(courseId), String(user?.id))
                 ]);
                 courseData = data;
                 isEnrolled = enroll;
+                chapterData = chapters;
             }
             else {
                 courseData = await getCourses(String(courseId), String(user?.id));
+                chapterData = courseData.chapters;
             }
 
             if(props.role === "student") {
@@ -231,7 +243,7 @@ export default function CourseDetail(props: any) {
             }
             setStudents(courseData.course.totalStudent);
             setTeacher(courseData.course.teacher);
-            setChapters(courseData.chapters);
+            setChapters(chapterData);
             setAverageRating(courseData.course.totalStars);
             setRatingCount(courseData.reviews?.length);
             if (courseData.reviews?.length > 0) {
@@ -663,8 +675,13 @@ export default function CourseDetail(props: any) {
                                                             triggerRef.current?.click();
                                                         }
                                                         else {
-                                                            setIsPending(true);
-                                                            router.push(`/${props.role}/course/${courseId}/lesson/${lesson.id}`);
+                                                            if (props.role === "student" && lesson.lessonOrder !== 0 && (findLessonByOrder(chapters, lesson.lessonOrder - 1)?.isFinished === false)) {
+                                                                lessonTriggerRef.current?.click();
+                                                            }
+                                                            else {
+                                                                setIsPending(true);
+                                                                router.push(`/${props.role}/course/${courseId}/lesson/${lesson.id}`);
+                                                            }
                                                         }
 
                                                     }}>
@@ -922,6 +939,17 @@ export default function CourseDetail(props: any) {
                 trigger={
                     <button
                         ref={triggerRef}
+                        style={{ display: "none" }} // Ẩn trigger button
+                    />
+                }
+            />
+
+            <InfoModal
+                title="Thông báo"
+                description="Bài giảng đang bị khóa. Vui lòng hoàn thành bài giảng trước!"
+                trigger={
+                    <button
+                        ref={lessonTriggerRef}
                         style={{ display: "none" }} // Ẩn trigger button
                     />
                 }
