@@ -15,7 +15,6 @@ import { Checkbox } from "@/components/ui/checkbox"
 import {Textarea} from "@/components/ui/textarea";
 import {Label} from "@/components/ui/label";
 import {submitCode, getSubmission} from "@/services/Judge0"
-import ReactMarkdown from "react-markdown";
 import {postIDEUsed} from "@/services/courseAnalysis";
 
 
@@ -240,40 +239,14 @@ export default function LessonAssignments(props: any) {
                     </div>
 
                     <Textarea className={`h-[100px] resize-none ${error ? "text-Red" : "text-black"}`}
-                              value={error || output}
+                              defaultValue={error || output}
                               />
 
                 </div>
             </div>
 
-            <div className="lg:col-start-3 w-full prose bg-LighterGray rounded-2xl p-4 h-fit order-1 lg:order-none">
-                <ReactMarkdown
-                    className="text-sm space-y-4"
-                    children={props.exercise}
-                    components={{
-                        blockquote: ({node, ...props}) => (
-                            <blockquote className="border-l-[3px] border-blue-500 pl-4 italic bg-gray-100 p-2" {...props} />
-                        ),
-                        ul: ({node, ...props}) => (
-                            <ul className="list-disc pl-6" {...props} />
-                        ),
-                        ol: ({node, ...props}) => (
-                            <ol className="list-decimal pl-6" {...props} />
-                        ),
-                        h1: ({ children }) => (
-                            <h1 className="text-4xl font-bold my-4">{children}</h1>
-                        ),
-                        h2: ({ children }) => (
-                            <h2 className="text-3xl font-semibold my-3">{children}</h2>
-                        ),
-                        h3: ({ children }) => (
-                            <h3 className="text-2xl font-medium my-2">{children}</h3>
-                        ),
-                        h4: ({ children }) => (
-                            <h4 className="text-xl font-light text-red-400 my-1">{children}</h4>
-                        ),
-                    }}
-                />
+            <div className="lg:col-start-3 w-full bg-LighterGray rounded-2xl p-4 h-fit order-1 lg:order-none">
+                {props.exercise}
             </div>
         </div>
     );

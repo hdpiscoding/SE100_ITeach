@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 import React, {useEffect, useState} from 'react';
 import NestedCommentItem from "@/components/Lesson/NestedCommentItem";
@@ -8,18 +9,24 @@ import {Textarea} from "@/components/ui/textarea";
 import {Send} from 'lucide-react'
 import {TooltipContent, Tooltip, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
 import {Pagination, Stack} from "@mui/material";
+import {createLessonComment} from "@/services/course";
+
+interface User {
+    id: string,
+    firstName: string,
+    lastName: string,
+    email: string,
+    avatar: string,
+    role: string
+}
 
 interface LessonComment {
     id: string;
-    user: {
-        id: string;
-        email: string;
-        avatar: string;
-        role: string;
-    };
-    lessonId: string;
+    userInfo: User;
+    userId: string;
     content: string;
-    parentCommentId?: string | null;
+    createdAt: string;
+    parrentCommentId?: string | null;
     children?: LessonComment[];
 }
 
@@ -35,9 +42,9 @@ function buildCommentTree(comments: LessonComment[]) {
     const tree: LessonComment[] = [];
 
     comments.forEach(comment => {
-        if (comment.parentCommentId) {
+        if (comment.parrentCommentId) {
             // Nếu có parentCommentId, thêm vào mảng children của parent
-            const parent = commentMap.get(comment.parentCommentId);
+            const parent = commentMap.get(comment.parrentCommentId);
             if (parent) {
                 parent.children.push(comment);
             }
@@ -50,89 +57,83 @@ function buildCommentTree(comments: LessonComment[]) {
     return tree;
 }
 
-const rawComments: LessonComment[] = [
-    {
-        id: "c1a2b3d4e5f6g7h8i9j0",
-        user: {
-            id: "u1a2b3c4d5e6f7g8h9i0",
-            email: "lm10@gmail.com",
-            avatar: "",
-            role: "student"
-        },
-        lessonId: "l1a2b3c4d5e6f7g8h9i0",
-        content: "This is a great lesson!",
-        parentCommentId: null
-    },
-    {
-        id: "c2b3d4e5f6g7h8i9j0a1",
-        user: {
-            id: "u2b3c4d5e6f7g8h9i0a1",
-            email: "cr7@gmail.com",
-            avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
-            role: "student"
-        },
-        lessonId: "l1a2b3c4d5e6f7g8h9i0",
-        content: "I have a question about this topic.",
-        parentCommentId: "c1a2b3d4e5f6g7h8i9j0"
-    },
-    {
-        id: "c3c4d5e6f7g8h9i0j1a2",
-        user: {
-            id: "u3c4d5e6f7g8h9i0j1a2",
-            email: "njr10@gmail.com",
-            avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
-            role: "student"
-        },
-        lessonId: "l2b3c4d5e6f7g8h9i0a1",
-        content: "Can you explain this part further? mlkgvfjgkljsdfjsdlkfjsdlkfjlskjflksdjfkljksdfmm nskjdnfsdhfkjdshfkjhsdkjfhsdkjfhsdkf",
-        parentCommentId: null
-    },
-    {
-        id: "c4d5e6f7g8h9i0j1a2b3",
-        user: {
-            id: "u4d5e6f7g8h9i0j1a2b3",
-            email: "r9@gmail.com",
-            avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
-            role: "teacher"
-        },
-        lessonId: "l2b3c4d5e6f7g8h9i0a1",
-        content: "Sure, here's my understanding...",
-        parentCommentId: "c3c4d5e6f7g8h9i0j1a2"
-    },
-    {
-        id: "c5e6f7g8h9i0j1a2b3c4",
-        user: {
-            id: "u5e6f7g8h9i0j1a2b3c4",
-            email: "kdb17@gmail.com",
-            avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
-            role: "student"
-        },
-        lessonId: "l3c4d5e6f7g8h9i0a1b2",
-        content: "Thanks for the explanation!",
-        parentCommentId: "c4d5e6f7g8h9i0j1a2b3"
-    },
-    {
-        id: "c6f7g8h9i0j1a2b3c4d5",
-        user: {
-            id: "u6f7g8h9i0j1a2b3c4d5",
-            email: "m3@gmail.com",
-            avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
-            role: "student"
-        },
-        lessonId: "l3c4d5e6f7g8h9i0a1b2",
-        content: "I found another resource that might help.",
-        parentCommentId: null
-    }
-];
+// const rawComments: LessonComment[] = [
+//     {
+//         id: "c1a2b3d4e5f6g7h8i9j0",
+//         user: {
+//             id: "u1a2b3c4d5e6f7g8h9i0",
+//             email: "lm10@gmail.com",
+//             avatar: "",
+//             role: "student"
+//         },
+//         lessonId: "l1a2b3c4d5e6f7g8h9i0",
+//         content: "This is a great lesson!",
+//         parentCommentId: null
+//     },
+//     {
+//         id: "c2b3d4e5f6g7h8i9j0a1",
+//         user: {
+//             id: "u2b3c4d5e6f7g8h9i0a1",
+//             email: "cr7@gmail.com",
+//             avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
+//             role: "student"
+//         },
+//         lessonId: "l1a2b3c4d5e6f7g8h9i0",
+//         content: "I have a question about this topic.",
+//         parentCommentId: "c1a2b3d4e5f6g7h8i9j0"
+//     },
+//     {
+//         id: "c3c4d5e6f7g8h9i0j1a2",
+//         user: {
+//             id: "u3c4d5e6f7g8h9i0j1a2",
+//             email: "njr10@gmail.com",
+//             avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
+//             role: "student"
+//         },
+//         lessonId: "l2b3c4d5e6f7g8h9i0a1",
+//         content: "Can you explain this part further? mlkgvfjgkljsdfjsdlkfjsdlkfjlskjflksdjfkljksdfmm nskjdnfsdhfkjdshfkjhsdkjfhsdkjfhsdkf",
+//         parentCommentId: null
+//     },
+//     {
+//         id: "c4d5e6f7g8h9i0j1a2b3",
+//         user: {
+//             id: "u4d5e6f7g8h9i0j1a2b3",
+//             email: "r9@gmail.com",
+//             avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
+//             role: "teacher"
+//         },
+//         lessonId: "l2b3c4d5e6f7g8h9i0a1",
+//         content: "Sure, here's my understanding...",
+//         parentCommentId: "c3c4d5e6f7g8h9i0j1a2"
+//     },
+//     {
+//         id: "c5e6f7g8h9i0j1a2b3c4",
+//         user: {
+//             id: "u5e6f7g8h9i0j1a2b3c4",
+//             email: "kdb17@gmail.com",
+//             avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
+//             role: "student"
+//         },
+//         lessonId: "l3c4d5e6f7g8h9i0a1b2",
+//         content: "Thanks for the explanation!",
+//         parentCommentId: "c4d5e6f7g8h9i0j1a2b3"
+//     },
+//     {
+//         id: "c6f7g8h9i0j1a2b3c4d5",
+//         user: {
+//             id: "u6f7g8h9i0j1a2b3c4d5",
+//             email: "m3@gmail.com",
+//             avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
+//             role: "student"
+//         },
+//         lessonId: "l3c4d5e6f7g8h9i0a1b2",
+//         content: "I found another resource that might help.",
+//         parentCommentId: null
+//     }
+// ];
 
 export default function LessonComment(props: any) {
     const [userComment, setUserComment] = useState<string>("");
-    const [commentId, setCommentId] = useState<string | null>(null);
-
-    useEffect(() => {
-        const randomId = Math.random().toString(36).substring(7);
-        setCommentId(randomId); // Chỉ set sau khi client render
-    }, []);
 
     const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setUserComment(e.target.value);
@@ -141,20 +142,20 @@ export default function LessonComment(props: any) {
     const [comments, setComments] = useState<LessonComment[]>([]);
 
     useEffect(() => {
-        setComments(buildCommentTree(rawComments));
-    }, []);
+        setComments(buildCommentTree(props?.rawComments));
+    }, [props?.rawComments]);
 
     const addComment = (newComment: LessonComment) => {
         setComments((prevComments) => {
             // Nếu comment là root, thêm trực tiếp
-            if (!newComment.parentCommentId) {
+            if (!newComment.parrentCommentId) {
                 return [...prevComments, newComment];
             }
 
             // Hàm đệ quy để thêm comment vào đúng vị trí
             const addToParent = (comments: LessonComment[]): LessonComment[] => {
                 return comments.map((comment: LessonComment) => {
-                    if (comment.id === newComment.parentCommentId) {
+                    if (comment.id === newComment.parrentCommentId) {
                         // Nếu tìm thấy comment cha, thêm comment con vào children
                         return {
                             ...comment,
@@ -200,32 +201,26 @@ export default function LessonComment(props: any) {
 
 
 
-    const handleUploadComment = () => {
-        let newComment: LessonComment = {
-            id: String(commentId),
-            user: {
-                id: props.user?.id,
-                email: props.user?.email,
-                avatar: props.user?.avatar,
-                role: props.user.role
-            },
-            lessonId: props.lessonId,
-            content: userComment,
-            parentCommentId: null
+    const handleUploadComment = async () => {
+        try {
+            const newComment = await createLessonComment(props.lessonId, props.user.id, userComment, null);
+            addComment(newComment);
+            console.log(newComment);
+            setUserComment("");
         }
-        addComment(newComment);
-        console.log(newComment);
-        setUserComment("");
+        catch (error) {
+            console.log(error);
+        }
     }
 
-    const handleKeyDown = (e: React.KeyboardEvent) => {
+    const handleKeyDown = async (e: React.KeyboardEvent) => {
         if (e.shiftKey && e.key === "Enter") {
             e.preventDefault();
             setUserComment((prev) => prev + "\n");
         }
         else if (e.key === "Enter") {
             e.preventDefault();
-            handleUploadComment();
+            await handleUploadComment();
         }
     }
 
@@ -235,44 +230,53 @@ export default function LessonComment(props: any) {
                 Bình luận
             </span>
 
-            <ScrollArea className="lg:col-start-1 w-full max-h-[500px]">
-                <div className="mr-4">
-                    {currentComments.map((comment) => (
-                        <NestedCommentItem comment={comment}
-                                           currentUser={props.user}
-                                           lessonId={props.lessonId}
-                                           addComment={addComment}/>
-                    ))}
-                </div>
-            </ScrollArea>
+            {props.rawComments?.length === 0
+                ?
+                <div className="lg:col-start-1 w-full text-center my-4">Hiện tại chưa có bình luận nào 🤐</div>
+                :
+                <div className="lg:col-start-1 flex flex-col gap-4">
+                    <ScrollArea className="w-full max-h-[500px]">
+                        <div className="mr-4">
+                            {currentComments?.map((comment, index) => (
+                                <NestedCommentItem key={index}
+                                                   comment={comment}
+                                                   currentUser={props.user}
+                                                   lessonId={props.lessonId}
+                                                   addComment={addComment}/>
+                            ))}
+                        </div>
+                    </ScrollArea>
 
-            <div className="lg:col-start-1 flex items-center justify-center my-4">
-                <Stack>
-                    <Pagination
-                        count={totalPages}
-                        page={page}
-                        onChange={handlePageChange}
-                        variant="text"
-                        shape="rounded"
-                        sx={{
-                            "& .MuiPaginationItem-root": {
-                                color: "#AAAAAA",            // Màu văn bản mặc định
-                            },
-                            '& .MuiPaginationItem-root:hover': {
-                                // Màu khi hover
-                                backgroundColor: '#3DCBB1', // Màu nền khi hover
-                                color: 'white', // Màu chữ khi hover
-                            },
-                            "& .Mui-selected": {
-                                backgroundColor: "#3DCBB1 !important", // Màu nền cho item được chọn
-                                color: "white",              // Màu chữ cho item được chọn
-                            },
-                            "& .MuiPaginationItem-ellipsis": {
-                                color: "#AAAAAA"              // Màu sắc cho dấu ba chấm (ellipsis)
-                            }
-                        }}/>
-                </Stack>
-            </div>
+                    <div className="flex items-center justify-center my-4">
+                        <Stack>
+                            <Pagination
+                                count={totalPages}
+                                page={page}
+                                onChange={handlePageChange}
+                                variant="text"
+                                shape="rounded"
+                                sx={{
+                                    "& .MuiPaginationItem-root": {
+                                        color: "#AAAAAA",            // Màu văn bản mặc định
+                                    },
+                                    '& .MuiPaginationItem-root:hover': {
+                                        // Màu khi hover
+                                        backgroundColor: '#3DCBB1', // Màu nền khi hover
+                                        color: 'white', // Màu chữ khi hover
+                                    },
+                                    "& .Mui-selected": {
+                                        backgroundColor: "#3DCBB1 !important", // Màu nền cho item được chọn
+                                        color: "white",              // Màu chữ cho item được chọn
+                                    },
+                                    "& .MuiPaginationItem-ellipsis": {
+                                        color: "#AAAAAA"              // Màu sắc cho dấu ba chấm (ellipsis)
+                                    }
+                                }}/>
+                        </Stack>
+                    </div>
+                </div>
+            }
+
 
             {props.user?.role !== "admin"
                 &&

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Menu, X } from "lucide-react";
@@ -19,6 +19,21 @@ const Navbar = () => {
 
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignInModal, setShowSignInModal] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const roleLocal = localStorage.getItem("role");
+      if (roleLocal) {
+        setRole(roleLocal);
+      }
+      const check = localStorage.getItem("isLogin");
+      if (!check) {
+        localStorage.setItem("isLogin", "false");
+      }
+      setLogin(localStorage.getItem("isLogin"));
+    }
+  }, []);
+  const isLoginLocal = localStorage.getItem("isLogin");
 
   const getNavLinks = (role) => {
     switch (role) {
@@ -40,6 +55,7 @@ const Navbar = () => {
           { href: "/admin/teacherAdmin", label: "Giáo viên" },
           { href: "/admin/course", label: "Quản lý khóa học" },
         ];
+      
       default:
         return [
           { href: "/", label: "Trang chủ" },
@@ -104,7 +120,7 @@ const Navbar = () => {
                 </ul>
 
                 <div className="hidden sm:block sm:w-[125px] md:w-[150px] lg:w-[175px]">
-                  {!login ? (
+                  {(  isLoginLocal==="false")? (
                     <div className=" grid grid-cols-2 lg:gap-x-2 sm:gap-x-1 md:gap-x-2">
                       <Button
                         onClick={() => setShowLoginModal(true)}
@@ -157,13 +173,17 @@ const Navbar = () => {
                                 <li>
                                   <button
                                     className="block py-2 w-full text-left"
-                                    onClick={() => {
+                                      onClick={() => {
+                                        localStorage.setItem("isLogin", "false");
+
                                       setLogin(false);
                                       setIsMenuOpen(false);
                                       router.push("/");
-                                      setRole("student");
-
-                                      localStorage.removeItem("access_token");
+                                        setRole("student");
+                                        localStorage.removeItem("access_token");
+                                        localStorage.setItem("role", "student");
+                                      localStorage.removeItem("user");
+                                     
                                     }}
                                   >
                                     Đăng xuất
@@ -204,11 +224,16 @@ const Navbar = () => {
                                   <button
                                     className="block py-2 w-full text-left"
                                     onClick={() => {
+                                      localStorage.setItem("isLogin", "false");
                                       setLogin(false);
                                       setIsMenuOpen(false);
                                       router.push("/");
                                       setRole("student");
                                       localStorage.removeItem("access_token");
+                                      
+                                        localStorage.setItem("role", "student");
+                                      
+
                                     }}
                                   >
                                     Đăng xuất
@@ -244,8 +269,10 @@ const Navbar = () => {
                                       setIsMenuOpen(false);
                                       router.push("/");
                                       setRole("student");
-
-                                      localStorage.removeItem("access_token");
+                                      localStorage.setItem("isLogin", "false");
+localStorage.removeItem("access_token");
+                                        localStorage.setItem("role", "student");
+                                      
                                     }}
                                   >
                                     Đăng xuất
@@ -311,8 +338,16 @@ const Navbar = () => {
                                   <button
                                     className="block py-2 w-full text-left"
                                     onClick={() => {
-                                      setLogin(false);
+                                      localStorage.removeItem("access_token");
+                                        localStorage.setItem("role", "student");                                      setLogin(false);
                                       setIsMenuOpen(false);
+                                      router.push("/");
+                                      setRole("student");
+                                      localStorage.setItem("isLogin", "false");
+                                      localStorage.removeItem("user");
+
+                                      
+
                                     }}
                                   >
                                     Đăng xuất
@@ -352,8 +387,17 @@ const Navbar = () => {
                                   <button
                                     className="block py-2 w-full text-left"
                                     onClick={() => {
+                                      localStorage.setItem("isLogin", "false");
                                       setLogin(false);
                                       setIsMenuOpen(false);
+                                      router.push("/");
+                                      setRole("student");
+                                      localStorage.removeItem("access_token");
+                                      localStorage.setItem("role", "student");
+                                      localStorage.removeItem("user");
+
+                                      
+                                      
                                     }}
                                   >
                                     Đăng xuất
@@ -385,8 +429,16 @@ const Navbar = () => {
                                   <button
                                     className="block py-2 w-full text-left"
                                     onClick={() => {
+                                       localStorage.setItem("isLogin", "false");
                                       setLogin(false);
                                       setIsMenuOpen(false);
+                                      router.push("/");
+                                      setRole("student");
+                                      localStorage.removeItem("access_token");
+                                      localStorage.setItem("role", "student");
+                                      localStorage.removeItem("user");
+                                      
+                                     
                                     }}
                                   >
                                     Đăng xuất

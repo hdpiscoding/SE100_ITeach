@@ -197,6 +197,72 @@ let getAnalysisInformation = (data) => {
         },
       });
 
+      let totalStudents = await db.User.count({
+        where: {
+          role: "R1",
+        },
+      });
+
+      let studentsThisMonth = await db.User.count({
+        where: {
+          role: "R1",
+          createdAt: {
+            [db.Sequelize.Op.and]: [
+              db.Sequelize.where(
+                db.Sequelize.fn(
+                  "EXTRACT",
+                  db.Sequelize.literal(`MONTH FROM "createdAt"`)
+                ),
+                data.month
+              ),
+              db.Sequelize.where(
+                db.Sequelize.fn(
+                  "EXTRACT",
+                  db.Sequelize.literal(`YEAR FROM "createdAt"`)
+                ),
+                data.year
+              ),
+            ],
+          },
+        },
+      });
+
+      let studentsLastMonth = await db.User.count({
+        where: {
+          role: "R1",
+          createdAt: {
+            [db.Sequelize.Op.and]: [
+              db.Sequelize.where(
+                db.Sequelize.fn(
+                  "EXTRACT",
+                  db.Sequelize.literal(`MONTH FROM "createdAt"`)
+                ),
+                data.month - 1
+              ),
+              db.Sequelize.where(
+                db.Sequelize.fn(
+                  "EXTRACT",
+                  db.Sequelize.literal(`YEAR FROM "createdAt"`)
+                ),
+                data.year
+              ),
+            ],
+          },
+        },
+      });
+
+      let studentGrowthRate =
+        ((studentsThisMonth - studentsLastMonth) / studentsLastMonth) * 100;
+      if (!studentGrowthRate) studentGrowthRate = 0;
+      if (!totalCost) totalCost = 0;
+      if (!totalCourseSell) totalCourseSell = 0;
+      if (!totalLessons) totalLessons = 0;
+      if (!totalCourses) totalCourses = 0;
+      if (!totalTeachers) totalTeachers = 0;
+      if (!studentsThisMonth) studentsThisMonth = 0;
+      if (!studentGrowthRate) studentGrowthRate = 0;
+      if (!totalStudents) totalStudents = 0;
+
       resolve({
         errCode: 0,
         errMessage: "OK",
@@ -204,12 +270,9 @@ let getAnalysisInformation = (data) => {
         totalCourses,
         totalLessons,
         totalCourseSell,
-      });
-
-      resolve({
-        errCode: 0,
-        errMessage: "OK",
-        totalTeachers,
+        totalCost,
+        studentsThisMonth,
+        studentGrowthRate,
       });
     } catch (error) {
       reject(error);
@@ -377,6 +440,51 @@ const createNewCourseCategory = (data) => {
     }
   });
 };
+const getChartData = (year) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let data = [];
+      for (let i = 1; i <= 12; i++) {
+        let totalCost = await db.Order.sum("totalCost", {
+          where: {
+            createdAt: {
+              [db.Sequelize.Op.and]: [
+                db.Sequelize.where(
+                  db.Sequelize.fn(
+                    "EXTRACT",
+                    db.Sequelize.literal(`MONTH FROM "createdAt"`)
+                  ),
+                  i
+                ),
+                db.Sequelize.where(
+                  db.Sequelize.fn(
+                    "EXTRACT",
+                    db.Sequelize.literal(`YEAR FROM "createdAt"`)
+                  ),
+                  year
+                ),
+              ],
+            },
+          },
+        });
+        if (!totalCost) totalCost = 0;
+        {
+          let dataa = {
+            month: i,
+            totalCost: totalCost,
+          };
+          data.push(dataa);
+        }
+      }
+      resolve({
+        errCode: 0,
+        data,
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 module.exports = {
   getAllTeacher,
   getPopularTeacher,
@@ -388,4 +496,5 @@ module.exports = {
   deleteCourse,
   getAllCourseOfTeacher,
   createNewCourseCategory,
+  getChartData,
 };

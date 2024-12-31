@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // noinspection JSUnusedLocalSymbols
-
 'use client';
 import React, {useState, useRef, useEffect, ChangeEvent} from "react";
 import {Button} from "@/components/ui/button";
@@ -21,10 +20,13 @@ import {Pagination, Stack} from "@mui/material";
 import {FaUser} from "react-icons/fa";
 import { Textarea } from "@/components/ui/textarea"
 import {useParams, useRouter} from "next/navigation";
-import Markdown from "react-markdown";
 import { Skeleton } from "@/components/ui/skeleton"
-import {getCourses} from "@/services/course";
+import {checkIsEnrolled, createCourseReview, getCourses, getMyCourseChapters} from "@/services/course";
 import Loading from "@/app/loading";
+import {addToCart, getCartByStudentId} from "@/services/cart";
+import {toast} from "react-toastify";
+import AlertModal from "@/components/AlertDialog2/AlertModal";
+import InfoModal from "@/components/AlertDialog2/InfoModal";
 
 
 interface Teacher {
@@ -35,23 +37,31 @@ interface Teacher {
     avatar: string | null;
 }
 
+interface Lesson {
+    id: string;
+    name: string;
+    studyTime: number;
+    lessonOrder: number;
+    isFinished?: boolean;
+}
 interface Chapter {
     id: number;
     chapterName: string;
     courseId: string;
-    lessons: {
-        id: string;
-        name: string;
-        studyTime: number;
-    }[];
+    lessons: Lesson[];
 }
 
 interface User {
-    id: number;
+    id: string;
     firstname: string | null;
     lastname: string | null;
     email: string;
+    phoneNumber: string | null;
+    role: string;
     avatar: string | null;
+    birthday: string | null;
+    totalCourseNumber: number | null;
+    totalStudentNumber: number | null;
 }
 
 interface Review {
@@ -60,7 +70,17 @@ interface Review {
     user: User;
 }
 
-const isUserInReviews = (userId: number, reviews: Review[]): boolean => {
+interface MyCourse {
+    id: string;
+    userId: string;
+    courseId: string;
+    currentLessonId: string;
+    numberOfProcess: number;
+    createdAt: string;
+    updatedAt: string;
+}
+
+const isUserInReviews = (userId: string | undefined, reviews: Review[]): boolean => {
     return reviews.some((review) => review.user.id === userId);
 }
 
@@ -76,9 +96,15 @@ const convertMinutes = (minutes: number): string => {
     return `${hours} giờ ${remainingMinutes} phút`;
 }
 
+const findLessonByOrder = (data: Chapter[], lessonOrder: number): Lesson | undefined => {
+    return data
+        .flatMap((chapter: Chapter) => chapter.lessons) // Gộp tất cả các lessons từ các chapter vào một mảng
+        .find((lesson: Lesson) => lesson.lessonOrder === lessonOrder); // Tìm lesson có lessonOrder cụ thể
+};
+
 export default function CourseDetail(props: any) {
     const {courseId} = useParams();
-    const userId = 1;
+    const [user, setUser] = useState<User>();
     const router = useRouter();
 
     // Refs for scrolling
@@ -112,17 +138,11 @@ export default function CourseDetail(props: any) {
         }
     }, [tab]);
 
-    const [isBuy, setIsBuy] = useState<boolean>(true);
+    const [isBuy, setIsBuy] = useState<boolean>(false);
     const [isFinish, setIsFinish] = useState<boolean>(false);
+    const [myCourse, setMyCourse] = useState<MyCourse>();
 
     // State for rating
-    const [user, setUser] = useState<User>({
-        id: 1,
-        firstname: "Huy",
-        lastname: "Nguyễn",
-        email: "nghuy@gmail.com",
-        avatar: ""
-    });
     const [averageRating, setAverageRating] = useState<number>();
     const [rating, setRating] = useState<number | null>(5);
     const [comment, setComment] = useState<string>("");
@@ -156,40 +176,96 @@ export default function CourseDetail(props: any) {
     const [students, setStudents] = useState<number>();
     const [teacher, setTeacher] = useState<Teacher>();
     const [chapters, setChapters] = useState<Array<Chapter>>();
+    const [certificate, setCertificate] = useState<string>();
 
     const [intro, setIntro] = useState<string>();
+
+    // State for loading
     const [isPending, setIsPending] = useState(false);
 
+    // State for info modal
+    const triggerRef = useRef<HTMLButtonElement | null>(null);
+    const lessonTriggerRef = useRef<HTMLButtonElement | null>(null);
+
     useEffect(() => {
+        setUser(JSON.parse(localStorage.getItem("user") || "{}"));
+    }, []);
+
+    useEffect(() => {
+        console.log(user);
         const fetchData = async () => {
-            const data = await getCourses(String(courseId), String(userId));
-            setName(data.course.courseName);
-            setDescription(data.course.intro);
-            setIntro(data.course.gioiThieu);
-            setPrice(data.course.cost);
-            setImage(data.course.anhBia);
-            setTotalTime(data.course.finishTime);
-            setTotalChapter(data.chapters?.length);
-            setTotalLecture(data.course.totalLesson);
-            setDiscount(data.course.discount);
-            setStudents(data.course.totalStudent);
-            setTeacher(data.course.teacher);
-            setChapters(data.chapters);
-            setAverageRating(data.course.totalStars);
-            setRatingCount(data.reviews?.length);
-            if (data.reviews?.length > 0) {
-                setRatingValueList(data.reviews.reduce((counts: number[], review: Review) => {
+            let isEnrolled = false;
+            let courseData;
+            let chapterData;
+            if (props.role === "student") {
+                const [data, enroll, chapters] = await Promise.all([
+                    getCourses(String(courseId), String(user?.id)),
+                    checkIsEnrolled(String(user?.id), String(courseId)),
+                    getMyCourseChapters(String(courseId), String(user?.id))
+                ]);
+                courseData = data;
+                isEnrolled = enroll;
+                chapterData = chapters;
+            }
+            else {
+                courseData = await getCourses(String(courseId), String(user?.id));
+                chapterData = courseData.chapters;
+            }
+
+            if(props.role === "student") {
+                setIsBuy(isEnrolled);
+            }
+            setName(courseData.course.courseName);
+            setDescription(courseData.course.intro);
+            setIntro(courseData.course.gioiThieu);
+            setPrice(courseData.course.cost);
+            setImage(courseData.course.anhBia);
+            if (courseData.course.finishTime) {
+                setTotalTime(courseData.course.finishTime);
+            }
+            else {
+                const totalDuration = courseData.chapters?.reduce((total: number, chapter: Chapter) => {
+                    const chapterDuration = chapter.lessons?.reduce((lessonTotal: number, lesson: Lesson) => {
+                        return lessonTotal + lesson.studyTime;
+                    }, 0);
+
+                    return total + chapterDuration;
+                }, 0);
+                setTotalTime(totalDuration);
+            }
+            setTotalChapter(courseData.chapters?.length);
+            setTotalLecture(courseData.course.totalLesson);
+            if (courseData.course.discount) {
+                setDiscount(courseData.course.discount);
+            }
+            else {
+                setDiscount(0);
+            }
+            setStudents(courseData.course.totalStudent);
+            setTeacher(courseData.course.teacher);
+            setChapters(chapterData);
+            setAverageRating(courseData.course.totalStars);
+            setRatingCount(courseData.reviews?.length);
+            if (courseData.reviews?.length > 0) {
+                setRatingValueList(courseData.reviews.reduce((counts: number[], review: Review) => {
                     const index = 5 - review.star; // Tính index tương ứng (5 sao = index 0)
                     counts[index] += 1;
                     return counts;
                 }, [0, 0, 0, 0, 0]))
             }
-            setReviews(data.reviews);
-            setIsReviewed(isUserInReviews(userId, data.reviews));
+            else{
+                setRatingValueList([0, 0, 0, 0, 0]);
+            }
+            setReviews(courseData.reviews);
+            setIsReviewed(isUserInReviews(user?.id, courseData.reviews));
+            setCertificate(courseData.course.chungchiId);
+            setMyCourse(courseData.mycourse);
         }
 
-        fetchData();
-    }, []);
+        if (user) {
+            fetchData();
+        }
+    }, [user]);
 
     useEffect(() => {
         setItemsPerPage(3);
@@ -200,6 +276,76 @@ export default function CourseDetail(props: any) {
         const indexOfFirstItem = indexOfLastItem - itemsPerPage;
         setCurrentReviews(reviews?.slice(indexOfFirstItem, indexOfLastItem));
     }, [reviews, page]);
+
+    const handleReview = async () => {
+        try {
+            const response = await createCourseReview(String(courseId), String(user?.id), rating ?? 5, comment);
+            if (response.errMessage === "OK") {
+                toast.success("Đánh giá thành công");
+                setIsReviewed(true);
+                setComment("");
+                const data = await getCourses(String(courseId), String(user?.id));
+                setAverageRating(data.course.totalStars);
+                setRatingCount(data.reviews?.length);
+                setReviews(data.reviews);
+                setIsReviewed(isUserInReviews(user?.id, data.reviews));
+            }
+            else {
+                toast.error("Đã có lỗi xảy ra");
+            }
+        }
+        catch (error) {
+            console.error(error);
+        }
+    }
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const data = await getCourses(String(courseId), String(user?.id));
+                setAverageRating(data.course.totalStars);
+                setRatingCount(data.reviews?.length);
+                if (data.reviews?.length > 0) {
+                    setRatingValueList(data.reviews.reduce((counts: number[], review: Review) => {
+                        const index = 5 - review.star; // Tính index tương ứng (5 sao = index 0)
+                        counts[index] += 1;
+                        return counts;
+                    }, [0, 0, 0, 0, 0]))
+                }
+                else{
+                    setRatingValueList([0, 0, 0, 0, 0]);
+                }
+                setReviews(data.reviews);
+            }
+            catch (error) {
+                console.error(error);
+            }
+        }
+        if (user) {
+            fetchData();
+        }
+    }, [isReviewed, user]);
+
+    const handleAddToCart = async () => {
+        try {
+            const cartItems = await getCartByStudentId(String(user?.id));
+            if (cartItems.some((item: any) => item.courseId === courseId)) {
+                toast.error("Khóa học đã có trong giỏ hàng");
+            }
+            else {
+                const response = await addToCart(String(courseId), String(user?.id));
+                if (response.errMessage === "OK") {
+                    toast.success("Thêm vào giỏ hàng thành công");
+                }
+                else {
+                    toast.error("Đã có lỗi xảy ra");
+                }
+            }
+        }
+        catch (error) {
+            console.error(error);
+        }
+    }
 
     return (
         <div>
@@ -269,7 +415,7 @@ export default function CourseDetail(props: any) {
                                 </div>
                             </div>
 
-                            {students
+                            {students != null
                                 ?
                                 <div className="bg-white rounded-3xl py-2 px-4 w-fit">
                                     <span className="font-semibold text-DarkGreen">
@@ -331,7 +477,7 @@ export default function CourseDetail(props: any) {
                                 <Skeleton className="bg-MediumGray h-[32px] w-[100px]"/>
                             }
 
-                            {ratingCount
+                            {ratingCount != null
                                 ?
                                 <div className="bg-white px-2 py-1 flex items-center w-fit gap-2 rounded-lg">
                                     <Star className="h-5 w-5 text-DarkGreen"/>
@@ -344,7 +490,7 @@ export default function CourseDetail(props: any) {
                             }
                         </div>
 
-                        {(price && discount)
+                        {(price && discount != null)
                             ?
                             <div className="flex flex-col-reverse lg:flex-row lg:items-center mt-5">
                                 <span className="text-orange font-bold text-4xl">
@@ -354,19 +500,22 @@ export default function CourseDetail(props: any) {
                                     }).format(Number(((price ?? 0) * (1 - (discount ?? 0))).toFixed(0)))}
                                 </span>
 
-                                <div className="flex items-center gap-2">
-                                    &nbsp;&nbsp;&nbsp;
-                                    <span className="text-DarkGray line-through font-semibold text-xl">
-                                        {new Intl.NumberFormat("vi-VN", {
-                                            style: "currency",
-                                            currency: "VND",
-                                        }).format(price ?? 0)}
-                                    </span>
+                                {discount !== 0
+                                    &&
+                                    <div className="flex items-center gap-2">
+                                        &nbsp;&nbsp;&nbsp;
+                                        <span className="text-DarkGray line-through font-semibold text-xl">
+                                            {new Intl.NumberFormat("vi-VN", {
+                                                style: "currency",
+                                                currency: "VND",
+                                            }).format(price ?? 0)}
+                                        </span>
 
-                                    <span className="text-sm bg-orange text-white px-2 py-1 rounded-lg mb-6">
-                                        -{String((discount ?? 0) * 100)}%
-                                    </span>
-                                </div>
+                                        <span className="text-sm bg-orange text-white px-2 py-1 rounded-lg mb-6">
+                                            -{String((discount ?? 0) * 100)}%
+                                        </span>
+                                    </div>
+                                }
                             </div>
                             :
                             <Skeleton className="bg-MediumGray h-[52px] w-[300px]"/>
@@ -375,7 +524,7 @@ export default function CourseDetail(props: any) {
                         <div>
                             {props.role === "student" && (!isBuy
                                 ?
-                                <Button className="bg-DarkGreen text-white hover:bg-DarkGreen_Hover rounded-2xl">
+                                <Button className="bg-DarkGreen text-white hover:bg-DarkGreen_Hover rounded-2xl" onClick={handleAddToCart}>
                                     <span className="font-semibold">
                                         Thêm vào giỏ hàng
                                     </span>
@@ -486,32 +635,8 @@ export default function CourseDetail(props: any) {
 
                             {intro
                                 ?
-                                // eslint-disable-next-line react/no-children-prop
-                                <Markdown children={intro}
-                                          className="space-y-4"
-                                          components={{
-                                               blockquote: ({node, ...props}) => (
-                                                   <blockquote className="border-l-[3px] border-blue-500 pl-4 italic bg-LightGray p-2" {...props} />
-                                               ),
-                                               ul: ({node, ...props}) => (
-                                                   <ul className="list-disc pl-6" {...props} />
-                                               ),
-                                               ol: ({node, ...props}) => (
-                                                   <ol className="list-decimal pl-6" {...props} />
-                                               ),
-                                               h1: ({ children }) => (
-                                                   <h1 className="text-4xl font-bold my-4">{children}</h1>
-                                               ),
-                                               h2: ({ children }) => (
-                                                   <h2 className="text-3xl font-semibold my-3">{children}</h2>
-                                               ),
-                                               h3: ({ children }) => (
-                                                   <h3 className="text-2xl font-medium my-2">{children}</h3>
-                                               ),
-                                               h4: ({ children }) => (
-                                                   <h4 className="text-xl font-light text-red-400 my-1">{children}</h4>
-                                               ),
-                                          }}/> :
+                                intro
+                                :
                                 <div className="flex flex-col gap-4">
                                     <Skeleton className="bg-gray h-[24px] w-full"/>
                                     <Skeleton className="bg-gray h-[24px] w-full"/>
@@ -546,8 +671,19 @@ export default function CourseDetail(props: any) {
 
                                                 {chapter.lessons?.map((lesson, index) => (
                                                     <AccordionContent key={String(lesson.id)} id={String(lesson.id)} onClick={() => {
-                                                            setIsPending(true);
-                                                            router.push(`/${props.role}/course/${courseId}/lesson/${lesson.id}`);
+                                                        if (props.role === "student" && !isBuy) {
+                                                            triggerRef.current?.click();
+                                                        }
+                                                        else {
+                                                            if (props.role === "student" && lesson.lessonOrder !== 0 && (findLessonByOrder(chapters, lesson.lessonOrder - 1)?.isFinished === false)) {
+                                                                lessonTriggerRef.current?.click();
+                                                            }
+                                                            else {
+                                                                setIsPending(true);
+                                                                router.push(`/${props.role}/course/${courseId}/lesson/${lesson.id}`);
+                                                            }
+                                                        }
+
                                                     }}>
                                                         <LessonListItem type="course" index={index + 1} name={lesson.name} duration={lesson.studyTime}/>
                                                     </AccordionContent>
@@ -601,11 +737,11 @@ export default function CourseDetail(props: any) {
                                                     {5 - index} sao ({rating})
                                                 </span>
 
-                                                <Progress value={Number((rating / (ratingCount ?? 0) * 100).toFixed(0))}
+                                                <Progress value={Number((rating / (ratingCount ?? 1) * 100).toFixed(0))}
                                                           indicatorColor="bg-Yellow"/>
 
                                                 <span className="font-semibold">
-                                                    {(rating / (ratingCount ?? 0) * 100).toFixed(0)}%
+                                                    {ratingCount === 0 ? 0 : (rating / (ratingCount ?? 1) * 100).toFixed(0)}%
                                                 </span>
                                             </div>
                                         ))}
@@ -665,12 +801,12 @@ export default function CourseDetail(props: any) {
                                 <div className="flex flex-col lg:flex-row lg:items-center gap-2">
                                     <div className="flex items-center gap-2">
                                         <div
-                                            className={`bg-DarkGray ${user.avatar ? "" : "p-[10px]"} rounded-[50%] h-fit w-fit`}>
-                                        {user.avatar ?
+                                            className={`bg-DarkGray ${user?.avatar ? "" : "p-[10px]"} rounded-[50%] h-fit w-fit`}>
+                                        {user?.avatar ?
                                                 <div
                                                     className="relative rounded-[50%] overflow-hidden h-[40px] w-[40px] flex items-center">
                                                     <Image
-                                                        src={user.avatar}
+                                                        src={user?.avatar}
                                                         alt="user avatar"
                                                         className="object-cover"
                                                         fill
@@ -682,7 +818,7 @@ export default function CourseDetail(props: any) {
 
                                         <div className="flex flex-col justify-center">
                                         <span className="font-semibold">
-                                            {user.firstname + " " + user.lastname}
+                                            {user?.email}
                                         </span>
 
                                             <Rating
@@ -701,9 +837,13 @@ export default function CourseDetail(props: any) {
                                             onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
                                                 setComment(event.target.value);
                                             }}
-                                            className="resize-none lg:w-[700px] w-[450px]"/>
+                                            className="resize-none lg:w-[550px] w-[450px]"/>
                                         <Button className={`bg-DarkGreen hover:bg-DarkGreen_Hover w-fit`}
-                                                disabled={comment === ""}>Đăng tải</Button>
+                                                disabled={comment === ""}
+                                                onClick={handleReview}
+                                        >
+                                            Đăng tải
+                                        </Button>
                                     </div>
                                 </div>}
 
@@ -741,7 +881,29 @@ export default function CourseDetail(props: any) {
                                 CHỨNG CHỈ
                             </span>
 
-                            <div className="bg-LighterGray rounded-2xl p-4 flex flex-col justify-center lg:flex-row items-center">
+                            {myCourse && props.role === "student"
+                                &&
+                                <div className="grid grid-cols-1 lg:grid-cols-[15%_2%_83%] items-center gap-4">
+                                    <span className="lg:col-start-1 font-semibold">
+                                        Tiến độ khóa học
+                                    </span>
+
+                                    <div className="lg:col-start-3 grid grid-cols-[85%_2%_13%] items-center">
+                                        <div className="col-start-1">
+                                            <Progress indicatorColor={"bg-DarkGreen"} value={Number((myCourse?.numberOfProcess / (totalLecture ?? 1)).toFixed(2)) * 100}/>
+                                        </div>
+
+                                        <span className="col-start-3">
+                                            {Number((myCourse?.numberOfProcess / (totalLecture ?? 1)).toFixed(2)) * 100}%
+                                        </span>
+                                    </div>
+
+                                </div>
+                            }
+
+
+                            <div
+                                className="bg-LighterGray rounded-2xl p-4 flex flex-col justify-center lg:flex-row items-center">
                                 <div className="flex flex-col gap-6 lg:pr-10">
                                     <span className="text-xl font-semibold">
                                         Chứng nhận hoàn thành khóa học
@@ -771,7 +933,27 @@ export default function CourseDetail(props: any) {
                     </div>
                 </div>
             </div>
+            <InfoModal
+                title="Thông báo"
+                description="Bạn phải đăng ký khóa học để có thể xem bài giảng!"
+                trigger={
+                    <button
+                        ref={triggerRef}
+                        style={{ display: "none" }} // Ẩn trigger button
+                    />
+                }
+            />
 
+            <InfoModal
+                title="Thông báo"
+                description="Bài giảng đang bị khóa. Vui lòng hoàn thành bài giảng trước!"
+                trigger={
+                    <button
+                        ref={lessonTriggerRef}
+                        style={{ display: "none" }} // Ẩn trigger button
+                    />
+                }
+            />
             {isPending && <Loading/>}
         </div>
     );

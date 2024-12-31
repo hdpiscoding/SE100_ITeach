@@ -71,13 +71,16 @@ const initARoutes = (app) => {
 
   router.put("/api/v1/delete-course", adminController.handleDeleteCourse);
   router.post(
-    "/api/v1/post-video-progess",
-    studentController.handlePostVideoProgess
+    "/api/v1/post-video-progress",
+    studentController.handlePostVideoProgress
   );
   router.get(
-    "/api/v1/get-video-progess-by-studentId",
-    studentController.handleGetVideoProgessByStudentId
+    "/api/v1/get-video-progress-by-studentId",
+    studentController.handleGetVideoProgressByStudentId
   );
+  router.post("/api/v1/send-email", teacherController.handleSendEmailToStudent);
+  router.get("/api/v1/chart-data", adminController.handleGetChartData);
+  router.get("/api/v1/get-my-course-chapters", studentController.handleGetMyCourseChapter);
   return app.use("/", router);
 };
 export default initARoutes;

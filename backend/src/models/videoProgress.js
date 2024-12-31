@@ -1,7 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class VideoProgess extends Model {
+  class VideoProgress extends Model {
     /**
      
 Helper method for defining associations.
@@ -9,17 +9,17 @@ This method is not a part of Sequelize lifecycle.
 The models/index file will call this method automatically.*/
     static associate(models) {
       // define association here
-      VideoProgess.belongsTo(models.Lesson, {
+        VideoProgress.belongsTo(models.Lesson, {
         foreignKey: "lessonId",
         as: "lesson",
       });
-      VideoProgess.belongsTo(models.User, {
+        VideoProgress.belongsTo(models.User, {
         foreignKey: "userId",
         as: "user",
       });
     }
   }
-  VideoProgess.init(
+    VideoProgress.init(
     {
       id: {
         type: DataTypes.UUID,
@@ -34,12 +34,16 @@ The models/index file will call this method automatically.*/
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
       },
-      progess: DataTypes.DOUBLE,
+      progress: DataTypes.DOUBLE,
+      isFinished: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      }
     },
     {
       sequelize,
-      modelName: "VideoProgess",
+      modelName: "VideoProgress",
     }
   );
-  return VideoProgess;
+  return VideoProgress;
 };

@@ -6,6 +6,12 @@ const nonSecurePaths = [
   "/api/auth/google/callback",
   "/api/auth/facebook",
   "/api/auth/facebook/callback",
+  "/api/auth/login-success",
+  "/api/auth/login-fail",
+  "/api/v1/get-all-courses",
+  "/api/v1/get-all-courses-categories",
+  "/api/v1/get-detail-course-info",
+  "/api/v1/get-list-chapters",
 ];
 const studentPaths = [
   "/api/v1/get-all-courses",
@@ -36,8 +42,9 @@ const studentPaths = [
 
   "/api/v1/post-ide-use",
   "/api/v1/get-all-student-of-course",
-  "/api/v1/post-video-progess",
-  "/api/v1/get-video-progess-by-studentId",
+  "/api/v1/post-video-progress",
+  "/api/v1/get-video-progress-by-studentId",
+  "/api/v1/get-my-course-chapters",
 ];
 const teacherPaths = [
   "/api/v1/create-new-course",
@@ -57,7 +64,12 @@ const teacherPaths = [
   "/api/v1/put-a-chapter",
   "/api/v1/delete-a-chapter",
   "/api/v1/get-detail-course-info",
+  "/api/v1/get-lesson-content",
+  "/api/v1/post-lesson-comments",
   "/api/v1/get-ide-use-by-month",
+  "/api/v1/send-email",
+  "/api/v1/get-lesson-content",
+  "/api/v1/get-all-courses-categories",
 ];
 const adminPaths = [
   "/api/v1/get-all-teacher",
@@ -73,8 +85,10 @@ const adminPaths = [
   "/api/v1/get-ide-use",
   "/api/v1/get-all-student-of-course",
   "/api/v1/get-detail-course-info",
+  "/api/v1/get-lesson-content",
   "/api/v1/get-ide-use-by-month",
   "/api/v1/create-new-course-category",
+  "/api/v1/chart-data",
 ];
 const commonPaths = [
   "/api/v1/update-user-info",

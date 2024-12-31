@@ -16,8 +16,8 @@ export default function OrderHistory() {
 
     useEffect(() => {
         const fetchData = async () => {
-            const data = await getOrders(7);
-            if (data.errCode === 0) { 
+            const data = await getOrders( localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "{}").id : 0);
+             if (data.errCode === 0) {
                 const orders = data.data.map((order: any) => {
                     return {
                         id: order.id,
