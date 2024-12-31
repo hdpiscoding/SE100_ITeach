@@ -171,7 +171,26 @@ const getATeacherInfo = async (id) => {
     throw error;
   }
 };
-
+const getAllCourseCategories = async () => {
+  try {
+    const response = await axios.get("api/v1/get-all-courses-categories", {
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error while getting all course category", error);
+    return null;
+  }
+};
+const getAllCourse = async () => {
+  try {
+    const response = await axios.get("api/v1/get-all-courses", {
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error while getting all course", error);
+    return null;
+  }
+}
 export {
   editUserProfile,
   changePassword,
@@ -184,28 +203,8 @@ export {
   getStudentCertificates,
   getMyCourses,
   getACertificate,
-  getAllCoursesCategories,
   getATeacherInfo,
+  getAllCourseCategories,
+  getAllCourse,
 };
-const getAllCourseCategory = async () => {
-  try {
-    const response = await axios.get("api/v1/get-all-courses-categories", {
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error while getting all course category", error);
-    return null;
-  }
-};
-export { getAllCourseCategory };
-const getAllCourse = async () => {
-  try {
-    const response = await axios.get("api/v1/get-all-courses", {
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error while getting all course", error);
-    return null;
-  }
-};
-export { getAllCourse };
+

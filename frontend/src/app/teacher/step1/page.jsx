@@ -6,7 +6,7 @@ import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
 import { useRouter } from "next/navigation";
 import{createNewCourse} from "@/services/teacher";
-import { getAllCourseCategory } from "@/services/teacher";
+import { getAllCourseCategories } from "@/services/student";
 import { useState,useEffect,useRef} from "react";
 import { toast } from 'react-toastify';
 const mdParser = new MarkdownIt(/* Markdown-it options */);
@@ -24,7 +24,7 @@ const Step1 = () => {
    const editorContent = useRef("");
    const [courseCategoryId, setCourseCategoryId] = useState("");
    const fetchCourseCategory = async () => {
-    const response = await getAllCourseCategory();
+    const response = await getAllCourseCategories();
    console.log("respone data",response.data);
     if (response.data.length > 0) {
      setCourseCategory(response.data);
@@ -204,7 +204,7 @@ const Step1 = () => {
             Giới thiệu
           </h1>
           <div className=" border border-gray rounded-md p-5">
-          <MdEditor style={{ height: '500px' }} renderHTML={text => mdParser.render(text)} onChange={handleEditorChange} />
+          <MdEditor style={{ height: '300px' }} renderHTML={text => mdParser.render(text)} onChange={handleEditorChange} />
           </div>
           <div className="flex justify-end space-x-3">
             <button className="bg-white text-orange px-5 py-2 rounded-md border border-orange">

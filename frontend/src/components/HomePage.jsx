@@ -13,16 +13,16 @@ import { Pagination, Navigation } from "swiper/modules";
 import Banner from "@/components/Banner";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { getAllCourseCategory, getAllCourse } from "@/services/teacher";
+import { getAllCourseCategories,getAllCourse } from "@/services/student";
 import { useEffect } from "react";
 
-const Home = () => {
+const Home = () => {  
   const [activeButton, setActiveButton] = useState("");
   const router = useRouter();
   const [courseCategory, setCourseCategory] = useState([]);
   const [allCourse, setAllCourse] = useState([]);
   const fetchCourseCategory = async () => {
-    const response = await getAllCourseCategory();
+    const response = await getAllCourseCategories();
     setCourseCategory(response.data);
   };
   useEffect(() => {
