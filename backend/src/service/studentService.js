@@ -461,6 +461,7 @@ let getDetailCourseInfo = (id, userId) => {
             attributes: ["id", "categoryName"],
           },
         ],
+        attributes: { exclude: ["chungchiId"] },
         nest: true,
         raw: true,
       });
@@ -526,8 +527,17 @@ let getDetailCourseInfo = (id, userId) => {
         result.mycourse = await db.MyCourse.findOne({
           where: { courseId: id, userId: userId },
         });
+        const certificate = await db.Certificate.findOne({
+          where: { courseId: id, userId: userId },
+        });
+        if (certificate) {
+          result.certificateId = certificate.id;
+        } else {
+          result.certificateId = null;
+        }
       } else {
         result.mycourse = null;
+        result.certificate = null;
       }
 
       if (result) {
