@@ -18,6 +18,9 @@ module.exports = {
       cost: {
         type: Sequelize.DOUBLE,
       },
+      markDown: {
+        type: Sequelize.STRING,
+      },
 
       level: {
         type: Sequelize.STRING,
