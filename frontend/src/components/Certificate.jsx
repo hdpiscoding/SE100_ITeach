@@ -22,8 +22,7 @@ const Certificate = ({ id }) => {
   return (
     <div className="lg:w-full md:w-[500px] sm p-4 ">
       <div className="grid grid-cols-[0.5fr_11fr_0.5fr]">
-        <div onClick={handleOnclik}>Button </div>
-        <div className="border-4 md:border-8 border-certificate text-certificate p-2">
+        <div className="col-start-2 border-4 md:border-8 border-certificate text-certificate p-2">
           <div className="border-2 border-gray-500 p-2">
             <div className="border-2 border-gray-500 grid grid-cols-[0.5fr_5fr_0.5fr]">
               <div></div>
@@ -95,7 +94,7 @@ const Certificate = ({ id }) => {
                   <div className="text-sm md:text-base text-center md:text-left">
                     <div>GIÁM ĐỐC SẢN XUẤT</div>
                     <div>Chief Delivery Officer</div>
-                    <div>ĐỖ VĂN KHẮC</div>
+                    <div>PHẠM HOÀNG DUY</div>
                   </div>
                 </div>
                 
