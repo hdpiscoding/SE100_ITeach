@@ -23,14 +23,16 @@ const Step1 = () => {
    const [intro, setIntro] = useState();
    const editorContent = useRef("");
    const [courseCategoryId, setCourseCategoryId] = useState("");
+   const fetchCourseCategory = async () => {
+    const response = await getAllCourseCategory();
+   console.log("respone data",response.data);
+    if (response.data.length > 0) {
+     setCourseCategory(response.data);
+     setCourseCategoryId(response.data[0].id);
+   }
+  };
     useEffect(() => {
-       const fetchCourseCategory = async () => {
-         const response = await getAllCourseCategory();
-         setCourseCategory(response.data);
-         if (response.data.length > 0) {
-          setCourseCategoryId(response.data[0].id);
-        }
-       };
+       
        fetchCourseCategory();
      }, []);
   function handleEditorChange({ html, text }) {
