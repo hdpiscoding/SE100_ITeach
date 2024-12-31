@@ -522,10 +522,13 @@ let getDetailCourseInfo = (id, userId) => {
         nest: true,
         raw: true,
       });
-
-      result.mycourse = await db.MyCourse.findOne({
-        where: { courseId: id, userId: userId },
-      });
+      if (userId) {
+        result.mycourse = await db.MyCourse.findOne({
+          where: { courseId: id, userId: userId },
+        });
+      } else {
+        result.mycourse = null;
+      }
 
       if (result) {
         resolve({
