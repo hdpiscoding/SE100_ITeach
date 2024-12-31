@@ -180,3 +180,17 @@ export { getDetailCourse };
   }
 };
 export { getLessonContent };
+const putACourse = async (data) => {
+  try {
+    const response = await axios.put("api/v1/put-a-course", data, {
+      headers: {
+        Authorization: teacherToken,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error("Error while updating course", error);
+    return null;
+  }
+};
+export { putACourse };

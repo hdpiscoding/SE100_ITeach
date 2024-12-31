@@ -8,7 +8,10 @@ import { Button } from "@/components/ui/button";
 import{useEffect,useRef} from "react";
 import { getMyAccount,getMyCourse } from "@/services/teacher";
 const CourseTeacher = () => {
-  let tId = "98e89016-b2d1-49a4-84b5-7d1e361a007c";
+  let user=localStorage.getItem("user");
+  let role=localStorage.getItem("role");
+  console.log(user);
+  let tId = JSON.parse(user).id;
   const [username, setUsername] = useState("");
   const [khoahoc, setKhoahoc] = useState(0);
   const [hocvien, setHocvien] = useState(0);
@@ -130,7 +133,7 @@ const CourseTeacher = () => {
         cost={course.cost}
         discount={course.discount}
         intro={course.intro}
-      
+        onClick={() => router.push(`/teacher/course/${course.id}`)}
       />
     ))}
           </div>

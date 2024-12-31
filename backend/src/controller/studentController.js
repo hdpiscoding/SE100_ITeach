@@ -119,23 +119,16 @@ const handleBuyCourse = async (req, res) => {
   return res.status(200).json(response);
 };
 const handleGetDetailCourseInfo = async (req, res) => {
-  if (!req.query.id ) {
+
+  if (!req.query.id) {
     return res.status(500).json({
       errCode: 1,
       errMessage: "Missing required parameter",
     });
   }
-  let response
-  if (!req.query.userId) {
-    response = await studentService.getDetailCourseInfo(req.query.id, null);
-  }
-  else
-  {
- response = await studentService.getDetailCourseInfo(
-    req.query.id,
-    req.query.userId
-  );
-}
+
+  const userId = req.query.userId ? req.query.userId : null;
+  let response = await studentService.getDetailCourseInfo(req.query.id, userId);
   return res.status(200).json(response);
 
 };
@@ -288,19 +281,19 @@ const handleGetVideoProgressByStudentId = async (req, res) => {
 };
 
 const handleGetMyCourseChapter = async (req, res) => {
-    if (!req.query.courseId || !req.query.studentId) {
-        return res.status(500).json({
-        errCode: 1,
-        errMessage: "Missing required parameter",
-        });
-    }
-    let response = await studentService.getMyCourseChapters(
-        req.query.studentId,
-        req.query.courseId
-    );
+  if (!req.query.courseId || !req.query.studentId) {
+    return res.status(500).json({
+      errCode: 1,
+      errMessage: "Missing required parameter",
+    });
+  }
+  let response = await studentService.getMyCourseChapters(
+    req.query.studentId,
+    req.query.courseId
+  );
 
-    return res.status(200).json(response);
-}
+  return res.status(200).json(response);
+};
 module.exports = {
   handleGetAllCourses,
   handleGetAllCoursesCategories,
@@ -328,5 +321,5 @@ module.exports = {
   handleGetATeacher,
   handlePostVideoProgress,
   handleGetVideoProgressByStudentId,
-  handleGetMyCourseChapter
+  handleGetMyCourseChapter,
 };

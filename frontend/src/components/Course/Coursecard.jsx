@@ -1,8 +1,8 @@
 import React from 'react'
 import Image from 'next/image'
-const Coursecard = ({courseName, cost, discount, intro}) => {
+const Coursecard = ({courseName, cost, discount, intro,onClick}) => {
   return (
-    <div className='rounded-md overflow-hidden bg-slate-100 w-full sm:max-w-[300px] space-y-1 sm:space-y-2 hover:shadow-lg transition-all duration-300'>
+    <div onClick={onClick} className='rounded-md overflow-hidden bg-slate-100 w-full sm:max-w-[300px] space-y-1 sm:space-y-2 hover:shadow-lg transition-all duration-300'>
       <div className='relative'>
         <Image
           width={300}
@@ -35,7 +35,7 @@ const Coursecard = ({courseName, cost, discount, intro}) => {
           </span>
         </div>
         <button className='bg-SignUp hover:bg-SignUp/90 text-xs sm:text-sm md:text-base lg:text-base text-white px-3 py-1 rounded-md'>
-          Enroll Now
+          Đăng ký ngay
         </button>
       </div>
     </div>

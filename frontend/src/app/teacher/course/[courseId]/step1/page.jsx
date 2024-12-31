@@ -1,18 +1,20 @@
-"use client";
+ "use client";
 import React from "react";
 import Image from "next/image";
 import MarkdownIt from "markdown-it";
 import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
-import { useRouter } from "next/navigation";
-import{createNewCourse} from "@/services/teacher";
+import { useParams, useRouter } from "next/navigation";
+import{createNewCourse,getDetailCourse} from "@/services/teacher";
 import { getAllCourseCategories } from "@/services/student";
-import { useState,useEffect,useRef} from "react";
+import { useState,useEffect,useRef,useCallback} from "react";
 import { toast } from 'react-toastify';
 const mdParser = new MarkdownIt(/* Markdown-it options */);
-let courseId = -1;
+
 
 const Step1 = () => {
+  const params = useParams();
+  const courseId = params.courseId;
   const router = useRouter();
   const [imagePreview, setImagePreview] = React.useState(null);
   const fileInputRef = React.useRef(null);
@@ -23,12 +25,12 @@ const Step1 = () => {
    const [intro, setIntro] = useState();
    const editorContent = useRef("");
    const [courseCategoryId, setCourseCategoryId] = useState("");
+   const [courseInfo, setCourseInfo] = useState({});
    const fetchCourseCategory = async () => {
+    console.log(courseId);
     const response = await getAllCourseCategories();
-   console.log("respone data",response.data);
     if (response.data.length > 0) {
      setCourseCategory(response.data);
-     setCourseCategoryId(response.data[0].id);
    }
   };
     useEffect(() => {
@@ -38,34 +40,6 @@ const Step1 = () => {
   function handleEditorChange({ html, text }) {
     editorContent.current = html;
   }
-  const handleCreateCourse = async () => {
-    if(!validate())
-    {
-      return;
-    }
-    const courseData = {
-      courseName: courseName,
-      courseCategoryId: courseCategoryId,
-      cost: price,
-      level: level,
-      intro: intro,
-      gioiThieu: editorContent.current,
-      anhBia: "anhBia",
-      teacherId: "98e89016-b2d1-49a4-84b5-7d1e361a007c"
-    };
-    console.log(courseData);
-  
-    const response = await createNewCourse(courseData);
-    
-    if (response) {
-      console.log(response);
-      courseId = response.data.courseId;
-      router.push(`/teacher/step2?courseId=${courseId}`);
-   
-    } else {
-      console.error("Failed to create course");
-    }
-  };
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -76,7 +50,6 @@ const Step1 = () => {
       reader.readAsDataURL(file);
     }
   };
-
   const handleImageClick = () => {
     fileInputRef.current.click();
   };
@@ -89,6 +62,58 @@ const Step1 = () => {
     }
     return true;
  }
+ const fetchDetailCourse = useCallback(async () => {
+  try {
+    const response = await getDetailCourse(courseId);
+
+    if (response?.data?.data) {
+      console.log("Fetched course info:", response.data.data);
+      const newCourseName = response.data.data.course.courseName;
+      console.log("Fetched course name:", newCourseName);
+      
+      setCourseInfo(response.data.data);
+      setCourseName(newCourseName);
+      setCourseCategoryId(response.data.data.course.courseCategoryId);
+      setLevel(response.data.data.course.level);
+      setPrice(response.data.data.course.cost);
+      setIntro(response.data.data.course.intro);
+    }
+  } catch (error) {
+    console.error("Lỗi khi tải thông tin khóa học:", error);
+    toast.error("Lỗi khi tải thông tin khóa học!");
+  } finally {
+  }
+}, [courseId]);
+useEffect(() => {
+  fetchDetailCourse();
+}
+, [courseId, fetchDetailCourse]);
+const handlePutCourse = async () => {
+  if (!validate()) {
+    return;
+  }
+  const data = {
+    courseId: courseId,
+    courseName: courseName,
+    courseCategoryId: courseCategoryId,
+    level: level,
+    cost: price,
+    intro: intro,
+    content: editorContent.current,
+  };
+  try {
+    const response = await createNewCourse(data);
+    if (response?.data?.success) {
+      toast.success("Cập nhật thông tin khóa học thành công!");
+      router.push(`/teacher/course/${courseId}/step2`);
+    } else {
+      toast.error("Lỗi khi cập nhật thông tin khóa học!");
+    }
+  } catch (error) {
+    console.error("Lỗi khi cập nhật thông tin khóa học:", error);
+    toast.error("Lỗi khi cập nhật thông tin khóa học!");
+  }
+}
   return (
     <div className="mb-20">
       <div className="space-y-3 md:space-y-5 lg:space-y-7 grid grid-cols-[0.5fr_11fr_0.5fr]">
@@ -112,6 +137,7 @@ const Step1 = () => {
             <div className="lg:col-span-2 md:col-span-2 col-span-2">
               <label htmlFor="name">Tên khóa học</label>
               <input
+              value={courseName}
                 onChange={(e) => setCourseName(e.target.value)}
                 type="text"
                 id="name"
@@ -122,7 +148,7 @@ const Step1 = () => {
               <label htmlFor="type">Loại</label>
               <select
               id="courseCategory"
-              className="w-full h-[40px] border border-gray rounded-md p-2 bg-white"
+              className="w-full h-[40px] border border-gray rounded-md p-2 bg-white cursor-pointer"
             value={courseCategoryId}
                 onChange={(e) => setCourseCategoryId(e.target.value)} 
                   >
@@ -133,11 +159,11 @@ const Step1 = () => {
                     ))}
             </select>
             </div>
-            <div className="col-span-1">
+            <div className="col-span-1 ">
               <label htmlFor="type">Mức độ</label>
-              <select
+              <select 
                 id="type"
-                className="w-full h-[40px] border border-gray rounded-md p-2 bg-white"
+                className="w-full h-[40px] border border-gray rounded-md p-2 bg-white cursor-pointer"
               >
                  value={level}
                  onChange={(e) => setLevel(e.target.value)}
@@ -210,7 +236,7 @@ const Step1 = () => {
             <button className="bg-white text-orange px-5 py-2 rounded-md border border-orange">
               Xóa khóa học
             </button>
-            <button onClick={handleCreateCourse} className="bg-orange text-white px-10 py-2 rounded-md">
+            <button  onClick={handlePutCourse} className="bg-orange text-white px-10 py-2 rounded-md">
               Tiếp tục
             </button>
           </div>
