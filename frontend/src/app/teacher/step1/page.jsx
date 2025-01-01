@@ -207,10 +207,10 @@ const Step1 = () => {
           <MdEditor style={{ height: '300px' }} renderHTML={text => mdParser.render(text)} onChange={handleEditorChange} />
           </div>
           <div className="flex justify-end space-x-3">
-            <button className="bg-white text-orange px-5 py-2 rounded-md border border-orange">
+            <button onClick={()=>router.push("/teacher/course")} className="bg-white hover:bg-lightOrangeHover text-orange px-5 py-2 rounded-md border border-orange">
               Xóa khóa học
             </button>
-            <button onClick={handleCreateCourse} className="bg-orange text-white px-10 py-2 rounded-md">
+            <button onClick={handleCreateCourse} className="bg-orange text-white px-10 py-2 rounded-md hover:bg-orangeHover">
               Tiếp tục
             </button>
           </div>
