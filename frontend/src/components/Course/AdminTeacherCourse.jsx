@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import { getAllCourseOfATeacher,getAllCourses } from "@/services/admin";
 import { parse } from "path";
-const AdminTeacherCourse = () => {
+const AdminTeacherCourse = ({teacherId}) => {
   const [activeTab, setActiveTab] = useState("public");
   const [currentPage, setCurrentPage] = useState(1);
   const coursesPerPage = 12;
@@ -32,7 +32,8 @@ const AdminTeacherCourse = () => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const response = await getAllCourseOfATeacher(1);
+        console.log("teacherId", teacherId);
+        const response = await getAllCourseOfATeacher(teacherId);
         //   const allCourses = response.data.data;
         //   console.log("allCourses", allCourses);
           setAll(response.data.data);
@@ -42,7 +43,7 @@ const AdminTeacherCourse = () => {
       }
     };
     getData();
-  }, []);
+  }, [teacherId]);
   const handleClick = (cs) => {
     const searchInput = document
       .querySelector('input[type="text"]')
@@ -87,7 +88,7 @@ const AdminTeacherCourse = () => {
       setFilteredCourses(all);
       return;
     }
-    const response =await getAllCourseOfATeacher(1);
+    const response =await getAllCourseOfATeacher(teacherId);
     const allCourses = response.data.data;
     const filter = allCourses.filter((course) => {
       var abovecost = 0;
