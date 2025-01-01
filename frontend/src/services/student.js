@@ -1,5 +1,5 @@
 import axios from "../utils/AxiosCustomized";
-const studenttoken = localStorage.getItem("access_token");
+const studenttoken = "Bearer " + localStorage.getItem("access_token");
 const studentToken = localStorage.getItem("access_token");
 const editUserProfile = async (data) => {
   try {

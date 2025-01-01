@@ -1,5 +1,5 @@
 import axios from "../utils/AxiosCustomized";
-const admintoken = "Bearer " + localStorage.getItem("jwt");
+const admintoken = "Bearer " + localStorage.getItem("access_token");
 const teachertoken = admintoken;
 const studenttoken = admintoken;
 const getTeachers = async () => {
