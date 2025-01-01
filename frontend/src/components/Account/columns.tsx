@@ -88,15 +88,14 @@ export const columns: ColumnDef<Order>[] = [
         cell: async ({ row }) => {
             const order = row.original
             const data = await getOrderItems(row.getValue("id"))
-            console.log("dataaaaaa", data)
-            let orderItems: any[] = []
+             let orderItems: any[] = []
             if (Array.isArray(data.data)) {
                 data.data.map((item: any) => {
                     orderItems.push({
                         id: item.id,
                         name: item.course.courseName,
                         price: item.course.cost,
-                        image: "https://cdn.codegym.vn/wp-content/uploads/2022/01/khoa-hoc-lap-trinh-java-online-9.jpg",
+                        image: item.course.anhBia,
                     });
                 });
             } else {
