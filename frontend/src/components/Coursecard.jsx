@@ -12,6 +12,10 @@ const Coursecard = ({ type, course }) => {
   const [courseName, setCourseName] = useState("");
   const [intro, setIntro] = useState("");
 
+  const handleredirect = () => {
+    window.location.href = "course/course-detail?courseId=" + course.id;
+  };
+
   useEffect(() => {
     if (type == 1) {
       setCreatedAt(
@@ -67,14 +71,17 @@ const Coursecard = ({ type, course }) => {
               </span>
             )}
           </div>
-          <button className="bg-SignUp hover:bg-SignUp/90 text-xs sm:text-sm md:text-base lg:text-base text-white px-3 py-1 rounded-md">
+          <button
+            onClick={handleredirect}
+            className="bg-SignUp hover:bg-SignUp/90 text-xs sm:text-sm md:text-base lg:text-base text-white px-3 py-1 rounded-md"
+          >
             Đăng ký ngay
           </button>
         </div>
       ) : (
         <div className="flex flex-wrap justify-between mx-3 sm:mx-4 items-center pb-3 sm:pb-4 gap-2">
           <button className="bg-[#FD661F] hover:bg-[#FD661F]/90 text-xs sm:text-sm md:text-base lg:text-base text-white px-3 py-1 rounded-md">
-           Học ngay
+            Học ngay
           </button>
         </div>
       )}
