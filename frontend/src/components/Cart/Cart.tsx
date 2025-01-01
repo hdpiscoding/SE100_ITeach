@@ -33,7 +33,7 @@ export default function Cart() {
                         id: item.id,
                         name: item.Course.courseName,
                         price: item.Course.cost,
-                        image: "https://cdn.codegym.vn/wp-content/uploads/2022/01/khoa-hoc-lap-trinh-java-online-9.jpg", //item.Course.anhBia
+                        image: item.Course.anhBia,  
                         courseId: item.courseId
                     });
                 });
@@ -80,7 +80,7 @@ export default function Cart() {
         }
         await postPayment(data);
         window.location.href = "/";
-        await deleteAllCartItems(7);       
+        await deleteAllCartItems(data.userId);       
         toast.success("Thanh toán thành công");
 
 

@@ -16,9 +16,12 @@ import { set } from "date-fns";
 const TeacherInfor = () => {
   const [teacherr, setTeacher] = useState(null);
   const [teacher, setTeacherr] = useState(null);
+  const [teacherId, setTeacherId] = useState(null);
   useEffect(() => {
     const fetchData = async () => {
       const teacherId = window.location.pathname.split("/").pop();
+      setTeacherId(teacherId);
+      console.log("teacherId", teacherId);
       const data = await getATeacherInfo(teacherId);
       console.log("data", data);
       if (data && data.errCode === 0) {
@@ -113,7 +116,7 @@ const TeacherInfor = () => {
                </div>
             </div>
             <div className="border border-gray rounded-lg ">
-             <AdminTeacherCourse></AdminTeacherCourse>
+             {teacherId && <AdminTeacherCourse teacherId={teacherId} />}
           </div>
 
         </div>
