@@ -45,6 +45,7 @@ const Login = ({ isOpen, onClose, onLogin, setLogin, setRole }) => {
           setRole("student");
           localStorage.setItem("role", "student");
         } else if (response.user.role === "R2") {
+          router.push("/teacher/course");
           setRole("teacher");
           localStorage.setItem("role", "teacher");
         } else {

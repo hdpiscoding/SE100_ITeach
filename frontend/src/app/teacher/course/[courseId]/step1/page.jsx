@@ -24,8 +24,8 @@ const Step1 = () => {
   const [courseName, setCourseName] = useState("");
    const [courseCategory, setCourseCategory] = useState([]);
    const [level, setLevel] = useState("begin");
-   const [price, setPrice] = useState();
-   const [intro, setIntro] = useState();
+   const [price, setPrice] = useState("");
+   const [intro, setIntro] = useState("");
    const editorContent = useRef("");
    const [markdown, setMarkdown] = useState("");
    const [courseCategoryId, setCourseCategoryId] = useState("");
@@ -63,6 +63,18 @@ const Step1 = () => {
     if(courseName===""||price===""||intro===""||markdown===""||courseCategoryId===""||level==="")
     {
       toast.error("Vui lòng điền đầy đủ thông tin");
+      return false;
+    }
+    const isDuplicate = allCourse.some((course) => {
+      if (course.courseName.trim() === courseName.trim()) {
+        console.log("Tên khóa học đã tồn tại");
+        return true;
+      }
+      return false;
+    });
+  
+    if (isDuplicate) {
+      toast.error("Tên khóa học đã tồn tại");
       return false;
     }
     return true;
@@ -191,7 +203,7 @@ const handlePutCourse = async () => {
               <input
                 onChange={(e) => setPrice(e.target.value)}
               value={price}
-                type="text"
+                type="number"
                 id="name"
                 className="w-full h-[40px] border border-gray rounded-md p-2"
               />

@@ -50,7 +50,6 @@ module.exports = (sequelize, DataTypes) => {
       markDown: DataTypes.STRING,
       chungchiId: {
         type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
       },
       teacherId: {
         type: DataTypes.UUID,

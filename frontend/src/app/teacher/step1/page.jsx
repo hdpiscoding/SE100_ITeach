@@ -6,23 +6,44 @@ import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
 import { useRouter } from "next/navigation";
 import{createNewCourse} from "@/services/teacher";
-import { getAllCourseCategories } from "@/services/student";
+import { getAllCourseCategories,getAllCourse } from "@/services/student";
+ 
 import { useState,useEffect,useRef} from "react";
 import { toast } from 'react-toastify';
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 let courseId = -1;
 
 const Step1 = () => {
+  const [allCourse, setAllCourse] = useState([]);
+  let user=localStorage.getItem("user");
+  const teacherId=JSON.parse(user).id;
+  const token=localStorage.getItem("access_token");
   const router = useRouter();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [imagePreview, setImagePreview] = React.useState(null);
   const fileInputRef = React.useRef(null);
   const [courseName, setCourseName] = useState("");
    const [courseCategory, setCourseCategory] = useState([]);
    const [level, setLevel] = useState("begin");
-   const [price, setPrice] = useState();
-   const [intro, setIntro] = useState();
+   const [price, setPrice] = useState("");
+   const [intro, setIntro] = useState("");
    const editorContent = useRef("");
    const [courseCategoryId, setCourseCategoryId] = useState("");
+   const [markdown, setMarkdown] = useState("");
+   const handleDeleteClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+  
+    setIsModalOpen(false);
+    router.push("/teacher/course");
+  };
+
+  const handleCancelDelete = () => {
+    setIsModalOpen(false);
+  };
    const fetchCourseCategory = async () => {
     const response = await getAllCourseCategories();
    console.log("respone data",response.data);
@@ -35,14 +56,26 @@ const Step1 = () => {
        
        fetchCourseCategory();
      }, []);
+      const fetchAllCourse = async () => {
+         const response = await getAllCourse();
+        
+         setAllCourse(response.data);
+       };
+       console.log(courseCategory);
+       useEffect(() => {
+        
+         fetchAllCourse();
+       }, []);
   function handleEditorChange({ html, text }) {
     editorContent.current = html;
+    setMarkdown(text);
   }
   const handleCreateCourse = async () => {
-    if(!validate())
-    {
+    if (!validate()) {
+      console.log("validate failed");
       return;
     }
+
     const courseData = {
       courseName: courseName,
       courseCategoryId: courseCategoryId,
@@ -51,19 +84,26 @@ const Step1 = () => {
       intro: intro,
       gioiThieu: editorContent.current,
       anhBia: "anhBia",
-      teacherId: "98e89016-b2d1-49a4-84b5-7d1e361a007c"
+      teacherId: teacherId,
+      markDown: markdown,
     };
     console.log(courseData);
-  
-    const response = await createNewCourse(courseData);
-    
-    if (response) {
-      console.log(response);
-      courseId = response.data.courseId;
-      router.push(`/teacher/step2?courseId=${courseId}`);
-   
-    } else {
-      console.error("Failed to create course");
+
+    setIsLoading(true); // Bắt đầu loading
+    try {
+      const response = await createNewCourse(courseData);
+      if (response) {
+        console.log(response);
+        courseId = response.data.courseId;
+        router.push(`/teacher/step2?courseId=${courseId}`);
+      } else {
+        console.error("Failed to create course");
+      }
+    } catch (error) {
+      console.error("Error creating course:", error);
+      toast.error("Lỗi khi tạo khóa học!");
+    } finally {
+      setIsLoading(false); // Kết thúc loading
     }
   };
   const handleImageChange = (e) => {
@@ -82,12 +122,26 @@ const Step1 = () => {
   };
  const validate =()=>
  {
-    if(courseName===""||price===""||intro===""||editorContent.current==="")
+ 
+    if(courseName===""||price===""||intro===""||markdown===""||courseCategoryId===""||level==="")
     {
       toast.error("Vui lòng điền đầy đủ thông tin");
       return false;
     }
+    const isDuplicate = allCourse.some((course) => {
+      if (course.courseName.trim() === courseName.trim()) {
+        console.log("Tên khóa học đã tồn tại");
+        return true;
+      }
+      return false;
+    });
+  
+    if (isDuplicate) {
+      toast.error("Tên khóa học đã tồn tại");
+      return false;
+    }
     return true;
+
  }
   return (
     <div className="mb-20">
@@ -150,9 +204,10 @@ const Step1 = () => {
               <label htmlFor="name">Giá</label>
               <input
                 onChange={(e) => setPrice(e.target.value)}
-              value={price}
-                type="text"
+                value={price}
+                type="number"
                 id="name"
+              
                 className="w-full h-[40px] border border-gray rounded-md p-2"
               />
             </div>
@@ -207,13 +262,29 @@ const Step1 = () => {
           <MdEditor style={{ height: '300px' }} renderHTML={text => mdParser.render(text)} onChange={handleEditorChange} />
           </div>
           <div className="flex justify-end space-x-3">
-            <button onClick={()=>router.push("/teacher/course")} className="bg-white hover:bg-lightOrangeHover text-orange px-5 py-2 rounded-md border border-orange">
+            <button onClick={handleDeleteClick} className="bg-white hover:bg-lightOrangeHover text-orange px-5 py-2 rounded-md border border-orange">
               Xóa khóa học
             </button>
             <button onClick={handleCreateCourse} className="bg-orange text-white px-10 py-2 rounded-md hover:bg-orangeHover">
-              Tiếp tục
+            {isLoading ? "Đang tạo..." : "Tiếp tục"}
             </button>
+              {isLoading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="loader"></div>
+        </div>
+      )}
           </div>
+          {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-md">
+            <h2 className="text-lg font-bold mb-4">Bạn có chắc chắn muốn xóa không?</h2>
+            <div className="flex justify-end space-x-4">
+              <button onClick={handleCancelDelete} className="px-4 py-2 bg-gray-300 rounded-md">Hủy</button>
+              <button onClick={handleConfirmDelete} className="px-4 py-2 bg-red-500 text-white rounded-md">Xóa</button>
+            </div>
+          </div>
+        </div>
+      )}
         </div>
         <div></div>
       </div>

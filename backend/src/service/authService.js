@@ -70,6 +70,7 @@ const registerOAuth = (data) => {
         firstName: data.firstName,
         lastName: data.lastName,
         avatar: data.avatar,
+        role: "R1",
       });
       resolve(user.id);
     } catch (error) {

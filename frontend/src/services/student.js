@@ -1,6 +1,13 @@
+import { get } from "http";
 import axios from "../utils/AxiosCustomized";
-const studentToken = localStorage.getItem("access_token");
 
+const getToken = () => {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem("access_token");
+  }
+  return null;
+};
+const studentToken = getToken();
 const editUserProfile = async (data) => {
   try {
     const response = await axios.put("api/v1/update-user-info", data, {

@@ -12,6 +12,7 @@ const TeacherCard = ({ teacher }) => {
 
   useEffect(() => {
     setTeacherName(teacher?.firstName + " " + teacher?.lastName);
+    console.log("teacher", teacher);
 
     setRating(
       teacher?.reviews && teacher?.reviews.length > 0
@@ -32,7 +33,7 @@ const TeacherCard = ({ teacher }) => {
     >
       <div className=" h-full w-full">
         <Image
-          src="/assets/images/teacher.png"
+          src={teacher?.avatar}
           alt="teacher"
           fill
           className="object-cover"
