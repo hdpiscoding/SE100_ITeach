@@ -1,13 +1,8 @@
-import axios from "../utils/AxiosCustomized";
-const studenttoken = localStorage.getItem("access_token");
-const studentToken = localStorage.getItem("access_token");
+import instance from "../utils/AxiosCustomized";
+
 const editUserProfile = async (data) => {
   try {
-    const response = await axios.put("api/v1/update-user-info", data, {
-      headers: {
-        Authorization: `Bearer ${studentToken}`,
-      },
-    });
+    const response = await instance.put("api/v1/update-user-info", data);
     return response.data;
   } catch (error) {
     console.error("Error while editing user profile", error);
@@ -16,11 +11,7 @@ const editUserProfile = async (data) => {
 };
 const changePassword = async (data) => {
   try {
-    const response = await axios.put("api/v1/change-password", data, {
-      headers: {
-        Authorization: `Bearer ${studentToken}`,
-      },
-    });
+    const response = await instance.put("api/v1/change-password", data);
     return response.data;
   } catch (error) {
     console.error("Error while changing password", error);
@@ -29,11 +20,7 @@ const changePassword = async (data) => {
 };
 const getCartItems = async (userId) => {
   try {
-    const response = await axios.get(`api/v1/get-cart-items?id=${userId}`, {
-      headers: {
-        Authorization: `Bearer ${studentToken}`,
-      },
-    });
+    const response = await instance.get(`api/v1/get-cart-items?id=${userId}`);
     return response.data;
   } catch (error) {
     console.error("Error while getting cart items", error);
@@ -42,11 +29,7 @@ const getCartItems = async (userId) => {
 };
 const deleteCartItem = async (id) => {
   try {
-    const response = await axios.delete(`api/v1/delete-cart-item?id=${id}`, {
-      headers: {
-        Authorization: `Bearer ${studentToken}`,
-      },
-    });
+    const response = await instance.delete(`api/v1/delete-cart-item?id=${id}`);
     return response.data;
   } catch (error) {
     console.error("Error while deleting cart item", error);
@@ -55,14 +38,7 @@ const deleteCartItem = async (id) => {
 };
 const deleteAllCartItems = async (userId) => {
   try {
-    const response = await axios.delete(
-      `api/v1/delete-all-cart-items?userId=${userId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${studentToken}`,
-        },
-      }
-    );
+    const response = await instance.delete(`api/v1/delete-all-cart-items?userId=${userId}`);
     return response.data;
   } catch (error) {
     console.error("Error while deleting all cart items", error);
@@ -71,11 +47,7 @@ const deleteAllCartItems = async (userId) => {
 };
 const postPayment = async (data) => {
   try {
-    const response = await axios.post("api/v1/post-payment", data, {
-      headers: {
-        Authorization: `Bearer ${studentToken}`,
-      },
-    });
+    const response = await instance.post("api/v1/post-payment", data);
     return response.data;
   } catch (error) {
     console.error("Error while posting payment", error);
@@ -84,14 +56,7 @@ const postPayment = async (data) => {
 };
 const getOrders = async (userId) => {
   try {
-    const response = await axios.get(
-      `api/v1/get-students-orders?id=${userId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${studentToken}`,
-        },
-      }
-    );
+    const response = await instance.get(`api/v1/get-students-orders?id=${userId}`);
     return response.data;
   } catch (error) {
     console.error("Error while getting orders", error);
@@ -100,14 +65,7 @@ const getOrders = async (userId) => {
 };
 const getOrderItems = async (orderId) => {
   try {
-    const response = await axios.get(
-      `api/v1/get-students-orders-items?orderId=${orderId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${studentToken}`,
-        },
-      }
-    );
+    const response = await instance.get(`api/v1/get-students-orders-items?orderId=${orderId}`);
     return response.data;
   } catch (error) {
     console.error("Error while getting order items", error);
@@ -116,14 +74,7 @@ const getOrderItems = async (orderId) => {
 };
 const getStudentCertificates = async (studentId) => {
   try {
-    const response = await axios.get(
-      "api/v1/get-student-certificates?studentId=" + studentId,
-      {
-        headers: {
-          Authorization: studenttoken,
-        },
-      }
-    );
+    const response = await instance.get(`api/v1/get-student-certificates?studentId=${studentId}`);
     return response;
   } catch (error) {
     console.error("Error fetching student certificates:", error);
@@ -132,11 +83,7 @@ const getStudentCertificates = async (studentId) => {
 };
 const getMyCourses = async (studentId) => {
   try {
-    const response = await axios.get("api/v1/get-my-courses?id=" + studentId, {
-      headers: {
-        Authorization: studenttoken,
-      },
-    });
+    const response = await instance.get(`api/v1/get-my-courses?id=${studentId}`);
     return response;
   } catch (error) {
     console.error("Error fetching my courses:", error);
@@ -145,11 +92,7 @@ const getMyCourses = async (studentId) => {
 };
 const getACertificate = async (id) => {
   try {
-    const response = await axios.get("api/v1/get-a-certificate?id=" + id, {
-      headers: {
-        Authorization: studenttoken,
-      },
-    });
+    const response = await instance.get(`api/v1/get-a-certificate?id=${id}`);
     return response;
   } catch (error) {
     console.error("Error fetching certificate:", error);
@@ -158,11 +101,7 @@ const getACertificate = async (id) => {
 };
 const getAllCoursesCategories = async () => {
   try {
-    const response = await axios.get("api/v1/get-all-courses-categories", {
-      headers: {
-        Authorization: studenttoken,
-      },
-    });
+    const response = await instance.get("api/v1/get-all-courses-categories");
     return response;
   } catch (error) {
     console.error("Error fetching courses categories:", error);
@@ -171,11 +110,7 @@ const getAllCoursesCategories = async () => {
 };
 const getATeacherInfo = async (id) => {
   try {
-    const response = await axios.get("api/v1/get-a-teacher-info?id=" + id, {
-      headers: {
-        Authorization: studenttoken,
-      },
-    });
+    const response = await instance.get(`api/v1/get-a-teacher-info?id=${id}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching teacher info:", error);
