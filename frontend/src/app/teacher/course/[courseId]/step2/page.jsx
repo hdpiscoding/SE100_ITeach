@@ -6,7 +6,7 @@ import MdEditor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
 import { toast } from "react-toastify";
 import { useState, useEffect, useCallback, useRef } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import {
   postAChapter,
   postALesson,
@@ -114,8 +114,8 @@ const useLessonState = () => {
 const Step2 = () => {
   const [nowChapterID, setNowChapterID] = useState(null);
   const [nowLessonID, setNowLessonID] = useState(null);
-  const searchParams = useSearchParams();
-  const courseId = searchParams.get("courseId");
+  const params = useParams();
+  const courseId = params.courseId;
   const router = useRouter();
   const fileInputRef = useRef(null);
 
@@ -290,6 +290,7 @@ const Step2 = () => {
   const handleEditLesson = (lesson,chapterId) => {
     setNowChapterID(chapterId);
     setNowLessonID(lesson.id);
+    console.log("lesson",lesson);
     console.log("Chapter ID:", chapterId);
     console.log("Lesson ID:", lesson.id);
     if(!lesson.hiddenBtn)
@@ -299,13 +300,15 @@ const Step2 = () => {
     lessonState.setHiddenEdit(false);
     lessonState.setHidden(false);
     lessonState.setLessonTitle(lesson.name);
-    if (lesson.content && lesson.content.video) {
+    if (lesson.content) {
       console.log("Video URL from content:", lesson.content.video);
       lessonState.setVideoUrl(lesson.content.video);
-      lessonState.setIsVideoEnabled(false); // Enable input when there's a video URL
+      lessonState.setIsVideoEnabled(false);
+      console.log("URL") // Enable input when there's a video URL
     } else {
-      lessonState.setVideoUrl("");
+    
       lessonState.setIsVideoEnabled(true);
+      console.log("No URL") // Enable input when there's a video URL
     }
     lessonState.setLessonDuration(lesson.studyTime);
     if (lesson.content) {
@@ -418,11 +421,15 @@ const Step2 = () => {
           id: nowLessonID,
           name: lessonState.lessonTitle,
           studyTime: lessonState.lessonDuration,
+          content:
+          {
+            lessonId: nowLessonID,
           video: videoValue,
           contentHtml: lessonState.contentHtml,
           contentMarkDown: lessonState.contentMarkDown,
           exerciseHtml: lessonState.exerciseHtml,
           exerciseMarkDown: lessonState.exerciseMarkDown,
+          },
         };
         courseState.setChapters(
           courseState.chapters.map((chapter) => ({
@@ -509,7 +516,7 @@ const Step2 = () => {
 
 
   const handleHiddenBtn = (num) => {
-    lessonState.setHiddenEdit(!lessonState.hiddenEdit);
+    lessonState.setHiddenEdit(true);
     if(num===2)
     {
       lessonState.setHidden(!lessonState.hidden);
@@ -891,7 +898,7 @@ const Step2 = () => {
               Xóa bài học
             </button>
             <button
-              onClick={() => router.push("/step2")}
+              onClick={() => router.push("/teacher/course")}
               className="bg-orange text-white px-10 py-2 rounded-md hover:bg-orangeHover hover:border-orangeHover"
             >
               Hoàn thành

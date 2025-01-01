@@ -86,7 +86,7 @@ const CourseTeacher = () => {
             </div>
             <Button
               onClick={() => router.push("/teacher/step1")}
-              className="bg-orange text-white h-[30px] w-[100px] text-[10px] sm:h-[35px] sm:w-[120px] sm:text-xs md:h-[40px] md:w-[140px] md:text-sm lg:h-[45px] lg:w-[160px] lg:text-base"
+              className="bg-orange hover:bg-orangeHover text-white h-[30px] w-[100px] text-[10px] sm:h-[35px] sm:w-[120px] sm:text-xs md:h-[40px] md:w-[140px] md:text-sm lg:h-[45px] lg:w-[160px] lg:text-base"
             >
               Tạo khóa học
             </Button>

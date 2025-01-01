@@ -129,7 +129,32 @@ const getChartData = async (year) => {
     throw error;
   }
 };
-
+const getPopularCourses = async () => {
+  try {
+    const response = await axios.get("api/v1/get-popular-course", {
+      headers: {
+        Authorization: admintoken,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error("Error fetching popular courses:", error);
+    throw error;
+  }
+};
+const getPopularTeachers = async () => {
+  try {
+    const response = await axios.get("api/v1/get-popular-teacher", {
+      headers: {
+        Authorization: admintoken,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error("Error fetching popular teachers:", error);
+    throw error;
+  }
+};
 export {
   getTeachers,
   getAllReviews,
@@ -140,4 +165,6 @@ export {
   getAllCourseOfATeacher,
   getAnalysisInfo,
   getChartData,
+  getPopularCourses,
+  getPopularTeachers,
 };

@@ -1,6 +1,5 @@
 import axios from "../utils/AxiosCustomized";
-const teacherToken =
-  `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImVtYWlsIjoiaHVuZzA4MDkyMDA0QGdtYWlsLmNvbSIsInJvbGUiOiJSMiIsImV4cGlyZXNJbiI6IjMwZCIsImlhdCI6MTcyNzU5OTQ4N30.2sAjaVD3nZ0KCZ1abl_8d2XXQqVKeVrLaZKeFuueALI`;
+const teacherToken = localStorage.getItem('access_token');
   const getAllCoursesCategories = async () => {
     try {
       const response = await axios.get("api/v1/get-all-courses-categories", {
@@ -182,7 +181,7 @@ export { getDetailCourse };
 export { getLessonContent };
 const putACourse = async (data) => {
   try {
-    const response = await axios.put("api/v1/put-a-course", data, {
+    const response = await axios.put("api/v1/edit-a-course", data, {
       headers: {
         Authorization: teacherToken,
       },
@@ -194,3 +193,31 @@ const putACourse = async (data) => {
   }
 };
 export { putACourse };
+const postSendMail = async (id) => {
+  try {
+    const response = await axios.post(`api/v1/send-mail?courseId=${id}`, {
+      headers: {
+        Authorization: teacherToken,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error("Error while sending mail", error);
+    return null;
+  }
+};
+export { postSendMail };
+const deleteACourse = async (courseId) => {
+  try {
+    const response = await axios.delete(`api/v1/delete-a-course?id=${courseId}`, {
+      headers: {
+        Authorization: teacherToken,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error("Error while deleting course", error);
+    return null;
+  }
+};
+export { deleteACourse };

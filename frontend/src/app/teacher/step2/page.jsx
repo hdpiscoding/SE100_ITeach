@@ -16,6 +16,7 @@ import {
   putALesson,
   deleteALesson,
   getLessonContent,
+  postSendMail,
 } from "@/services/teacher";
 import {
   Delete as DeleteIcon,
@@ -144,6 +145,19 @@ const Step2 = () => {
       courseState.setIsLoading(false);
     }
   }, [courseId]);
+  const sendMail = async () => {
+    try {
+      const response = await postSendMail(courseId);
+      console.log("courseId:", courseId);
+      if (response) {
+        // router.push("/teacher/course");
+        console.log(response);
+      }
+    } catch (error) {
+     console.log("Error:", error);
+    }
+  };
+
   //Chapter API
   const toggleChapter = (index) => {
     courseState.setChapters(
@@ -418,11 +432,15 @@ const Step2 = () => {
           id: nowLessonID,
           name: lessonState.lessonTitle,
           studyTime: lessonState.lessonDuration,
+          content:
+          {
+            lessonId: nowLessonID,
           video: videoValue,
           contentHtml: lessonState.contentHtml,
           contentMarkDown: lessonState.contentMarkDown,
           exerciseHtml: lessonState.exerciseHtml,
           exerciseMarkDown: lessonState.exerciseMarkDown,
+          },
         };
         courseState.setChapters(
           courseState.chapters.map((chapter) => ({
@@ -445,6 +463,11 @@ const Step2 = () => {
   const handleDeleteLesson = async ( e) => {
     let lessonId=nowLessonID;
     e.stopPropagation();
+    if(!lessonId)
+    {
+      toast.error("Vui lòng chọn bài học cần xóa!");
+      return;
+    }
     try {
       const response = await deleteALesson(lessonId);
       if (response.data) {
@@ -507,9 +530,8 @@ const Step2 = () => {
     }
   }
 
-
   const handleHiddenBtn = (num) => {
-    lessonState.setHiddenEdit(!lessonState.hiddenEdit);
+    lessonState.setHiddenEdit(true);
     if(num===2)
     {
       lessonState.setHidden(!lessonState.hidden);
@@ -891,7 +913,7 @@ const Step2 = () => {
               Xóa bài học
             </button>
             <button
-              onClick={() => router.push("/step2")}
+              onClick={sendMail}
               className="bg-orange text-white px-10 py-2 rounded-md hover:bg-orangeHover hover:border-orangeHover"
             >
               Hoàn thành

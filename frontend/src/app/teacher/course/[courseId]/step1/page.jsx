@@ -5,7 +5,7 @@ import MarkdownIt from "markdown-it";
 import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
 import { useParams, useRouter } from "next/navigation";
-import{createNewCourse,getDetailCourse} from "@/services/teacher";
+import{getDetailCourse, putACourse} from "@/services/teacher";
 import { getAllCourseCategories } from "@/services/student";
 import { useState,useEffect,useRef,useCallback} from "react";
 import { toast } from 'react-toastify';
@@ -13,6 +13,9 @@ const mdParser = new MarkdownIt(/* Markdown-it options */);
 
 
 const Step1 = () => {
+  let user=localStorage.getItem("user");
+  const teacherId=JSON.parse(user).id;
+  const token=localStorage.getItem("access_token");
   const params = useParams();
   const courseId = params.courseId;
   const router = useRouter();
@@ -24,6 +27,7 @@ const Step1 = () => {
    const [price, setPrice] = useState();
    const [intro, setIntro] = useState();
    const editorContent = useRef("");
+   const [markdown, setMarkdown] = useState("");
    const [courseCategoryId, setCourseCategoryId] = useState("");
    const [courseInfo, setCourseInfo] = useState({});
    const fetchCourseCategory = async () => {
@@ -39,6 +43,7 @@ const Step1 = () => {
      }, []);
   function handleEditorChange({ html, text }) {
     editorContent.current = html;
+    setMarkdown(text);
   }
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -55,7 +60,7 @@ const Step1 = () => {
   };
  const validate =()=>
  {
-    if(courseName===""||price===""||intro===""||editorContent.current==="")
+    if(courseName===""||price===""||intro===""||markdown===""||courseCategoryId===""||level==="")
     {
       toast.error("Vui lòng điền đầy đủ thông tin");
       return false;
@@ -77,6 +82,7 @@ const Step1 = () => {
       setLevel(response.data.data.course.level);
       setPrice(response.data.data.course.cost);
       setIntro(response.data.data.course.intro);
+      setMarkdown(response.data.data.course.markDown);
     }
   } catch (error) {
     console.error("Lỗi khi tải thông tin khóa học:", error);
@@ -93,17 +99,25 @@ const handlePutCourse = async () => {
     return;
   }
   const data = {
-    courseId: courseId,
+   id: courseId,
     courseName: courseName,
     courseCategoryId: courseCategoryId,
-    level: level,
     cost: price,
+    level: level,
     intro: intro,
-    content: editorContent.current,
+    markDown: markdown,
+    teacherId: teacherId,
+    anhBia:"Sua anh bia",
+    gioiThieu:editorContent.current
+
   };
+  console.log("data",data);
   try {
-    const response = await createNewCourse(data);
-    if (response?.data?.success) {
+    console.log("tokenteacher",token);
+    const response = await putACourse(data);
+   
+    if (response?.data) {
+      console.log("respone",response);
       toast.success("Cập nhật thông tin khóa học thành công!");
       router.push(`/teacher/course/${courseId}/step2`);
     } else {
@@ -230,7 +244,9 @@ const handlePutCourse = async () => {
             Giới thiệu
           </h1>
           <div className=" border border-gray rounded-md p-5">
-          <MdEditor style={{ height: '300px' }} renderHTML={text => mdParser.render(text)} onChange={handleEditorChange} />
+          <MdEditor style={{ height: '300px' }}
+          value={markdown}
+           renderHTML={text => mdParser.render(text)} onChange={handleEditorChange} />
           </div>
           <div className="flex justify-end space-x-3">
             <button className="bg-white text-orange px-5 py-2 rounded-md border border-orange">

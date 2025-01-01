@@ -20,6 +20,7 @@ let createNewCourse = (data) => {
         totalStudent: 0,
         totalLesson: 0,
         courseStatus: "CS2",
+        markDown: data.markDown,
       });
       let teacher = await db.User.findOne({
         where: { id: data.teacherId },
@@ -121,6 +122,7 @@ let editACourse = (data) => {
         course.gioiThieu = data.gioiThieu;
         course.anhBia = data.anhBia;
         course.chungchiId = data.chungchiId;
+        course.markDown= data.markDown;
         await course.save(); // Save the instance
         resolve({
           errCode: 0,
