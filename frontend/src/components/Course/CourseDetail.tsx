@@ -21,7 +21,14 @@ import {FaUser} from "react-icons/fa";
 import { Textarea } from "@/components/ui/textarea"
 import {useParams, useRouter} from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton"
-import {checkIsEnrolled, createCourseReview, getCourses, getMyCourseChapters} from "@/services/course";
+import {
+    checkIsEnrolled,
+    createCourseReview,
+    deleteCourse,
+    getCourses,
+    getMyCourseChapters,
+    stopCourse
+} from "@/services/course";
 import Loading from "@/app/loading";
 import {addToCart, getCartByStudentId} from "@/services/cart";
 import {toast} from "react-toastify";
@@ -186,6 +193,44 @@ export default function CourseDetail(props: any) {
     // State for info modal
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const lessonTriggerRef = useRef<HTMLButtonElement | null>(null);
+
+    // State for admin confirm modal
+    const deleteRef = useRef<HTMLButtonElement | null>(null);
+    const suspendRef = useRef<HTMLButtonElement | null>(null);
+
+    const handleDeleteCourse = async () => {
+        try {
+            setIsPending(true);
+            const response = await deleteCourse(String(courseId));
+            if (response?.data.errMessage === "OK") {
+                toast.success("Xóa khóa học thành công");
+                router.push("/admin/course");
+            }
+            else {
+                toast.error("Đã có lỗi xảy ra");
+            }
+        }
+        catch (error) {
+            console.error(error);
+        }
+    }
+
+    const handleSuspendCourse = async () => {
+        try {
+            setIsPending(true);
+            const response = await stopCourse(String(courseId));
+            if (response?.data.errMessage === "OK") {
+                toast.success("Tạm ngưng khóa học thành công");
+                router.push("/admin/course");
+            }
+            else {
+                toast.error("Đã có lỗi xảy ra");
+            }
+        }
+        catch (error) {
+            console.error(error);
+        }
+    }
 
     useEffect(() => {
         setUser(JSON.parse(localStorage.getItem("user") || "{}"));
@@ -362,8 +407,17 @@ export default function CourseDetail(props: any) {
             <div className="bg-bg grid grid-cols-[0.5fr_11fr_0.5fr] py-6">
                 <Button
                     className="col-start-2 bg-bg border border-orange text-orange rounded-xl w-fit hover:bg-orange hover:text-white mb-4">
-                    <div className="flex items-center gap-2">
-                        <ArrowLeft height={18} width={18} onClick={() => {router.back();}}/>
+                    <div className="flex items-center gap-2" onClick={() => {
+                        if (props.role !== "user") {
+                            setIsPending(true);
+                            router.push(`/${props.role}/course`);
+                        }
+                        else {
+                            setIsPending(true);
+                            router.push(`/course`);
+                        }
+                    }}>
+                        <ArrowLeft height={18} width={18}/>
 
                         <span className="font-semibold">
                                 Trở lại
@@ -571,13 +625,17 @@ export default function CourseDetail(props: any) {
 
                             {props.role === "admin" &&
                                 <div className="flex items-center gap-4">
-                                    <Button className="bg-orange text-white hover:bg-Orange_Hover rounded-2xl">
+                                    <Button className="bg-orange text-white hover:bg-Orange_Hover rounded-2xl" onClick={() => {
+                                        deleteRef.current?.click();
+                                    }}>
                                         <span className="font-semibold">
                                             Xóa
                                         </span>
                                     </Button>
 
-                                    <Button className="bg-orange text-white hover:bg-Orange_Hover rounded-2xl">
+                                    <Button className="bg-orange text-white hover:bg-Orange_Hover rounded-2xl" onClick={() => {
+                                        suspendRef.current?.click();
+                                    }}>
                                         <span className="font-semibold">
                                             Tạm ngưng
                                         </span>
@@ -648,7 +706,9 @@ export default function CourseDetail(props: any) {
 
                             {intro
                                 ?
-                                intro
+                                <div dangerouslySetInnerHTML={{ __html: intro }}>
+
+                                </div>
                                 :
                                 <div className="flex flex-col gap-4">
                                     <Skeleton className="bg-gray h-[24px] w-full"/>
@@ -968,6 +1028,30 @@ export default function CourseDetail(props: any) {
                 }
             />
             {isPending && <Loading/>}
+
+            <AlertModal
+                title="Xác nhận xóa khóa học"
+                description="Bạn có chắc chắn muốn xóa khóa học này?"
+                trigger={
+                    <button
+                        ref={deleteRef}
+                        style={{ display: "none" }} // Ẩn trigger button
+                    />
+                }
+                onConfirm={handleDeleteCourse}
+            />
+
+            <AlertModal
+                title="Xác nhận dừng khóa học"
+                description="Bạn có chắc chắn muốn dừng khóa học này?"
+                trigger={
+                    <button
+                        ref={suspendRef}
+                        style={{ display: "none" }} // Ẩn trigger button
+                    />
+                }
+                onConfirm={handleSuspendCourse}
+            />
         </div>
     );
 };
