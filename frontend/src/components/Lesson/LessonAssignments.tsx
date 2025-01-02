@@ -245,8 +245,8 @@ export default function LessonAssignments(props: any) {
                 </div>
             </div>
 
-            <div className="lg:col-start-3 w-full bg-LighterGray rounded-2xl p-4 h-fit order-1 lg:order-none">
-                <div dangerouslySetInnerHTML={{ __html: props.exercise }}>
+            <div className="lg:col-start-3 w-full bg-LighterGray rounded-2xl p-4 h-fit max-w-[540px] order-1 lg:order-none">
+                <div className="max-w-[540px]" dangerouslySetInnerHTML={{ __html: props.exercise }}>
 
                 </div>
             </div>
