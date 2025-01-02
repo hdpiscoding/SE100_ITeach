@@ -246,7 +246,9 @@ export default function LessonAssignments(props: any) {
             </div>
 
             <div className="lg:col-start-3 w-full bg-LighterGray rounded-2xl p-4 h-fit order-1 lg:order-none">
-                {props.exercise}
+                <div dangerouslySetInnerHTML={{ __html: props.exercise }}>
+
+                </div>
             </div>
         </div>
     );

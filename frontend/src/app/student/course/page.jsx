@@ -12,10 +12,11 @@ import {
 } from "@/components/ui/select";
 import { getAllCourses } from "@/services/admin";
 import { getMyCourses } from "@/services/student";
+import { useRouter } from "next/navigation";
 const CoursesPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const coursesPerPage = 12;
-
+const router=useRouter();
   const [courses, setCourses] = useState([]);
   const [all, setAll] = useState([]);
   const [filteredCourses, setFilteredCourses] = useState([]);
@@ -53,8 +54,15 @@ const CoursesPage = () => {
         setLoading(false); // Kết thúc tải dữ liệu
       }
     };
-    getData();
-  }, []);
+    const isLogin = localStorage.getItem("isLogin");
+    if (isLogin==="true") {
+      getData();
+    }
+    else {
+      router.push("/course");
+      
+    }
+   }, []);
   const handleFilter = async (
     selectedCategories,
     selectedDurations,

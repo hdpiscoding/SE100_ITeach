@@ -6,7 +6,9 @@ export default function LessonContent(props: any){
     return (
         <div className="grid lg:grid-cols-[68%_1%_31%] grid-cols-1 gap-4 lg:gap-0 mt-6 ">
             <div className="col-start-1">
-                {props.content}
+                <div dangerouslySetInnerHTML={{ __html: props.content }}>
+
+                </div>
             </div>
         </div>
     );

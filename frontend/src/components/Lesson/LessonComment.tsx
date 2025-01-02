@@ -278,7 +278,7 @@ export default function LessonComment(props: any) {
             }
 
 
-            {props.user?.role !== "admin"
+            {props.user?.role !== "R3"
                 &&
                 <div className="lg:col-start-1 flex flex-col gap-6 w-full">
                     <div className="flex gap-4">
