@@ -123,8 +123,8 @@ const TeacherInfor = () => {
         <div></div>
       </div>
       <AlertModal
-                                    title="Xác nhận lưu thay đổi"
-                                    description="Bạn có chắc chắn muốn thay đổi thông tin trên?"
+                                    title="Xác nhận đình chỉ"
+                                    description="Bạn có chắc chắn muốn đình chỉ giảng viên này?"
                                     trigger={
                                         <button
                                             ref={triggerRef}
