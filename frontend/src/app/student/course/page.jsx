@@ -1,17 +1,17 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import Filter from "@/components/Filter";
-import Coursecard from "@/components/Course/Coursecard";
+import Filter from "../../../components/Filter";
+import Coursecard from "../../../components/Coursecard";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { getAllCourses } from "@/services/admin";
-import { getMyCourses } from "@/services/student";
+} from "../../../components/ui/select";
+import { getAllCourses } from "../../../services/admin";
+import { getMyCourses } from "../../../services/student";
 import { useRouter } from "next/navigation";
 const CoursesPage = () => {
   const [currentPage, setCurrentPage] = useState(1);

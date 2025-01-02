@@ -390,10 +390,12 @@ export default function CourseDetail(props: any) {
     const handleAddToCart = async () => {
         try {
             const cartItems = await getCartByStudentId(String(user?.id));
-            if (cartItems.some((item: any) => item.courseId === courseId)) {
+            if (cartItems && cartItems.some((item: any) => item.courseId === courseId)) {
+                console.log("Course is already in cart");
                 toast.error("Khóa học đã có trong giỏ hàng");
             }
             else {
+                console.log("Adding course to cart");
                 const response = await addToCart(String(courseId), String(user?.id));
                 if (response.errMessage === "OK") {
                     toast.success("Thêm vào giỏ hàng thành công");
@@ -576,7 +578,7 @@ export default function CourseDetail(props: any) {
                                     {new Intl.NumberFormat("vi-VN", {
                                         style: "currency",
                                         currency: "VND",
-                                    }).format(Number(((price ?? 0) * (1 - (discount ?? 0))).toFixed(0)))}
+                                    }).format(Number(((price ?? 0) * (1 - (discount ?? 0) / 100)).toFixed(0)))}
                                 </span>
 
                                 {discount !== 0
@@ -591,7 +593,7 @@ export default function CourseDetail(props: any) {
                                         </span>
 
                                         <span className="text-sm bg-orange text-white px-2 py-1 rounded-lg mb-6">
-                                            -{String((discount ?? 0) * 100)}%
+                                            -{String((discount ?? 0))}%
                                         </span>
                                     </div>
                                 }
