@@ -86,11 +86,7 @@ const getChartData = async (year) => {
 };
 const getPopularCourses = async () => {
   try {
-    const response = await axios.get("api/v1/get-popular-course", {
-      headers: {
-        Authorization: admintoken,
-      },
-    });
+    const response = await instance.get("api/v1/get-popular-course");
     return response;
   } catch (error) {
     console.error("Error fetching popular courses:", error);
@@ -99,11 +95,7 @@ const getPopularCourses = async () => {
 };
 const getPopularTeachers = async () => {
   try {
-    const response = await axios.get("api/v1/get-popular-teacher", {
-      headers: {
-        Authorization: admintoken,
-      },
-    });
+    const response = await instance.get("api/v1/get-popular-teacher");
     return response;
   } catch (error) {
     console.error("Error fetching popular teachers:", error);
