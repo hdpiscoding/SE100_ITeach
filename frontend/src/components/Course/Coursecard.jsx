@@ -29,17 +29,28 @@ const Coursecard = ({courseName, cost, discount, intro,onClick}) => {
       <div className='flex flex-wrap justify-between mx-3 sm:mx-4 items-center pb-3 sm:pb-4 gap-2 '>
         <div className='flex items-center'>
           <span className='text-orange font-semibold sm:text-sm md:text-lg lg:text-xl text-xs'>
-           {(1-discount)*cost}đ
+              {new Intl.NumberFormat("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+              }).format(Number(((cost ?? 0) * (1 - (discount ?? 0) / 100)).toFixed(0)))}
           </span>
-          <span className='line-through ml-2 text-gray-500 text-sm'>
-            {cost}đ
-          </span>
-        </div>
-        {(role !== "teacher" && role !== "admin") &&(
 
-        <button className='bg-SignUp hover:bg-SignUp/90 text-xs sm:text-sm md:text-base lg:text-base text-white px-3 py-1 rounded-md'>
-          Đăng ký ngay
-        </button>)
+            {discount && discount !== 0
+                ?
+                <span className='line-through ml-2 text-gray-500 text-sm'>
+                    {new Intl.NumberFormat("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                    }).format(cost ?? 0)}
+                  </span>
+                : <div></div>}
+
+            </div>
+            {(role !== "teacher" && role !== "admin") &&(
+
+                <button className='bg-SignUp hover:bg-SignUp/90 text-xs sm:text-sm md:text-base lg:text-base text-white px-3 py-1 rounded-md'>
+                Đăng ký ngay
+                </button>)
 }
       </div>
     </div>
