@@ -182,7 +182,7 @@ const Navbar = () => {
                                       router.push("/");
                                         setRole("student");
                                         localStorage.removeItem("access_token");
-                                        localStorage.setItem("role", "student");
+                                        localStorage.removeItem("role");
                                       localStorage.removeItem("user");
                                      
                                     }}
@@ -232,7 +232,8 @@ const Navbar = () => {
                                       setRole("student");
                                       localStorage.removeItem("access_token");
                                       
-                                        localStorage.setItem("role", "student");
+                                        localStorage.removeItem("role");
+                                      localStorage.removeItem("user");
                                       
 
                                     }}
@@ -272,7 +273,8 @@ const Navbar = () => {
                                       setRole("student");
                                       localStorage.setItem("isLogin", "false");
 localStorage.removeItem("access_token");
-                                        localStorage.setItem("role", "student");
+                                        localStorage.removeItem("role");
+                                      localStorage.removeItem("user");
                                       
                                     }}
                                   >
@@ -340,7 +342,7 @@ localStorage.removeItem("access_token");
                                     className="block py-2 w-full text-left"
                                     onClick={() => {
                                       localStorage.removeItem("access_token");
-                                        localStorage.setItem("role", "student");                                      setLogin(false);
+                                        localStorage.removeItem("role");                                      setLogin(false);
                                       setIsMenuOpen(false);
                                       router.push("/");
                                       setRole("student");
@@ -394,7 +396,7 @@ localStorage.removeItem("access_token");
                                       router.push("/");
                                       setRole("student");
                                       localStorage.removeItem("access_token");
-                                      localStorage.setItem("role", "student");
+                                      localStorage.removeItem("role");
                                       localStorage.removeItem("user");
 
                                       
@@ -436,7 +438,7 @@ localStorage.removeItem("access_token");
                                       router.push("/");
                                       setRole("student");
                                       localStorage.removeItem("access_token");
-                                      localStorage.setItem("role", "student");
+                                      localStorage.removeItem("role");
                                       localStorage.removeItem("user");
                                       
                                      
