@@ -2,11 +2,11 @@
 import React, { useEffect } from "react";
 import Image from "next/image";
 import { useState } from "react";
-import FilterProcess from "@/components/filterProcess";
-import Coursecard from "@/components/Course/Coursecard";
-import CertificateCard from "@/components/certificateCard";
-import { getStudentCertificates, getMyCourses } from "@/services/student";
-import { getAllCourses } from "@/services/admin";
+//import FilterProcess from "@/components/filterProcess";
+import Coursecard from "../../../components/courseCard";
+import CertificateCard from "../../../components/certificateCard";
+import { getStudentCertificates, getMyCourses } from "../../../services/student";
+import { getAllCourses } from "../../../services/admin";
 
 const Process = () => {
   const [certificates, setCertificates] = useState([]);
@@ -27,11 +27,7 @@ const Process = () => {
       const storedUser = JSON.parse(localStorage.getItem("user"));
     const storedUserId = storedUser.id;
 
-    const storedUsername = storedUser.firstName
-      ? storedUser.firstName
-      : " " + " " + storedUser.lastName
-      ? storedUser.lastName
-      : " ";
+    const storedUsername = storedUser.email;
     setUsername(storedUsername);
       const response = await getStudentCertificates(storedUserId);
       setCertificates(response.data.certificates);
@@ -75,8 +71,8 @@ const Process = () => {
     if (activeTab === "certificate") {
       return (
         <div className="grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-2 grid-cols-1 lg:gap-6 md:gap-4 sm:gap-3 gap-2">
-          {certificates.map((certificate) => (
-            <CertificateCard certificate={certificate} />
+          {certificates.map((certificate, index) => (
+            <CertificateCard key={index} certificate={certificate} />
           ))}
         </div>
       );
@@ -85,7 +81,7 @@ const Process = () => {
       return (
         <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 grid-cols-1 lg:gap-6 md:gap-4 sm:gap-3 gap-2">
           {registeredCourses.map((_, index) => (
-            <Coursecard course={registeredCourses[index]} type="1" />
+            <Coursecard key={index} course={registeredCourses[index]} type="1" />
           ))}
         </div>
       );
@@ -94,7 +90,7 @@ const Process = () => {
       return (
         <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 grid-cols-1 lg:gap-6 md:gap-4 sm:gap-3 gap-2">
           {suggestedCourses.map((_, index) => (
-            <Coursecard course={suggestedCourses[index]} type="0" />
+            <Coursecard key={index} course={suggestedCourses[index]} type="0" />
           ))}
         </div>
       );
