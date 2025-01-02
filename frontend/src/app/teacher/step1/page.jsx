@@ -7,9 +7,17 @@ import 'react-markdown-editor-lite/lib/index.css';
 import { useRouter } from "next/navigation";
 import{createNewCourse} from "@/services/teacher";
 import { getAllCourseCategories,getAllCourse } from "@/services/student";
- 
 import { useState,useEffect,useRef} from "react";
 import { toast } from 'react-toastify';
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  listAll,
+  list,
+} from "firebase/storage";
+import { storage } from "@/firebase/firebase";
+import { v4 } from "uuid";
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 let courseId = -1;
 
@@ -31,6 +39,8 @@ const Step1 = () => {
    const editorContent = useRef("");
    const [courseCategoryId, setCourseCategoryId] = useState("");
    const [markdown, setMarkdown] = useState("");
+   const [isImageSelected, setIsImageSelected] = useState(false);
+   const [fileImage, setFileImage] = useState(null);
    const handleDeleteClick = () => {
     setIsModalOpen(true);
   };
@@ -75,39 +85,46 @@ const Step1 = () => {
       console.log("validate failed");
       return;
     }
-
-    const courseData = {
-      courseName: courseName,
-      courseCategoryId: courseCategoryId,
-      cost: price,
-      level: level,
-      intro: intro,
-      gioiThieu: editorContent.current,
-      anhBia: "anhBia",
-      teacherId: teacherId,
-      markDown: markdown,
-    };
-    console.log(courseData);
-
-    setIsLoading(true); // Bắt đầu loading
-    try {
-      const response = await createNewCourse(courseData);
-      if (response) {
-        console.log(response);
-        courseId = response.data.courseId;
-        router.push(`/teacher/step2?courseId=${courseId}`);
-      } else {
-        console.error("Failed to create course");
-      }
-    } catch (error) {
-      console.error("Error creating course:", error);
-      toast.error("Lỗi khi tạo khóa học!");
-    } finally {
-      setIsLoading(false); // Kết thúc loading
-    }
+    const imageRef = ref(storage, `images/${fileImage.name + v4()}`);
+    uploadBytes(imageRef, fileImage).then((snapshot) => {
+      getDownloadURL(snapshot.ref).then(async (url) => {
+        const courseData = {
+          courseName: courseName,
+          courseCategoryId: courseCategoryId,
+          cost: price,
+          level: level,
+          intro: intro,
+          gioiThieu: editorContent.current,
+          anhBia: url,
+          teacherId: teacherId,
+          markDown: markdown,
+        };
+        console.log(courseData);
+    
+        setIsLoading(true); // Bắt đầu loading
+        try {
+          const response = await createNewCourse(courseData);
+          if (response) {
+            console.log(response);
+            courseId = response.data.courseId;
+            router.push(`/teacher/step2?courseId=${courseId}`);
+          } else {
+            console.error("Failed to create course");
+          }
+        } catch (error) {
+          console.error("Error creating course:", error);
+          toast.error("Lỗi khi tạo khóa học!");
+        } finally {
+          setIsLoading(false); // Kết thúc loading
+        }
+      });
+    });
+    
   };
   const handleImageChange = (e) => {
     const file = e.target.files[0];
+    setFileImage(file);
+      
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -119,11 +136,12 @@ const Step1 = () => {
 
   const handleImageClick = () => {
     fileInputRef.current.click();
+    setIsImageSelected(true);
   };
  const validate =()=>
  {
  
-    if(courseName===""||price===""||intro===""||markdown===""||courseCategoryId===""||level==="")
+    if(courseName===""||price===""||intro===""||markdown===""||courseCategoryId===""||level===""||fileImage===null)
     {
       toast.error("Vui lòng điền đầy đủ thông tin");
       return false;
@@ -207,7 +225,7 @@ const Step1 = () => {
                 value={price}
                 type="number"
                 id="name"
-              
+                min="0"
                 className="w-full h-[40px] border border-gray rounded-md p-2"
               />
             </div>
@@ -232,7 +250,7 @@ const Step1 = () => {
                   type="file"
                   ref={fileInputRef}
                   onChange={handleImageChange}
-                  accept="image/*"
+                  accept=".jpg, .jpeg, .png"
                   className="hidden"
                 />
 
@@ -253,6 +271,11 @@ const Step1 = () => {
                   />
                 )}
               </div>
+              {isImageSelected&&(imagePreview!==null) && (
+                <button onClick={handleImageClick} className="bg-orange text-white px-5 py-2 rounded-md mt-2">
+                <label htmlFor="name">Thay đổi ảnh</label>
+              </button>
+              )}
             </div>
           </div>
           <h1 className="lg:text-2xl md:text-xl text-lg font-bold text-SignUp">
