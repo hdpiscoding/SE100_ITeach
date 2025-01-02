@@ -72,6 +72,30 @@ const getMyCourseChapters = async (courseId: string, userId: string) => {
     return response.data.data;
 }
 
+const deleteCourse = async (courseId: string) => {
+    try {
+        const response = await instance.put(`api/v1/delete-course`, {
+            courseId: courseId
+        });
+        return response;
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+
+const stopCourse = async (courseId: string) => {
+    try {
+        const response = await instance.put(`api/v1/stop-course`, {
+            courseId: courseId
+        });
+        return response;
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+
 export {
     getCourses,
     getLessonDetail,
@@ -81,5 +105,7 @@ export {
     createCourseReview,
     saveLessonProgress,
     getLessonProgress,
-    getMyCourseChapters
+    getMyCourseChapters,
+    deleteCourse,
+    stopCourse
 }

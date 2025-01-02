@@ -1,14 +1,8 @@
-import axios from "../utils/AxiosCustomized";
-const admintoken = "Bearer " + localStorage.getItem("jwt");
-const teachertoken = admintoken;
-const studenttoken = admintoken;
+import instance from "../utils/AxiosCustomized";
+
 const getTeachers = async () => {
   try {
-    const response = await axios.get("api/v1/get-all-teacher", {
-      headers: {
-        Authorization: admintoken,
-      },
-    });
+    const response = await instance.get("api/v1/get-all-teacher");
     return response;
   } catch (error) {
     console.error("Error fetching teachers:", error);
@@ -17,11 +11,7 @@ const getTeachers = async () => {
 };
 const getAllReviews = async () => {
   try {
-    const response = await axios.get("api/v1/get-all-reviews", {
-      headers: {
-        Authorization: admintoken,
-      },
-    });
+    const response = await instance.get("api/v1/get-all-reviews");
     return response;
   } catch (error) {
     console.error("Error fetching reviews:", error);
@@ -30,11 +20,7 @@ const getAllReviews = async () => {
 };
 const getAllCourses = async () => {
   try {
-    const response = await axios.get("api/v1/get-all-courses", {
-      headers: {
-        Authorization: admintoken,
-      },
-    });
+    const response = await instance.get("api/v1/get-all-courses");
     return response;
   } catch (error) {
     console.error("Error fetching courses:", error);
@@ -43,11 +29,7 @@ const getAllCourses = async () => {
 };
 const ApproveCourse = async (body) => {
   try {
-    const response = await axios.put(`api/v1/approve-course`, body, {
-      headers: {
-        Authorization: admintoken,
-      },
-    });
+    const response = await instance.put(`api/v1/approve-course`, body);
     return response;
   } catch (error) {
     console.error("Error approving course:", error);
@@ -56,24 +38,16 @@ const ApproveCourse = async (body) => {
 };
 const StopCourse = async (body) => {
   try {
-    const response = await axios.put(`api/v1/stop-course`, body, {
-      headers: {
-        Authorization: admintoken,
-      },
-    });
+    const response = await instance.put(`api/v1/stop-course`, body);
     return response;
   } catch (error) {
     console.error("Error stopping course:", error);
     throw error;
   }
 };
-const delteCourse = async (body) => {
+const deleteCourse = async (body) => {
   try {
-    const response = await axios.put(`api/v1/delete-course`, body, {
-      headers: {
-        Authorization: admintoken,
-      },
-    });
+    const response = await instance.put(`api/v1/delete-course`, body);
     return response;
   } catch (error) {
     console.error("Error deleting course:", error);
@@ -82,14 +56,7 @@ const delteCourse = async (body) => {
 };
 const getAllCourseOfATeacher = async (teacherId) => {
   try {
-    const response = await axios.get(
-      `api/v1/get-all-course-of-teacher?teacherId=${teacherId}`,
-      {
-        headers: {
-          Authorization: admintoken,
-        },
-      }
-    );
+    const response = await instance.get(`api/v1/get-all-course-of-teacher?teacherId=${teacherId}`);
     return response;
   } catch (error) {
     console.error("Error fetching courses of teacher:", error);
@@ -98,14 +65,7 @@ const getAllCourseOfATeacher = async (teacherId) => {
 };
 const getAnalysisInfo = async (year, month) => {
   try {
-    const response = await axios.get(
-      `api/v1/get-analysis-information?year=${year}&month=${month}`,
-      {
-        headers: {
-          Authorization: admintoken,
-        },
-      }
-    );
+    const response = await instance.get(`api/v1/get-analysis-information?year=${year}&month=${month}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching analysis info:", error);
@@ -114,11 +74,7 @@ const getAnalysisInfo = async (year, month) => {
 };
 const getChartData = async (year) => {
   try {
-    const response = await axios.get(`api/v1/chart-data?year=${year}`, {
-      headers: {
-        Authorization: admintoken,
-      },
-    });
+    const response = await instance.get(`api/v1/chart-data?year=${year}`);
     let data = response.data.data.map((item) => {
       return { y: item.totalCost, x: item.month };
     });
@@ -160,7 +116,7 @@ export {
   getAllCourses,
   ApproveCourse,
   StopCourse,
-  delteCourse,
+  deleteCourse,
   getAllCourseOfATeacher,
   getAnalysisInfo,
   getChartData,

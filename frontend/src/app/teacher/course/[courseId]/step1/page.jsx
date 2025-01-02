@@ -6,7 +6,7 @@ import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
 import { useParams, useRouter } from "next/navigation";
 import{getDetailCourse, putACourse,deleteACourse} from "@/services/teacher";
-import { getAllCourseCategories,getAllCourse } from "@/services/student";
+import { getAllCoursesCategories,getAllCourse } from "@/services/student";
 import { useState,useEffect,useRef,useCallback} from "react";
 import { toast } from 'react-toastify';
 const mdParser = new MarkdownIt(/* Markdown-it options */);
@@ -56,7 +56,7 @@ const Step1 = () => {
     };
    const fetchCourseCategory = async () => {
     console.log(courseId);
-    const response = await getAllCourseCategories();
+    const response = await getAllCoursesCategories();
     if (response.data.length > 0) {
      setCourseCategory(response.data);
    }

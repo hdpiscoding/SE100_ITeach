@@ -6,7 +6,7 @@ import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
 import { useRouter } from "next/navigation";
 import{createNewCourse} from "@/services/teacher";
-import { getAllCourseCategories,getAllCourse } from "@/services/student";
+import { getAllCoursesCategories,getAllCourse } from "@/services/student";
 import { useState,useEffect,useRef} from "react";
 import { toast } from 'react-toastify';
 import {
@@ -55,7 +55,7 @@ const Step1 = () => {
     setIsModalOpen(false);
   };
    const fetchCourseCategory = async () => {
-    const response = await getAllCourseCategories();
+    const response = await getAllCoursesCategories();
    console.log("respone data",response.data);
     if (response.data.length > 0) {
      setCourseCategory(response.data);

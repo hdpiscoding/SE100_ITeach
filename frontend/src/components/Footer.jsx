@@ -2,13 +2,13 @@
 import React from "react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { getAllCourseCategories } from "@/services/student";
+import { getAllCoursesCategories } from "@/services/student";
 import { useRouter } from "next/navigation";
 const Footer = () => {
   const router = useRouter();
   const [courseCategory, setCourseCategory] = useState([]);
    const fetchCourseCategory = async () => {
-      const response = await getAllCourseCategories();
+      const response = await getAllCoursesCategories();
      console.log("respone data",response.data);
       if (response.data.length > 0) {
        setCourseCategory(response.data);

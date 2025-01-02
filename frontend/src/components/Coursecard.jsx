@@ -13,7 +13,16 @@ const Coursecard = ({ type, course }) => {
   const [intro, setIntro] = useState("");
 
   const handleredirect = () => {
-    window.location.href = "course/course-detail?courseId=" + course.id;
+    const role = localStorage.getItem("role");
+    if (role === "RS1") {
+      window.location.href = "student/course/" + course.id;
+    } else if (role === "RS2") {
+      window.location.href = "teacher/course/" + course.id;
+    } else if (role === "RS3") {
+      window.location.href = "admin/course/" + course.id;
+    } else {
+      window.location.href = "course/" + course.id;
+    }
   };
 
   useEffect(() => {

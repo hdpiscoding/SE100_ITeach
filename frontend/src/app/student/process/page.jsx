@@ -21,7 +21,10 @@ const Process = () => {
 
   const isLogin = localStorage.getItem("isLogin");
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
+    
+
+    const getData = async () => {
+      const storedUser = JSON.parse(localStorage.getItem("user"));
     const storedUserId = storedUser.id;
 
     const storedUsername = storedUser.firstName
@@ -30,8 +33,6 @@ const Process = () => {
       ? storedUser.lastName
       : " ";
     setUsername(storedUsername);
-
-    const getData = async () => {
       const response = await getStudentCertificates(storedUserId);
       setCertificates(response.data.certificates);
       setChungchi(response.data.certificates.length);
