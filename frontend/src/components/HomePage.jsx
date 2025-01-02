@@ -23,7 +23,7 @@ const Home = () => {
   const [allCourse, setAllCourse] = useState([]);
   const fetchCourseCategory = async () => {
     const response = await getAllCoursesCategories();
-    setCourseCategory(response.data);
+    setCourseCategory(response.data.data);
   };
   useEffect(() => {
     

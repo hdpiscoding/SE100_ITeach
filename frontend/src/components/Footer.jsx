@@ -7,17 +7,24 @@ import { useRouter } from "next/navigation";
 const Footer = () => {
   const router = useRouter();
   const [courseCategory, setCourseCategory] = useState([]);
-   const fetchCourseCategory = async () => {
+  const fetchCourseCategory = async () => {
+    try {
       const response = await getAllCoursesCategories();
-     console.log("respone data",response.data);
-      if (response.data.length > 0) {
-       setCourseCategory(response.data);
-     }
-    };
-      useEffect(() => {
-         
-         fetchCourseCategory();
-       }, []);
+      const data = response.data.data;
+      
+      if (data && data.length > 0) {
+        setCourseCategory(data);
+        setCourseCategoryId(data[0]?.id || "");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+  
+  useEffect(() => {
+    fetchCourseCategory();
+
+  }, []);
   return (
     <div className="bg-bg w-full px-4 lg:py-8 py-4 md:px-8 lg:px-16 lg:text-xl md:text-lg sm:text-base text-xs">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row  sm:space-y-5 md:space-x-8 lg:space-x-20 xl:space-x-40">

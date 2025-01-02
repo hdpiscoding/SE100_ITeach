@@ -56,11 +56,7 @@ const postAChapter = async (data) => {
 };
 const putAChapter = async (data) => {
   try {
-    const response = await instance.put("api/v1/put-a-chapter", data, {
-      headers: {
-        Authorization: teacherToken,
-      },
-    });
+    const response = await instance.put("api/v1/put-a-chapter", data);
     return response;
   } catch (error) {
     console.error("Error while updating chapter", error);

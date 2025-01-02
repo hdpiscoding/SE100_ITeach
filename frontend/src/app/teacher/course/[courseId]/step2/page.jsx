@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { use } from "react";
 import Image from "next/image";
 import MarkdownIt from "markdown-it";
 import MdEditor from "react-markdown-editor-lite";
@@ -27,6 +27,9 @@ import {
   Edit as EditIcon,
 } from "@mui/icons-material";
 import { set } from "date-fns";
+import { ref, uploadBytes, getDownloadURL, listAll } from "firebase/storage";
+import { storage } from "@/firebase/firebase";
+import { v4 } from "uuid";
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 
 const useCourseState = () => {
@@ -78,6 +81,7 @@ const useLessonState = () => {
   const [videoUrl, setVideoUrl] = useState("");
   const [lessonContent, setLessonContent] = useState(null);
   const [isEditing, setIsEditing] = useState(true);
+  const [videoFile, setVideoFile] =useState(null);
   return {
     activeTab,
     setActiveTab,
@@ -105,6 +109,8 @@ const useLessonState = () => {
     setLessonContent,
     isEditing,
     setIsEditing,
+    videoFile,
+    setVideoFile,
   };
 };
 
@@ -295,9 +301,18 @@ const Step2 = () => {
     lessonState.setLessonTitle(lesson.name);
     if (lesson.content) {
       console.log("Video URL from content:", lesson.content.video);
+      if (lesson.content.video.includes('firebasestorage')) {
+        lessonState.setVideoPreview(lesson.content.video);
+        lessonState.setIsVideoEnabled(true);
+        lessonState.setVideoUrl("");
+      }
+    else
+    {
       lessonState.setVideoUrl(lesson.content.video);
       lessonState.setIsVideoEnabled(false);
-      console.log("URL") // Enable input when there's a video URL
+      lessonState.setVideoPreview("");
+    }
+    
     } else {
     
       lessonState.setIsVideoEnabled(true);
@@ -325,19 +340,25 @@ const Step2 = () => {
       }, 1000); 
     }
   };
-  const handleAddLesson = async () => {
-      if(lessonState.videoPreview===""&&lessonState.videoUrl==="")
+    const validateAddLesson = () => {
+      if(lessonState.videoFile===null&&lessonState.isVideoEnabled)
         {
-          toast.error("Vui lòng nhập đầy đủ thông tin!");
-          return;
+          toast.error("Vui lòng chọn cách nhập video!");
+      
+          return false;
         }
-    const videoValue = !lessonState.isVideoEnabled ? lessonState.videoUrl : "file video";
+    if(lessonState.videoFile===null&&lessonState.videoUrl==="")
+      {
+        toast.error("Vui lòng nhập đầy đủ thông tin!");
+        return false;
+      }
+   
     if (!lessonState.lessonTitle.trim() || !lessonState.lessonDuration.trim()
       || !lessonState.contentHtml.trim() || !lessonState.contentMarkDown.trim()
      || !lessonState.exerciseHtml.trim() || !lessonState.exerciseMarkDown.trim()
     ) {
       toast.error("Vui lòng nhập đầy đủ thông tin!");
-      return;
+      return false;
     }
    
     const isDuplicate = courseState.chapters
@@ -348,141 +369,296 @@ const Step2 = () => {
   
   if (isDuplicate) {
     toast.error("Tên bài học đã tồn tại!");
-    return;
+    return false;
   }
-    try {
-      const response = await postALesson({
-        courseId: courseId,
-        chapter: nowChapterID,
-        name: lessonState.lessonTitle,
-        studyTime: parseInt(lessonState.lessonDuration),
-        video: videoValue,
-        contentHtml: lessonState.contentHtml,
-        contentMarkDown: lessonState.contentMarkDown,
-        exerciseHtml: lessonState.exerciseHtml,
-        exerciseMarkDown: lessonState.exerciseMarkDown,
-      });
-     
-      if (response && response.data) {
-        lessonState.setHidden(true);
-        const newLesson = {
-          id: response.data.lessonId,
-          name: lessonState.lessonTitle,
-          studyTime: lessonState.lessonDuration,
-          content:
-          {
-            lessonId: nowLessonID,
-          video: videoValue,
-          contentHtml: lessonState.contentHtml,
-          contentMarkDown: lessonState.contentMarkDown,
-          exerciseHtml: lessonState.exerciseHtml,
-          exerciseMarkDown: lessonState.exerciseMarkDown,
-          },
-        };
-
-        courseState.setChapters(
-          courseState.chapters.map((chapter) =>
-            chapter.id === nowChapterID
-              ? {
-                  ...chapter,
-                  lessons: [...chapter.lessons, newLesson],
-                }
-              : chapter
-          )
-        );
-        console.log("Chapters:", courseState.chapters);
-        lessonState.setLessonTitle("");
-        lessonState.setLessonDuration("");
-        lessonState.setContentHtml("");
-        lessonState.setContentMarkDown("");
-        lessonState.setExerciseHtml("");
-        lessonState.setExerciseMarkDown("");
-        lessonState.setVideoUrl("");
-        lessonState.setVideoPreview("");
-        toast.success("Thêm bài học mới thành công!");
+  return true;
+    };
+  const handleAddLesson = async () => {
+    console.log("Add lesson");
+     if(!validateAddLesson())
+     {
+        return;
+     }
+      if(lessonState.isVideoEnabled)
+      {
+        console.log("videofile:",lessonState.videoFile);
+        const videoRef = ref(storage, `videos/${lessonState.videoFile.name + v4()}`);
+        uploadBytes(videoRef, lessonState.videoFile).then((snapshot) => {
+          getDownloadURL(snapshot.ref).then(async(url) => {
+          console.log("URL:", url);
+          lessonState.setVideoPreview(url);
+          console.log("0")
+          try {
+            console.log("1")
+            const response = await postALesson({
+              courseId: courseId,
+              chapter: nowChapterID,
+              name: lessonState.lessonTitle,
+              studyTime: parseInt(lessonState.lessonDuration),
+              video: url,
+              contentHtml: lessonState.contentHtml,
+              contentMarkDown: lessonState.contentMarkDown,
+              exerciseHtml: lessonState.exerciseHtml,
+              exerciseMarkDown: lessonState.exerciseMarkDown,
+            });
+            console.log(response);
+            console.log(courseId);
+            console.log(nowChapterID);
+            console.log(lessonState.lessonTitle);
+            console.log(lessonState.lessonDuration);
+            console.log(url);
+            console.log(lessonState.contentHtml);
+            console.log(lessonState.contentMarkDown);
+            console.log(lessonState.exerciseHtml);
+            console.log(lessonState.exerciseMarkDown);
+            if (response && response.data.errCode === 0 ) {
+              console.log("2")
+              lessonState.setHidden(true);
+              console.log("2.1")
+              const newLesson = {
+                id: response.data.lessonId,
+                name: lessonState.lessonTitle,
+                studyTime: lessonState.lessonDuration,
+                content:
+                {
+                lessonId: nowLessonID,
+                video:url,
+                contentHtml: lessonState.contentHtml,
+                contentMarkDown: lessonState.contentMarkDown,
+                exerciseHtml: lessonState.exerciseHtml,
+                exerciseMarkDown: lessonState.exerciseMarkDown,
+                },
+              };
+              console.log("3")
+              courseState.setChapters(
+                courseState.chapters.map((chapter) =>
+                  chapter.id === nowChapterID
+                    ? {
+                        ...chapter,
+                        lessons: [...chapter.lessons, newLesson],
+                      }
+                    : chapter
+                )
+              );
+             console.log("chay thanh cong")
+              toast.success("Thêm bài học mới thành công!");
+            }
+          } catch (error) {
+            console.log("co loi ne")
+            console.log("Error:", error);
+            toast.error("Thêm bài học mới thất bại!");
+          }
+          });
+        });
+      
       }
-    } catch (error) {
-      console.log("Error:", error);
-      toast.error("Thêm bài học mới thất bại!");
-    }
+      else{
+      
+      
+        try {
+          const response = await postALesson({
+            courseId: courseId,
+            chapter: nowChapterID,
+            name: lessonState.lessonTitle,
+            studyTime: parseInt(lessonState.lessonDuration),
+            video: lessonState.videoUrl,
+            contentHtml: lessonState.contentHtml,
+            contentMarkDown: lessonState.contentMarkDown,
+            exerciseHtml: lessonState.exerciseHtml,
+            exerciseMarkDown: lessonState.exerciseMarkDown,
+          });
+         
+          if (response && response.data) {
+            lessonState.setHidden(true);
+            const newLesson = {
+              id: response.data.lessonId,
+              name: lessonState.lessonTitle,
+              studyTime: lessonState.lessonDuration,
+              content:
+              {
+                lessonId: nowLessonID,
+              video: lessonState.videoUrl,
+              contentHtml: lessonState.contentHtml,
+              contentMarkDown: lessonState.contentMarkDown,
+              exerciseHtml: lessonState.exerciseHtml,
+              exerciseMarkDown: lessonState.exerciseMarkDown,
+              },
+            };
+    
+            courseState.setChapters(
+              courseState.chapters.map((chapter) =>
+                chapter.id === nowChapterID
+                  ? {
+                      ...chapter,
+                      lessons: [...chapter.lessons, newLesson],
+                    }
+                  : chapter
+              )
+            );
+            console.log("Chapters:", courseState.chapters);
+            toast.success("Thêm bài học mới thành công!");
+          }
+        } catch (error) {
+          console.log("Error:", error);
+          toast.error("Thêm bài học mới thất bại!");
+        }
+      }
+     
+    
+
   };
+  const validateEditLesson = () => {
+    if(lessonState.videoFile===null&&lessonState.isVideoEnabled)
+      {
+        toast.error("Vui lòng chọn cách nhập video!");
+    
+        return false;
+      }
+  if(lessonState.videoFile===null&&lessonState.videoUrl==="")
+    {
+      toast.error("Vui lòng nhập đầy đủ thông tin!");
+      return false;
+    }
+  if (!lessonState.lessonTitle.trim() || !String(lessonState.lessonDuration).trim()
+    || !lessonState.contentHtml.trim() || !lessonState.contentMarkDown.trim()
+   || !lessonState.exerciseHtml.trim() || !lessonState.exerciseMarkDown.trim()) {
+    toast.error("Vui lòng nhập đầy đủ thông tin!");
+    return false;
+  }
+  
+  const isDuplicate = courseState.chapters
+  .filter((chapter) => chapter.id === nowChapterID) // Chỉ xét chapter có id là nowChapterID
+  .some((chapter) =>
+    chapter.lessons.some((lesson) =>
+      lesson.id !== nowLessonID && lesson.name.trim() === lessonState.lessonTitle.trim()
+    )
+  );
+
+if (isDuplicate) {
+  toast.error("Tên bài học đã tồn tại!");
+  return false;
+}
+return true;
+  }
   const handleSaveEditLesson = async () => {
-        if(lessonState.videoPreview===""&&lessonState.isVideoEnabled)
+        if(!validateEditLesson())
         {
-          toast.error("Vui lòng chọn cách nhập video!");
+          console.log("validate false");
           return;
         }
-    if(lessonState.videoPreview===""&&lessonState.videoUrl==="")
-      {
-        toast.error("Vui lòng nhập đầy đủ thông tin!");
-        return;
-      }
-    const videoValue = !lessonState.isVideoEnabled ? lessonState.videoUrl : "";
-    if (!lessonState.lessonTitle.trim() || !String(lessonState.lessonDuration).trim()
-      || !lessonState.contentHtml.trim() || !lessonState.contentMarkDown.trim()
-     || !lessonState.exerciseHtml.trim() || !lessonState.exerciseMarkDown.trim()
-    ||  !lessonState.videoUrl.trim()) {
-      toast.error("Vui lòng nhập đầy đủ thông tin!");
-      return;
-    }
-    
-    const isDuplicate = courseState.chapters
-    .filter((chapter) => chapter.id === nowChapterID) // Chỉ xét chapter có id là nowChapterID
-    .some((chapter) =>
-      chapter.lessons.some((lesson) =>
-        lesson.id !== nowLessonID && lesson.name.trim() === lessonState.lessonTitle.trim()
-      )
-    );
-  
-  if (isDuplicate) {
-    toast.error("Tên bài học đã tồn tại!");
-    return;
-  }
-    try {
-      const response = await putALesson({
-        id: nowLessonID,
-        courseId: courseId,
-        chapter: nowChapterID,
-        name: lessonState.lessonTitle,
-        studyTime: parseInt(lessonState.lessonDuration),
-        video: videoValue,
-        contentHtml: lessonState.contentHtml,
-        contentMarkDown: lessonState.contentMarkDown,
-        exerciseHtml: lessonState.exerciseHtml,
-        exerciseMarkDown: lessonState.exerciseMarkDown,
-      });
-      if (response && response.data) {
-        const updatedLesson = {
-          id: nowLessonID,
-          name: lessonState.lessonTitle,
-          studyTime: lessonState.lessonDuration,
-          content:
+        if(lessonState.isVideoEnabled)
+        {
+          console.log("chon video tu foler")
+          if(lessonState.videoFile)
           {
-            lessonId: nowLessonID,
-          video: videoValue,
-          contentHtml: lessonState.contentHtml,
-          contentMarkDown: lessonState.contentMarkDown,
-          exerciseHtml: lessonState.exerciseHtml,
-          exerciseMarkDown: lessonState.exerciseMarkDown,
-          },
-        };
-        courseState.setChapters(
-          courseState.chapters.map((chapter) => ({
-            ...chapter,
-            lessons: chapter.lessons.map((lesson) =>
-              lesson.id === nowLessonID
-                ? updatedLesson
-                : lesson
-            ),
-          }))
-        );
+            console.log("videofile:",lessonState.videoFile);
+          }
+          else{
+            console.log(" no videofile:");
+          }
+          const videoRef = ref(storage, `videos/${lessonState.videoFile.name + v4()}`);
+          uploadBytes(videoRef, lessonState.videoFile).then((snapshot) => {
+            getDownloadURL(snapshot.ref).then(async(url) => {
+              console.log("URL edit:", url);
+            lessonState.setVideoPreview(url);
+            try {
+              const response = await putALesson({
+                id: nowLessonID,
+                courseId: courseId,
+                chapter: nowChapterID,
+                name: lessonState.lessonTitle,
+                studyTime: parseInt(lessonState.lessonDuration),
+                video: url,
+                contentHtml: lessonState.contentHtml,
+                contentMarkDown: lessonState.contentMarkDown,
+                exerciseHtml: lessonState.exerciseHtml,
+                exerciseMarkDown: lessonState.exerciseMarkDown,
+              });
+              if (response && response.data) {
+                const updatedLesson = {
+                  id: nowLessonID,
+                  name: lessonState.lessonTitle,
+                  studyTime: lessonState.lessonDuration,
+                  content:
+                  {
+                    lessonId: nowLessonID,
+                  video: url,
+                  contentHtml: lessonState.contentHtml,
+                  contentMarkDown: lessonState.contentMarkDown,
+                  exerciseHtml: lessonState.exerciseHtml,
+                  exerciseMarkDown: lessonState.exerciseMarkDown,
+                  },
+                };
+                courseState.setChapters(
+                  courseState.chapters.map((chapter) => ({
+                    ...chapter,
+                    lessons: chapter.lessons.map((lesson) =>
+                      lesson.id === nowLessonID
+                        ? updatedLesson
+                        : lesson
+                    ),
+                  }))
+                );
+                
+                toast.success("Cập nhật bài học thành công!");
+              }
+            } catch (error) {
+              console.error("Error:", error);
+              toast.error("Cập nhật bài học thất bại!");
+            }
+            });
+          });
+        }
+        else{
+          console.log("chon video tu link")
+          try {
+            const response = await putALesson({
+              id: nowLessonID,
+              courseId: courseId,
+              chapter: nowChapterID,
+              name: lessonState.lessonTitle,
+              studyTime: parseInt(lessonState.lessonDuration),
+              video: lessonState.videoUrl,
+              contentHtml: lessonState.contentHtml,
+              contentMarkDown: lessonState.contentMarkDown,
+              exerciseHtml: lessonState.exerciseHtml,
+              exerciseMarkDown: lessonState.exerciseMarkDown,
+            });
+            if (response && response.data) {
+              const updatedLesson = {
+                id: nowLessonID,
+                name: lessonState.lessonTitle,
+                studyTime: lessonState.lessonDuration,
+                content:
+                {
+                  lessonId: nowLessonID,
+                video: lessonState.videoUrl,
+                contentHtml: lessonState.contentHtml,
+                contentMarkDown: lessonState.contentMarkDown,
+                exerciseHtml: lessonState.exerciseHtml,
+                exerciseMarkDown: lessonState.exerciseMarkDown,
+                },
+              };
+              courseState.setChapters(
+                courseState.chapters.map((chapter) => ({
+                  ...chapter,
+                  lessons: chapter.lessons.map((lesson) =>
+                    lesson.id === nowLessonID
+                      ? updatedLesson
+                      : lesson
+                  ),
+                }))
+              );
+              
+              toast.success("Cập nhật bài học thành công!");
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            toast.error("Cập nhật bài học thất bại!");
+          }
+        }
         
-        toast.success("Cập nhật bài học thành công!");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      toast.error("Cập nhật bài học thất bại!");
-    }
+   
   };
   const handleDeleteLesson = async ( e) => {
     let lessonId=nowLessonID;
@@ -505,6 +681,7 @@ const Step2 = () => {
   };
   // Handle Video
   const handleImageClick = () => {
+
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -513,7 +690,7 @@ const Step2 = () => {
   const handleVideoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-     
+     lessonState.setVideoFile(file);
       if (lessonState.videoPreview) {
         URL.revokeObjectURL(lessonState.videoPreview);
       }
@@ -659,12 +836,19 @@ const Step2 = () => {
                   )}
                 </div>
                 {lessonState.videoPreview && lessonState.isVideoEnabled && (
-                  <button
-                    onClick={handleImageClick}
-                    className="mt-2 px-4 py-2 bg-stroke1 text-white rounded-md hover:bg-opacity-90"
-                  >
-                    Thay đổi video
-                  </button>
+                 <div className="space-x-3">
+                    <button 
+                      onClick={handleImageClick}
+                      className="mt-2 px-4 py-2 bg-stroke1 text-white rounded-md hover:bg-opacity-90"
+                    >
+                      Thay đổi video
+                    </button>
+                    <button
+                    onClick={()=>lessonState.setVideoPreview("")}
+                     className="mt-2 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-opacity-90">
+                      Xóa video
+                    </button>
+                 </div>
                 )}
                 <div className="mt-4 flex items-end">
                   <input

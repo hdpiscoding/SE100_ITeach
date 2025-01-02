@@ -54,24 +54,30 @@ const Step1 = () => {
   const handleCancelDelete = () => {
     setIsModalOpen(false);
   };
-   const fetchCourseCategory = async () => {
-    const response = await getAllCoursesCategories();
-   console.log("respone data",response.data);
-    if (response.data.length > 0) {
-     setCourseCategory(response.data);
-     setCourseCategoryId(response.data[0].id);
-   }
+  const fetchCourseCategory = async () => {
+    try {
+      const response = await getAllCoursesCategories();
+      const data = response.data.data;
+      
+      if (data && data.length > 0) {
+        setCourseCategory(data);
+        setCourseCategoryId(data[0]?.id || "");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
-    useEffect(() => {
-       
-       fetchCourseCategory();
-     }, []);
+  
+  useEffect(() => {
+    fetchCourseCategory();
+
+  }, []);
       const fetchAllCourse = async () => {
          const response = await getAllCourse();
         
          setAllCourse(response.data);
        };
-       console.log(courseCategory);
+    
        useEffect(() => {
         
          fetchAllCourse();
@@ -195,7 +201,7 @@ const Step1 = () => {
               <select
               id="courseCategory"
               className="w-full h-[40px] border border-gray rounded-md p-2 bg-white"
-            value={courseCategoryId}
+              value={courseCategoryId}
                 onChange={(e) => setCourseCategoryId(e.target.value)} 
                   >
                           {courseCategory.map((category) => (

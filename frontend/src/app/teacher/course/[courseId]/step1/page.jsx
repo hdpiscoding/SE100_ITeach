@@ -54,12 +54,18 @@ const Step1 = () => {
     const handleCancelDelete = () => {
       setIsModalOpen(false);
     };
-   const fetchCourseCategory = async () => {
-    console.log(courseId);
-    const response = await getAllCoursesCategories();
-    if (response.data.length > 0) {
-     setCourseCategory(response.data);
-   }
+  const fetchCourseCategory = async () => {
+    try {
+      const response = await getAllCoursesCategories();
+      const data = response.data.data;
+      
+      if (data && data.length > 0) {
+        setCourseCategory(data);
+        setCourseCategoryId(data[0]?.id || "");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
     useEffect(() => {
        
