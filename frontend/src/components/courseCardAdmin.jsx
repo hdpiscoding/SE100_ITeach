@@ -1,7 +1,7 @@
 'use client';
 import React from "react";
 import Image from "next/image";
-import { ApproveCourse, StopCourse, delteCourse } from "@/services/admin";
+import { ApproveCourse, StopCourse, deleteCourse } from "../services/admin";
 import {useRouter} from "next/navigation";
 
 const CourseCardAdmin = ({ course, type }) => {
@@ -15,9 +15,9 @@ const CourseCardAdmin = ({ course, type }) => {
     window.location.reload();
   };
   const handleDelete = async () => {
-    await delteCourse({ courseId: course.id });
+    //await deleteCourse({ courseId: course.id });
     if (window.confirm("Are you sure you want to delete this course?")) {
-      await delteCourse({ courseId: course.id });
+      await deleteCourse({ courseId: course.id });
     }
     window.location.reload();
   };

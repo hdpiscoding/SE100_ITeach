@@ -16,12 +16,29 @@ const Package = ({courseName, cost, discount, intro}) => {
             style={{ objectFit: 'cover' }}
           />
           <div className='bg-white rounded-xl absolute bottom-4 right-4 p-2 shadow-sm'>
-            <span className='text-orange font-semibold text-sm md:text-base lg:text-lg'> {discount*cost} đ</span>
-            <span className='line-through text-gray-450 ml-2 text-sm md:text-base lg:text-lg'>{cost} đ</span>
+            <span className='text-orange font-semibold text-sm md:text-base lg:text-lg'>
+              {new Intl.NumberFormat("vi-VN", {
+                style: "currency",
+                currency: "VND",
+              }).format(Number(((cost ?? 0) * (1 - (discount ?? 0) / 100)).toFixed(0)))}
+            </span>
+
+            {discount
+                ?
+                <span className='line-through text-gray-450 ml-2 text-sm md:text-base lg:text-lg'>
+                  {new Intl.NumberFormat("vi-VN", {
+                    style: "currency",
+                    currency: "VND",
+                  }).format(cost ?? 0)}
+                </span>
+                :
+                <div></div>
+            }
+
           </div>
         </div>
 
-       
+
         <div className='col-span-4 p-4 md:p-6 lg:p-8 flex flex-col gap-3'>
           <p className='text-xs md:text-sm lg:text-lg text-gray-600'>
             1-28 July 2022
