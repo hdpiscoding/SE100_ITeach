@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const instance = axios.create({
-  baseURL: "http://localhost:8080/",
+  baseURL: "https://iteach-d4vn.onrender.com/",
   timeout: 70000,
   headers: {
     "Content-Type": "application/json; charset=utf-8",
