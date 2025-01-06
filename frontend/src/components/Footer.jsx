@@ -14,7 +14,6 @@ const Footer = () => {
       
       if (data && data.length > 0) {
         setCourseCategory(data);
-        setCourseCategoryId(data[0]?.id || "");
       }
     } catch (error) {
       console.error("Error:", error);

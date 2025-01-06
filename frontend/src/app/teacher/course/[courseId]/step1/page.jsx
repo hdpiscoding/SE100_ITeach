@@ -9,7 +9,7 @@ import{getDetailCourse, putACourse,deleteACourse} from "@/services/teacher";
 import { getAllCoursesCategories,getAllCourse } from "@/services/student";
 import { useState,useEffect,useRef,useCallback} from "react";
 import { toast } from 'react-toastify';
-const mdParser = new MarkdownIt(/* Markdown-it options */);
+const mdParser = new MarkdownIt();
 import {
   ref,
   uploadBytes,
@@ -41,6 +41,7 @@ const Step1 = () => {
    const [courseInfo, setCourseInfo] = useState({});
      const [isModalOpen, setIsModalOpen] = useState(false);
      const [fileImage, setFileImage] = useState(null);
+     const [discount, setDiscount] = useState("");
      const handleDeleteClick = () => {
       setIsModalOpen(true);
     };
@@ -137,6 +138,7 @@ const Step1 = () => {
       setPrice(response.data.data.course.cost);
       setIntro(response.data.data.course.intro);
       setMarkdown(response.data.data.course.markDown);
+      setDiscount(response.data.data.course.discount);
     }
   } catch (error) {
     console.error("Lỗi khi tải thông tin khóa học:", error);
@@ -201,7 +203,8 @@ const handlePutCourse = async () => {
        markDown: markdown,
        teacherId: teacherId,
        anhBia: imagePreview,
-       gioiThieu:editorContent.current
+       gioiThieu:editorContent.current,
+        discount:discount
    
      };
      console.log("data",data);
@@ -256,11 +259,11 @@ const handleDeleteCourse = async () => {
             </span>
           </div>
 
-          <div className="grid lg:grid-cols-5 md:grid-cols-3 grid-cols-1 space-x-3 md:space-x-5 lg:space-x-7 ">
+          <div className="grid lg:grid-cols-3 md:grid-cols-3 grid-cols-1 space-x-3 md:space-x-5 lg:space-x-7 ">
             <div className="lg:col-span-2 md:col-span-2 col-span-2">
               <label htmlFor="name">Tên khóa học</label>
               <input
-              value={courseName}
+                value={courseName}
                 onChange={(e) => setCourseName(e.target.value)}
                 type="text"
                 id="name"
@@ -271,8 +274,8 @@ const handleDeleteCourse = async () => {
               <label htmlFor="type">Loại</label>
               <select
               id="courseCategory"
-              className="w-full h-[40px] border border-gray rounded-md p-2 bg-white cursor-pointer"
-            value={courseCategoryId}
+              className="w-full h-[40px] border border-gray rounded-md p-2 bg-white"
+              value={courseCategoryId}
                 onChange={(e) => setCourseCategoryId(e.target.value)} 
                   >
                           {courseCategory.map((category) => (
@@ -282,30 +285,63 @@ const handleDeleteCourse = async () => {
                     ))}
             </select>
             </div>
-            <div className="col-span-1 ">
-              <label htmlFor="type">Mức độ</label>
-              <select 
-                id="type"
-                className="w-full h-[40px] border border-gray rounded-md p-2 bg-white cursor-pointer"
-              >
-                 value={level}
-                 onChange={(e) => setLevel(e.target.value)}
-                <option value="begin">Cơ bản</option>
-                <option value="intermediate">Trung cấp</option>
-                <option value="advanced">Nâng cao</option>
-              </select>
-            </div>
-            <div className="col-span-1">
-              <label htmlFor="name">Giá</label>
-              <input
-                onChange={(e) => setPrice(e.target.value)}
-              value={price}
-                type="number"
-                id="name"
-                className="w-full h-[40px] border border-gray rounded-md p-2"
-              />
-            </div>
+
           </div>
+          <div className="grid lg:grid-cols-3 md:grid-cols-3 grid-cols-1 space-x-3 md:space-x-5 lg:space-x-7">
+              <div className="col-span-1">
+                <label htmlFor="type">Mức độ</label>
+                <select
+                  id="type"
+                  className="w-full h-[40px] border border-gray rounded-md p-2 bg-white"
+                >
+                   value={level}
+                   onChange={(e) => setLevel(e.target.value)}
+                  <option value="begin">Cơ bản</option>
+                  <option value="intermediate">Trung cấp</option>
+                  <option value="advanced">Nâng cao</option>
+                </select>
+              </div>
+              <div className="col-span-1">
+                <label htmlFor="name">Giá</label>
+                <input
+                  onChange={(e) => {
+                   
+                    const value = e.target.value;
+                    const formattedValue = value ? parseInt(value, 10).toString() : '';
+                    setPrice(formattedValue);
+                  }}
+                  value={price}
+                  type="number"
+                  id="name"
+                  min="0"
+                  className="w-full h-[40px] border border-gray rounded-md p-2"
+                  onKeyDown={(e) => {
+                   
+                    if (e.key === '-' || e.key === '+' || e.key === 'e') {
+                      e.preventDefault();
+                    }
+                  }}
+                />
+              </div>
+              <div className="col-span-1">
+                <label htmlFor="name">Giảm Giá</label>
+                <input
+                  onChange={(e) => setDiscount(e.target.value)}
+                  value={discount}
+                  type="number"
+                  id="name"
+                  min="0"
+                  max="100"
+                  className="w-full h-[40px] border border-gray rounded-md p-2"
+                  onKeyDown={(e) => {
+                   
+                    if (e.key === '-' || e.key === '+' || e.key === 'e') {
+                      e.preventDefault();
+                    }
+                  }}
+                />
+              </div>
+  </div>
           <div className="grid lg:grid-cols-5 md:grid-cols-7 grid-cols-7 space-x-3 md:space-x-5 lg:space-x-7">
             <div className="lg:col-span-3 md:col-span-5 col-span-5">
               <label htmlFor="name">Mô tả</label>

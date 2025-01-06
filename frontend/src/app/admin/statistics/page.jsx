@@ -91,7 +91,7 @@ const Statistics = () => {
       <div className="grid grid-cols-[0.5fr_11fr_0.5fr]">
         <div></div>
         <div className="space-y-16">
-          <div className="grid grid-cols-5 p-4 lg:gap-6 md:gap-4 sm:gap-3 gap-2 lg:text-2xl md:text-lg sm:text-base text-base lg:h-[60vh] md:h-[60vh] sm:h-[50vh] h-[50vh]">
+          <div className="grid grid-cols-5 p-4 lg:gap-6 md:gap-4 sm:gap-3 gap-2 lg:text-2xl md:text-lg sm:text-base text-base min-h-[60vh] overflow-auto">
             <div className="border p-4 flex flex-col items-center justify-around col-span-2 rounded-lg border-SignUp h-full ">
              <div className="flex flex-col items-center justify-center h-full space-y-3">
                 <div className=" font-bold text-9xl  ">{data.studentsThisMonth}</div>
@@ -166,9 +166,10 @@ const Statistics = () => {
           </h1>
           <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-2 gap-4 justify-items-center">
           {courses
-          // .filter((course) => course.courseStatus === "CS1")
+          .filter((course) => course.courseStatus === "CS1")
           .map((course) => (
       <Coursecard
+       anhBia={course.anhBia}
         key={course.id}
         courseName={course.courseName}
         cost={course.cost}

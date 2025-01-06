@@ -30,7 +30,7 @@ import { set } from "date-fns";
 import { ref, uploadBytes, getDownloadURL, listAll } from "firebase/storage";
 import { storage } from "@/firebase/firebase";
 import { v4 } from "uuid";
-const mdParser = new MarkdownIt(/* Markdown-it options */);
+const mdParser = new MarkdownIt();
 
 const useCourseState = () => {
   const [courseInfo, setCourseInfo] = useState(null);
@@ -158,15 +158,36 @@ const Step2 = () => {
   };
   const deleteChapter = async (id) => {
     try {
+      
+      const chapterToDelete = courseState.chapters.find(
+        (chapter) => chapter.id === id
+      );
+  
+      if (chapterToDelete && chapterToDelete.lessons) {
+      
+        for (const lesson of chapterToDelete.lessons) {
+          try {
+            await deleteALesson(lesson.id);
+          } catch (error) {
+            console.error(`Failed to delete lesson ${lesson.id}:`, error);
+          }
+        }
+      }
+  
+     
       const response = await deleteAChapter(id);
       if (response.data) {
-        toast.success("Xóa chương thành công!");
+        toast.success("Xóa chương  thành công!");
+        lessonState.setHidden(true);
+        lessonState.contentMarkDown("");
+        lessonState.setExerciseMarkDown("");
         courseState.setChapters(
           courseState.chapters.filter((chapter) => chapter.id !== id)
         );
       }
     } catch (error) {
       toast.error("Xóa chương thất bại!");
+      console.error("Delete chapter error:", error);
     }
   };
   const handleDeleteChapter = (id, e) => {
@@ -316,7 +337,7 @@ const Step2 = () => {
     } else {
     
       lessonState.setIsVideoEnabled(true);
-      console.log("No URL") // Enable input when there's a video URL
+      console.log("No URL") 
     }
     lessonState.setLessonDuration(lesson.studyTime);
     if (lesson.content) {
@@ -739,6 +760,10 @@ return true;
     setNowChapterID(chapterId);
     console.log("Chapter ID:", chapterId);
     }
+    const handleComplete=()=>{
+      router.push("/teacher/course");
+      toast.success("Cập nhật khóa học thành công!");
+    }
   return (
     <div className="mb-20">
       <div className="space-y-3 md:space-y-5 lg:space-y-7 grid grid-cols-[0.5fr_11fr_0.5fr]">
@@ -779,8 +804,19 @@ return true;
                     type="number"
                     id="name"
                     value={lessonState.lessonDuration}
-                    onChange={(e) => lessonState.setLessonDuration(e.target.value)}
+                    onChange={(e) => {
+                     
+                      const value = e.target.value;
+                      const formattedValue = value ? parseInt(value, 10).toString() : '';
+                     lessonState.setLessonDuration(formattedValue);
+                    }}
                     className="w-full h-[40px] border border-gray rounded-md p-2"
+                    onKeyDown={(e) => {
+                      
+                      if (e.key === '-' || e.key === '+' || e.key === 'e') {
+                        e.preventDefault();
+                      }
+                    }}
                   />
                   <span className="ml-2">phút</span>
                 </div>
@@ -878,7 +914,7 @@ return true;
                   <span className="p-3"> Đang tải dữ liệu ....</span>
                 ) : (
                   <div className="border border-gray rounded-md p-5">
-                    {/* Hiển thị các chương hiện có */}
+                   
                     {courseState.chapters.map((chapter, index) => (
                       <div
                         key={chapter.id}
@@ -941,7 +977,7 @@ return true;
                                 </div>
                               ))}
 
-                            {/* Nút thêm lesson mới */}
+                          
                             <div className="flex justify-between items-center p-2 mt-2 cursor-pointer hover:bg-gray-100 border-t">
                               <span className="text-sm text-gray-500">
                                 Thêm bài học mới
@@ -987,7 +1023,7 @@ return true;
                         </div>
                       </div>
                     )}
-                    {/* Nút thêm chương mới */}
+                    
                     <div className="mt-4">
                       <button
                         onClick={xuLyThemChuong}
@@ -997,7 +1033,7 @@ return true;
                       </button>
                     </div>
 
-                    {/* Form thêm chương mới */}
+                   
                     {chapterState.showNewChapterForm && (
                       <div className="mt-4 p-4 border rounded-md">
                         <input
@@ -1104,7 +1140,7 @@ return true;
             </div>
           )}
             <button
-              onClick={() => router.push("/teacher/course")}
+              onClick={handleComplete}
               className="bg-orange text-white px-10 py-2 rounded-md hover:bg-orangeHover hover:border-orangeHover"
             >
               Hoàn thành

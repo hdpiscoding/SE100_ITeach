@@ -30,7 +30,7 @@ import { set } from "date-fns";
 import { ref, uploadBytes, getDownloadURL, listAll } from "firebase/storage";
 import { storage } from "@/firebase/firebase";
 import { v4 } from "uuid";
-const mdParser = new MarkdownIt(/* Markdown-it options */);
+const mdParser = new MarkdownIt();
 
 const useCourseState = () => {
   const [courseInfo, setCourseInfo] = useState(null);
@@ -157,15 +157,36 @@ const Step2 = () => {
   };
   const deleteChapter = async (id) => {
     try {
+      
+      const chapterToDelete = courseState.chapters.find(
+        (chapter) => chapter.id === id
+      );
+  
+      if (chapterToDelete && chapterToDelete.lessons) {
+      
+        for (const lesson of chapterToDelete.lessons) {
+          try {
+            await deleteALesson(lesson.id);
+          } catch (error) {
+            console.error(`Failed to delete lesson ${lesson.id}:`, error);
+          }
+        }
+      }
+  
+     
       const response = await deleteAChapter(id);
       if (response.data) {
-        toast.success("Xóa chương thành công!");
+        toast.success("Xóa chương  thành công!");
+        lessonState.setHidden(true);
+        lessonState.contentMarkDown("");
+        lessonState.setExerciseMarkDown("");
         courseState.setChapters(
           courseState.chapters.filter((chapter) => chapter.id !== id)
         );
       }
     } catch (error) {
       toast.error("Xóa chương thất bại!");
+      console.error("Delete chapter error:", error);
     }
   };
   const handleDeleteChapter = (id, e) => {
@@ -231,7 +252,7 @@ const Step2 = () => {
       return;
     }
 
-    // Check for duplicate names
+ 
     const chapterExists = courseState.chapters.some(
       (chapter) =>
         chapter.chapterName.toLowerCase() ===
@@ -271,7 +292,7 @@ const Step2 = () => {
       toast.error("Cập nhật chương thất bại!");
     }
   };
-  //Lesson API
+ 
  const handleEditLesson = (lesson,chapterId) => {
     setNowChapterID(chapterId);
     setNowLessonID(lesson.id);
@@ -298,7 +319,7 @@ const Step2 = () => {
     } else {
     
       lessonState.setIsVideoEnabled(true);
-      console.log("No URL") // Enable input when there's a video URL
+      console.log("No URL") 
     }
     lessonState.setLessonDuration(lesson.studyTime);
     if (lesson.content) {
@@ -344,7 +365,7 @@ const Step2 = () => {
     }
    
     const isDuplicate = courseState.chapters
-    .filter((chapter) => chapter.id === nowChapterID) // Chỉ xét chapter có id là nowChapterID
+    .filter((chapter) => chapter.id === nowChapterID) 
     .some((chapter) =>
       chapter.lessons.some((lesson) => lesson.name.trim() === lessonState.lessonTitle.trim())
     );
@@ -495,7 +516,7 @@ const Step2 = () => {
     }
     
     const isDuplicate = courseState.chapters
-    .filter((chapter) => chapter.id === nowChapterID) // Chỉ xét chapter có id là nowChapterID
+    .filter((chapter) => chapter.id === nowChapterID) 
     .some((chapter) =>
       chapter.lessons.some((lesson) =>
         lesson.id !== nowLessonID && lesson.name.trim() === lessonState.lessonTitle.trim()
@@ -748,8 +769,19 @@ const Step2 = () => {
                     type="number"
                     id="name"
                     value={lessonState.lessonDuration}
-                    onChange={(e) => lessonState.setLessonDuration(e.target.value)}
+                    onChange={(e) => {
+                      
+                      const value = e.target.value;
+                      const formattedValue = value ? parseInt(value, 10).toString() : '';
+                     lessonState.setLessonDuration(formattedValue);
+                    }}
                     className="w-full h-[40px] border border-gray rounded-md p-2"
+                    onKeyDown={(e) => {
+                     
+                      if (e.key === '-' || e.key === '+' || e.key === 'e') {
+                        e.preventDefault();
+                      }
+                    }}
                   />
                   <span className="ml-2">phút</span>
                 </div>
@@ -847,7 +879,7 @@ const Step2 = () => {
                   <span className="p-3"> Đang tải dữ liệu ....</span>
                 ) : (
                   <div className="border border-gray rounded-md p-5">
-                    {/* Hiển thị các chương hiện có */}
+                    
                     {courseState.chapters.map((chapter, index) => (
                       <div
                         key={chapter.id}
@@ -910,7 +942,7 @@ const Step2 = () => {
                                 </div>
                               ))}
 
-                            {/* Nút thêm lesson mới */}
+                           
                             <div className="flex justify-between items-center p-2 mt-2 cursor-pointer hover:bg-gray-100 border-t">
                               <span className="text-sm text-gray-500">
                                 Thêm bài học mới
@@ -956,7 +988,7 @@ const Step2 = () => {
                         </div>
                       </div>
                     )}
-                    {/* Nút thêm chương mới */}
+                   
                     <div className="mt-4">
                       <button
                         onClick={xuLyThemChuong}
@@ -966,7 +998,7 @@ const Step2 = () => {
                       </button>
                     </div>
 
-                    {/* Form thêm chương mới */}
+                  
                     {chapterState.showNewChapterForm && (
                       <div className="mt-4 p-4 border rounded-md">
                         <input

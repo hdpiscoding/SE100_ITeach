@@ -1,5 +1,6 @@
 import teacherService from "../service/teacherService";
 let handleCreateNewCourse = async (req, res) => {
+  console.log("controller");
   if (
     !req.body.courseName ||
     !req.body.courseCategoryId ||

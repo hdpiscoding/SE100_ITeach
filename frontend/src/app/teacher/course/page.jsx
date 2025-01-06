@@ -129,6 +129,7 @@ const CourseTeacher = () => {
     .map((course) => (
       <Coursecard
         key={course.id}
+        anhBia={course.anhBia}
         courseName={course.courseName}
         cost={course.cost}
         discount={course.discount}

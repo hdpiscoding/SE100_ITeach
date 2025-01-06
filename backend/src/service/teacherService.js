@@ -5,6 +5,7 @@ const { Op, fn, col, literal } = require("sequelize");
 import db from "../models/index";
 import nodemailer from "nodemailer";
 let createNewCourse = (data) => {
+  console.log(data);
   return new Promise(async (resolve, reject) => {
     try {
       let newCourse = await db.Course.create({
@@ -21,7 +22,9 @@ let createNewCourse = (data) => {
         totalLesson: 0,
         courseStatus: "CS2",
         markDown: data.markDown,
+        discount: data.discount,
       });
+      console.log(newCourse);
       let teacher = await db.User.findOne({
         where: { id: data.teacherId },
         raw: false, // Ensure id is an integer
@@ -39,6 +42,7 @@ let createNewCourse = (data) => {
         courseId: newCourseId,
       });
     } catch (error) {
+      console.log(error);
       reject(error);
     }
   });

@@ -29,6 +29,7 @@ const getMyCourse = async (teacherId) => {
 };
 const createNewCourse = async (data) => {
   try {
+    console.log("data", data);
     const response = await instance.post("api/v1/create-new-course", data);
     return response;
   } catch (error) {

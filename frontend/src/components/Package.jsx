@@ -1,23 +1,29 @@
 import React from 'react'
 import Image from 'next/image'
-const Package = ({courseName, cost, discount, intro}) => {
+const Package = ({courseName, cost, discount, intro,anhBia}) => {
   return (
-    <div className='flex justify-center px-2'>
-      <div className='grid grid-cols-7 rounded-xl border border-black w-full overflow-hidden'
-           style={{ minHeight: '200px' }}> 
+    <div className='flex justify-center px-2 lg:h-[200px] md:h-[150px] sm:h-[100px] h-[100px]'>
+      <div className='grid grid-cols-7 rounded-xl border border-black w-full overflow-hidden lg:h-[200px] md:h-[150px] sm:h-[100px] h-[100px]'
+           > 
         
        
         <div className='relative col-span-3'>
           <Image 
-            className='rounded-l-xl object-cover' 
-            src="/assets/images/course.webp"
+            className='rounded-l-xl lg:h-[200px] md:h-[150px] sm:h-[100px] h-[100px] w-full ' 
+            src={anhBia}
             alt="Course Image"
-            fill  
-            style={{ objectFit: 'cover' }}
+            width={300}
+            height={200}
           />
-          <div className='bg-white rounded-xl absolute bottom-4 right-4 p-2 shadow-sm'>
-            <span className='text-orange font-semibold text-sm md:text-base lg:text-lg'> {discount*cost} đ</span>
-            <span className='line-through text-gray-450 ml-2 text-sm md:text-base lg:text-lg'>{cost} đ</span>
+          <div className='bg-white rounded-xl absolute bottom-4 right-4 p-2 shadow-sm text-[10px] md:text-base lg:text-lg'>
+          {new Intl.NumberFormat("vi-VN", {
+                                        style: "currency",
+                                        currency: "VND",
+                                    }).format(Number(((cost ?? 0) * (1 - (discount/100 ?? 0))).toFixed(0)))}
+            <span className='line-through text-gray-450 ml-2 '> {new Intl.NumberFormat("vi-VN", {
+                                        style: "currency",
+                                        currency: "VND",
+                                    }).format(Number((cost).toFixed(0)))}</span>
           </div>
         </div>
 

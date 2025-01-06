@@ -88,6 +88,7 @@ const Home = () => {
         .map((course) => (
           <Coursecard 
             key={course.id}
+            anhBia={course.anhBia}
             courseName={course.courseName}
             cost={course.cost}
             discount={course.discount}
@@ -201,7 +202,9 @@ const Home = () => {
             modules={[Pagination]}
             className="w-full md:w-[60%] "
           >
-            {allCourse.map((course) => (
+            {allCourse
+            .filter((course) => course.courseStatus === "CS1")
+            .map((course) => (
               <SwiperSlide className="flex justify-center">
                 <Package 
                 key={course.id}
@@ -209,6 +212,7 @@ const Home = () => {
                 cost={course.cost}
                 discount={course.discount}
                 intro={course.intro}
+                anhBia={course.anhBia}
                 />
               </SwiperSlide>
             ))}

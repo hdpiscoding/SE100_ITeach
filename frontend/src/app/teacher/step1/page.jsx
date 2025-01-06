@@ -18,7 +18,7 @@ import {
 } from "firebase/storage";
 import { storage } from "@/firebase/firebase";
 import { v4 } from "uuid";
-const mdParser = new MarkdownIt(/* Markdown-it options */);
+const mdParser = new MarkdownIt();
 let courseId = -1;
 
 const Step1 = () => {
@@ -36,6 +36,7 @@ const Step1 = () => {
    const [level, setLevel] = useState("begin");
    const [price, setPrice] = useState("");
    const [intro, setIntro] = useState("");
+   const [discount, setDiscount] = useState("");
    const editorContent = useRef("");
    const [courseCategoryId, setCourseCategoryId] = useState("");
    const [markdown, setMarkdown] = useState("");
@@ -94,6 +95,11 @@ const Step1 = () => {
     const imageRef = ref(storage, `images/${fileImage.name + v4()}`);
     uploadBytes(imageRef, fileImage).then((snapshot) => {
       getDownloadURL(snapshot.ref).then(async (url) => {
+        if(discount==="")
+        {
+          setDiscount(0);
+        }
+        console.log("url", url);
         const courseData = {
           courseName: courseName,
           courseCategoryId: courseCategoryId,
@@ -104,10 +110,11 @@ const Step1 = () => {
           anhBia: url,
           teacherId: teacherId,
           markDown: markdown,
+          discount: discount,
         };
         console.log(courseData);
     
-        setIsLoading(true); // Bắt đầu loading
+        setIsLoading(true); 
         try {
           const response = await createNewCourse(courseData);
           if (response) {
@@ -121,7 +128,7 @@ const Step1 = () => {
           console.error("Error creating course:", error);
           toast.error("Lỗi khi tạo khóa học!");
         } finally {
-          setIsLoading(false); // Kết thúc loading
+          setIsLoading(false); 
         }
       });
     });
@@ -150,6 +157,17 @@ const Step1 = () => {
     if(courseName===""||price===""||intro===""||markdown===""||courseCategoryId===""||level===""||fileImage===null)
     {
       toast.error("Vui lòng điền đầy đủ thông tin");
+      return false;
+    }
+    if(discount<0||discount>100)
+    {
+      toast.error("Giảm Giá không hợp lệ");
+      return false;
+    }
+    
+    if(price<0)
+    {
+      toast.error("Giá không hợp lệ");
       return false;
     }
     const isDuplicate = allCourse.some((course) => {
@@ -186,7 +204,7 @@ const Step1 = () => {
             </span>
           </div>
 
-          <div className="grid lg:grid-cols-5 md:grid-cols-3 grid-cols-1 space-x-3 md:space-x-5 lg:space-x-7 ">
+          <div className="grid lg:grid-cols-3 md:grid-cols-3 grid-cols-1 space-x-3 md:space-x-5 lg:space-x-7 ">
             <div className="lg:col-span-2 md:col-span-2 col-span-2">
               <label htmlFor="name">Tên khóa học</label>
               <input
@@ -211,31 +229,63 @@ const Step1 = () => {
                     ))}
             </select>
             </div>
-            <div className="col-span-1">
-              <label htmlFor="type">Mức độ</label>
-              <select
-                id="type"
-                className="w-full h-[40px] border border-gray rounded-md p-2 bg-white"
-              >
-                 value={level}
-                 onChange={(e) => setLevel(e.target.value)}
-                <option value="begin">Cơ bản</option>
-                <option value="intermediate">Trung cấp</option>
-                <option value="advanced">Nâng cao</option>
-              </select>
-            </div>
-            <div className="col-span-1">
-              <label htmlFor="name">Giá</label>
-              <input
-                onChange={(e) => setPrice(e.target.value)}
-                value={price}
-                type="number"
-                id="name"
-                min="0"
-                className="w-full h-[40px] border border-gray rounded-md p-2"
-              />
-            </div>
+
           </div>
+          <div className="grid lg:grid-cols-3 md:grid-cols-3 grid-cols-1 space-x-3 md:space-x-5 lg:space-x-7">
+              <div className="col-span-1">
+                <label htmlFor="type">Mức độ</label>
+                <select
+                  id="type"
+                  className="w-full h-[40px] border border-gray rounded-md p-2 bg-white"
+                >
+                   value={level}
+                   onChange={(e) => setLevel(e.target.value)}
+                  <option value="begin">Cơ bản</option>
+                  <option value="intermediate">Trung cấp</option>
+                  <option value="advanced">Nâng cao</option>
+                </select>
+              </div>
+              <div className="col-span-1">
+                <label htmlFor="name">Giá</label>
+                <input
+                  onChange={(e) => {
+                    
+                    const value = e.target.value;
+                    const formattedValue = value ? parseInt(value, 10).toString() : '';
+                    setPrice(formattedValue);
+                  }}
+                  value={price}
+                  type="number"
+                  id="name"
+                  min="0"
+                  className="w-full h-[40px] border border-gray rounded-md p-2"
+                  onKeyDown={(e) => {
+                    
+                    if (e.key === '-' || e.key === '+' || e.key === 'e') {
+                      e.preventDefault();
+                    }
+                  }}
+                />
+              </div>
+              <div className="col-span-1">
+                <label htmlFor="name">Giảm Giá</label>
+                <input
+                  onChange={(e) => setDiscount(e.target.value)}
+                  value={discount}
+                  type="number"
+                  id="name"
+                  min="0"
+                  max="100"
+                  className="w-full h-[40px] border border-gray rounded-md p-2"
+                  onKeyDown={(e) => {
+                    
+                    if (e.key === '-' || e.key === '+' || e.key === 'e') {
+                      e.preventDefault();
+                    }
+                  }}
+                />
+              </div>
+  </div>
           <div className="grid lg:grid-cols-5 md:grid-cols-7 grid-cols-7 space-x-3 md:space-x-5 lg:space-x-7">
             <div className="lg:col-span-3 md:col-span-5 col-span-5">
               <label htmlFor="name">Mô tả</label>
