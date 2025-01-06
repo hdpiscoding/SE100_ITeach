@@ -1,9 +1,7 @@
 "use client";
 import { React, useState, useEffect } from "react";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import { create } from "domain";
-import { set } from "date-fns";
+import {useRouter} from "next/navigation";
 const Coursecard = ({ type, course }) => {
   if (!course || (!course.Course && type == 1)) {
     return null; // or some fallback UI
@@ -42,6 +40,14 @@ const Coursecard = ({ type, course }) => {
       setIntro(course.intro ? course.introZ : "");
     }
   }, []);
+
+  const router = useRouter();
+
+  const handleStudyNow = () => {
+    console.log("study now");
+    router.push(`/student/course/${course.courseId}`);
+  }
+
   return (
     <div className="rounded-md overflow-hidden bg-slate-100 w-full sm:max-w-[300px] space-y-1 sm:space-y-2 hover:shadow-lg transition-all duration-300">
       <div className="relative">
@@ -68,15 +74,17 @@ const Coursecard = ({ type, course }) => {
         <div className="flex flex-wrap justify-between mx-3 sm:mx-4 items-center pb-3 sm:pb-4 gap-2">
           <div className="flex items-center">
             <span className="text-orange font-semibold lg:text-lg md:text-base sm:text-sm text-xs">
-              {course.discount && course.discount > 0
-                ? course.cost - course.discount
-                : course.cost}
-              {" đ"}
+              {new Intl.NumberFormat("vi-VN", {
+                style: "currency",
+                currency: "VND",
+              }).format(Number(((course.cost ?? 0) * (1 - (course.discount ?? 0) / 100)).toFixed(0)))}
             </span>
-            {course.discount && course.discount > 0 && (
+            {course.discount && (
               <span className="line-through ml-2 text-gray-500 text-xs">
-                {course.cost}
-                {" đ"}
+                {new Intl.NumberFormat("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                }).format(course.cost ?? 0)}
               </span>
             )}
           </div>
@@ -89,7 +97,7 @@ const Coursecard = ({ type, course }) => {
         </div>
       ) : (
         <div className="flex flex-wrap justify-between mx-3 sm:mx-4 items-center pb-3 sm:pb-4 gap-2">
-          <button className="bg-[#FD661F] hover:bg-[#FD661F]/90 text-xs sm:text-sm md:text-base lg:text-base text-white px-3 py-1 rounded-md">
+          <button className="bg-[#FD661F] hover:bg-[#FD661F]/90 text-xs sm:text-sm md:text-base lg:text-base text-white px-3 py-1 rounded-md" onClick={handleStudyNow}>
             Học ngay
           </button>
         </div>

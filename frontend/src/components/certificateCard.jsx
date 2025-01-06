@@ -3,6 +3,7 @@ import { React, useState, useEffect, use } from "react";
 import Image from "next/image";
 import { QRCodeSVG } from "qrcode.react";
 import { useRouter } from "next/navigation";
+import {format} from "date-fns";
 const CertificateCard = ({ certificate }) => {
   const router = useRouter();
   const formatDate = (dateString) => {
@@ -36,7 +37,12 @@ const CertificateCard = ({ certificate }) => {
                         </div>
                       </div>
                       <div className="text-[8px] md:text-xs lg:text-sm">
-                        {certificate.user.firstName} {certificate.user.lastName}
+                        {certificate?.user?.firstName && certificate?.user?.lastName
+                            ?
+                            (certificate?.user?.firstName + " " + certificate?.user?.lastName)
+                            :
+                            certificate?.user?.email
+                        }
                         <hr className="bg-certificate w-2/3" />
                       </div>
                       <div className="text-[8px] md:text-sm lg:text-sm">
@@ -75,8 +81,8 @@ const CertificateCard = ({ certificate }) => {
                 {/* Footer section */}
                 <div className="flex  justify-between items-center space-y-1 md:space-y-5">
                   <div className="text-[8px] md:text-sm lg:text-sm">
-                    <div>Hà Nội,__/__/____</div>
-                    <div>Ha Noi,__/__/____</div>
+                    <div>TP.HCM, {certificate?.createdAt ? format(new Date(certificate?.createdAt), "dd/MM/yyyy") : ""}</div>
+                    <div>HCMC, {certificate?.createdAt ? format(new Date(certificate?.createdAt), "dd/MM/yyyy") : ""}</div>
                   </div>
                   <Image
                     className="hidden sm:block w-full lg:w-[50px] lg:h-[20px] h-[15px]"
@@ -88,7 +94,7 @@ const CertificateCard = ({ certificate }) => {
                   <div className="text-[5px] md:text-xs lg:text-xs text-center md:text-left">
                     <div>GIÁM ĐỐC SẢN XUẤT</div>
                     <div>Chief Delivery Officer</div>
-                    <div>ĐỖ VĂN KHẮC</div>
+                    <div>PHẠM HOÀNG DUY</div>
                   </div>
                 </div>
               </div>

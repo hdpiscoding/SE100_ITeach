@@ -247,7 +247,7 @@ const handleDeleteCourse = async () => {
         <div className="space-y-3 md:space-y-5 lg:space-y-7">
           <div className="flex items-center ">
             <Image
-              onClick={() => router.push("/teacher/course")}
+              onClick={() => router.push(`/teacher/course/${courseId}`)}
               className="inline-block cursor-pointer"
               src="/assets/images/vector.png"
               alt="step1"

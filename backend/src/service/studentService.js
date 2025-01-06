@@ -817,7 +817,7 @@ let getStudentCertificates = (studentId) => {
         });
         let user = await db.User.findOne({
           where: { id: certificate.userId },
-          attributes: ["id", "firstName", "lastName"],
+          attributes: ["id", "firstName", "lastName", "email"],
           raw: true,
         });
         if (course) {
@@ -852,7 +852,7 @@ const getACertificate = (id) => {
       });
       let user = await db.User.findOne({
         where: { id: certificate.userId },
-        attributes: ["id", "firstName", "lastName"],
+        attributes: ["id", "firstName", "lastName", "email"],
         raw: true,
       });
       if (course) {

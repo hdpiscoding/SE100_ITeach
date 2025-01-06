@@ -2,11 +2,11 @@
 import React from "react";
 import Image from "next/image";
 import { useState } from "react";
-import Coursecard from "@/components/Course/Coursecard";
+import Coursecard from "../../../components/Course/Coursecard";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { Button } from "../../../components/ui/button";
 import{useEffect,useRef} from "react";
-import { getMyAccount,getMyCourse } from "@/services/teacher";
+import { getMyAccount,getMyCourse } from "../../../services/teacher";
 const CourseTeacher = () => {
   let user=localStorage.getItem("user");
   let role=localStorage.getItem("role");

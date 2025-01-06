@@ -175,7 +175,7 @@ const Statistics = () => {
         cost={course.cost}
         discount={course.discount}
         intro={course.intro}
-        onClick={() => router.push(`/teacher/course/${course.id}`)}
+        onClick={() => router.push(`/admin/course/${course.id}`)}
       />
     ))}
           </div>

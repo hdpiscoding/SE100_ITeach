@@ -27,7 +27,7 @@ const Package = ({courseName, cost, discount, intro,anhBia}) => {
           </div>
         </div>
 
-       
+
         <div className='col-span-4 p-4 md:p-6 lg:p-8 flex flex-col gap-3'>
           <p className='text-xs md:text-sm lg:text-lg text-gray-600'>
             1-28 July 2022

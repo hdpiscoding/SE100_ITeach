@@ -1,7 +1,8 @@
 'use client';
 import React from "react";
 import Image from "next/image";
-import { ApproveCourse, StopCourse, delteCourse } from "@/services/admin";
+import { ApproveCourse, StopCourse, deleteCourse } from "../services/admin";
+import {useRouter} from "next/navigation";
 
 const CourseCardAdmin = ({ course, type }) => {
   const handelApprove = async () => {
@@ -14,12 +15,17 @@ const CourseCardAdmin = ({ course, type }) => {
     window.location.reload();
   };
   const handleDelete = async () => {
-    await delteCourse({ courseId: course.id });
+    //await deleteCourse({ courseId: course.id });
     if (window.confirm("Are you sure you want to delete this course?")) {
-      await delteCourse({ courseId: course.id });
+      await deleteCourse({ courseId: course.id });
     }
     window.location.reload();
   };
+
+  const router = useRouter();
+  const handleToCourseDetail = () => {
+    router.push(`/admin/course/${course.id}`);
+  }
   return (
     <div className=" max-h-[300px] rounded-md overflow-hidden bg-slate-100 lg:w-[300px] md:w-[250px] sm:w-[200px] w-[200px] space-y-2 sm:space-y-3 hover:shadow-lg transition-all duration-300">
       <div className="relative">
@@ -37,7 +43,7 @@ const CourseCardAdmin = ({ course, type }) => {
           {new Date(course?.createdAt).toLocaleDateString()}
         </h5>
 
-        <h3 className="font-bold text-SignUp mx-3 sm:mx-4 lg:text-xl md:text-base sm:text-sm text-sm">
+        <h3 className="font-bold text-SignUp mx-3 sm:mx-4 lg:text-xl md:text-base sm:text-sm text-sm cursor-pointer" onClick={handleToCourseDetail}>
           {course?.courseName}
         </h3>
 
@@ -48,15 +54,23 @@ const CourseCardAdmin = ({ course, type }) => {
         <div className="flex flex-wrap justify-between mx-3 sm:mx-4 items-center pb-3 sm:pb-4 gap-2">
           <div className="flex items-center">
             <span className="text-orange font-semibold lg:text-lg md:text-base sm:text-sm text-xs">
-              {course?.discount && course?.discount > 0
-                ? course?.cost - course?.discount
-                : course?.cost}
-              {" đ"}
+              {/*{course?.discount && course?.discount > 0*/}
+              {/*  ? course?.cost - course?.discount*/}
+              {/*  : course?.cost}*/}
+              {/*{" đ"}*/}
+              {new Intl.NumberFormat("vi-VN", {
+                style: "currency",
+                currency: "VND",
+              }).format(Number(((course?.cost ?? 0) * (1 - (course?.discount ?? 0) / 100)).toFixed(0)))}
             </span>
             {course?.discount && course?.discount > 0 && (
               <span className="line-through ml-2 text-gray-500 text-xs">
-                {course?.cost}
-                {" đ"}
+                {/*{course?.cost}*/}
+                {/*{" đ"}*/}
+                {new Intl.NumberFormat("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                }).format(course?.cost ?? 0)}
               </span>
             )}
           </div>

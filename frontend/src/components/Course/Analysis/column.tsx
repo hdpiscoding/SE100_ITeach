@@ -24,7 +24,7 @@ interface Student {
 
 export const columns: ColumnDef<Student>[] = [
     {
-        accessorKey: "User.firstName",
+        accessorKey: "firstName",
         header: ({column }) => {
             return (
                 <div className="hidden sm:table-cell min-w-[150px]">

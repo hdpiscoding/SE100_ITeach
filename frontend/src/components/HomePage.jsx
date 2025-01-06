@@ -61,7 +61,7 @@ const Home = () => {
         </h1>
 
         <div className="flex flex-wrap gap-3 justify-center my-8 md:my-14 ">
-          {courseCategory.map((category) => (
+          {courseCategory?.map((category) => (
             <button
               key={category.id}
               onClick={() => setActiveButton(category.categoryName)}
