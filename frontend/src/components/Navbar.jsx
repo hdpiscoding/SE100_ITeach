@@ -81,7 +81,7 @@ const Navbar = () => {
   return (
     <>
       <div className="lg:h-[72px] md:h-[50px] h-[40px]"></div>
-      <div className="fixed top-0 left-0 right-0 bg-white z-50">
+      <div className="fixed top-0 left-0 right-0 bg-white z-50" onClick={() => setIsMenuOpen(!isMenuOpen)}>
         <div className="grid grid-cols-[0.5fr_11fr_0.5fr]">
           <div></div>
           <div className="relative">
@@ -160,7 +160,7 @@ const Navbar = () => {
                             />
                           </button>
                           {isMenuOpen && (
-                            <div className="absolute bg-white shadow-lg rounded-lg p-4 mt-2">
+                            <div className="absolute bg-white shadow-lg rounded-lg p-4 mt-2 min-w-[150px] right-1 top-4">
                               <ul className="space-y-2">
                                 <li>
                                   <Link
@@ -209,7 +209,7 @@ const Navbar = () => {
                             />
                            </button>
                           {isMenuOpen && (
-                            <div className="absolute bg-white shadow-lg rounded-lg p-4 mt-2">
+                            <div className="absolute bg-white shadow-lg rounded-lg p-4 mt-2 min-w-[150px] right-1">
                               <ul className="space-y-2">
                                 <li>
                                   <Link
@@ -260,7 +260,7 @@ const Navbar = () => {
                             />
                            </button>
                           {isMenuOpen && (
-                            <div className="absolute bg-white shadow-lg rounded-lg p-4 mt-2">
+                            <div className="absolute bg-white shadow-lg rounded-lg p-4 mt-2 min-w-[150px] right-1">
                               <ul className="space-y-2">
                                  
                                 <li>
@@ -272,8 +272,8 @@ const Navbar = () => {
                                       router.push("/");
                                       setRole("student");
                                       localStorage.setItem("isLogin", "false");
-localStorage.removeItem("access_token");
-                                        localStorage.removeItem("role");
+                                      localStorage.removeItem("access_token");
+                                      localStorage.removeItem("role");
                                       localStorage.removeItem("user");
                                       
                                     }}
