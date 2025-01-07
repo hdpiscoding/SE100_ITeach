@@ -50,14 +50,16 @@ const Coursecard = ({ type, course }) => {
   }
 
   return (
-    <div className="rounded-md overflow-hidden bg-slate-100 w-full sm:max-w-[300px] space-y-1 sm:space-y-2 hover:shadow-lg transition-all duration-300">
+    <div className="cursor-pointer rounded-md overflow-hidden flex flex-col justify-between gap-1
+     bg-slate-100 w-full max-w-[300px] min-h-[250px] 
+      hover:shadow-lg transition-all duration-300">
       <div className="relative">
         <Image
           width={300}
           height={200}
-          src="/assets/images/course.webp"
+          src={course.anhBia}
           alt="course image"
-          className="w-full h-auto"
+         className="w-full max-h-[160px] object-cover"
         />
       </div>
 

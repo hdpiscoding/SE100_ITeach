@@ -19,6 +19,7 @@ const Statistics = () => {
     const fetchData = async () => {
       const data = await getPopularCourses();
       setCourses(data.data.courses);
+      console.log("courses", data.data.courses);
     };
     fetchData();
   }, []);
@@ -169,6 +170,7 @@ const Statistics = () => {
           .filter((course) => course.courseStatus === "CS1")
           .map((course) => (
       <Coursecard
+      day={course.createdAt}
        anhBia={course.anhBia}
         key={course.id}
         courseName={course.courseName}

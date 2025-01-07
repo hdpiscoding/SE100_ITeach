@@ -87,7 +87,8 @@ const Home = () => {
         })
         .filter((course) => course.courseStatus === "CS1")
         .map((course) => (
-          <Coursecard 
+          <Coursecard
+          day={course.createdAt} 
             key={course.id}
             anhBia={course.anhBia}
             courseName={course.courseName}
@@ -207,7 +208,8 @@ const Home = () => {
             .filter((course) => course.courseStatus === "CS1")
             .map((course) => (
               <SwiperSlide className="flex justify-center">
-                <Package 
+                <Package
+                day={course.createdAt} 
                 key={course.id}
                 courseName={course.courseName}
                 cost={course.cost}

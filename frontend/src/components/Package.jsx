@@ -1,6 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
-const Package = ({courseName, cost, discount, intro,anhBia}) => {
+const Package = ({courseName, cost, discount, intro,anhBia,day}) => {
   return (
     <div className='flex justify-center px-2 lg:h-[200px] md:h-[150px] sm:h-[100px] h-[100px]'>
       <div className='grid grid-cols-7 rounded-xl border border-black w-full overflow-hidden lg:h-[200px] md:h-[150px] sm:h-[100px] h-[100px]'
@@ -30,7 +30,7 @@ const Package = ({courseName, cost, discount, intro,anhBia}) => {
 
         <div className='col-span-4 p-4 md:p-6 lg:p-8 flex flex-col gap-3'>
           <p className='text-xs md:text-sm lg:text-lg text-gray-600'>
-            1-28 July 2022
+          {new Date(day).toLocaleDateString()}
           </p>
           <h2 className='text-SignUp font-bold text-sm md:text-lg lg:text-xl'>
             {courseName}

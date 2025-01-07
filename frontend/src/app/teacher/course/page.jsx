@@ -128,6 +128,7 @@ const CourseTeacher = () => {
     })
     .map((course) => (
       <Coursecard
+      day={course.createdAt}
         key={course.id}
         anhBia={course.anhBia}
         courseName={course.courseName}

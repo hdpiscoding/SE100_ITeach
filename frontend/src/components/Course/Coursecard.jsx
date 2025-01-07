@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-const Coursecard = ({ courseName, cost, discount, intro, onClick, anhBia }) => {
+const Coursecard = ({ courseName, cost, discount, intro, onClick, anhBia,day }) => {
   const role = localStorage.getItem("role");
   return (
     <div
@@ -21,7 +21,8 @@ const Coursecard = ({ courseName, cost, discount, intro, onClick, anhBia }) => {
 
       <div className="space-y-1 sm:space-y-2">
         <h5 className="mx-3 sm:mx-4 text-gray-600 text-xs sm:text-sm">
-          1-28 July 2022
+        
+        {day?new Date(day).toLocaleDateString():''}
         </h5>
 
         <h3 className="font-bold text-SignUp mx-3 sm:mx-4  sm:text-sm md:text-lg lg:text-xl text-xs">
