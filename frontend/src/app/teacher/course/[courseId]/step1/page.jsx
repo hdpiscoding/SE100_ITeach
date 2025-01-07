@@ -243,23 +243,23 @@ const handleDeleteCourse = async () => {
       <div className="space-y-3 md:space-y-5 lg:space-y-7 grid grid-cols-[0.5fr_11fr_0.5fr]">
         <div></div>
         <div className="space-y-3 md:space-y-5 lg:space-y-7">
-          <div className="flex items-center ">
+          <div className="flex items-center space-x-2 ">
             <Image
-              onClick={() => router.push(`/teacher/course/${courseId}`)}
-              className="inline-block cursor-pointer"
+              onClick={() => router.push("/teacher/course")}
+               className="inline-block cursor-pointer lg:w-[20px] lg:h-[15px] md:w-[15px] md:h-[10px] w-[10px] h-[8px]"
               src="/assets/images/vector.png"
               alt="step1"
               width={20}
               height={15}
             />
-            <span className="lg:text-2xl md:text-xl text-lg font-bold text-SignUp">
+            <span className="lg:text-2xl md:text-xl sm:text-lg text-base font-bold text-SignUp">
               Thông tin cơ bản
             </span>
           </div>
 
-          <div className="grid lg:grid-cols-3 md:grid-cols-3 grid-cols-1 space-x-3 md:space-x-5 lg:space-x-7 ">
+          <div className="grid lg:grid-cols-3 md:grid-cols-3 grid-cols-1  md:space-x-5 lg:space-x-7 ">
             <div className="lg:col-span-2 md:col-span-2 col-span-2">
-              <label htmlFor="name">Tên khóa học</label>
+              <label className="lg:text-lg md:text-base sm:text-sm text-xs" htmlFor="name">Tên khóa học</label>
               <input
                 value={courseName}
                 onChange={(e) => setCourseName(e.target.value)}
@@ -269,10 +269,10 @@ const handleDeleteCourse = async () => {
               />
             </div>
             <div className="col-span-1">
-              <label htmlFor="type">Loại</label>
+              <label className="lg:text-lg md:text-base sm:text-sm text-xs" htmlFor="type">Loại</label>
               <select
               id="courseCategory"
-              className="w-full h-[40px] border border-gray rounded-md p-2 bg-white"
+              className="w-full h-[40px] border border-gray rounded-md p-2 bg-white lg:text-lg md:text-base sm:text-sm text-xs"
               value={courseCategoryId}
                 onChange={(e) => setCourseCategoryId(e.target.value)} 
                   >
@@ -285,12 +285,12 @@ const handleDeleteCourse = async () => {
             </div>
 
           </div>
-          <div className="grid lg:grid-cols-3 md:grid-cols-3 grid-cols-1 space-x-3 md:space-x-5 lg:space-x-7">
+          <div className="grid lg:grid-cols-3 md:grid-cols-3 grid-cols-1  md:space-x-5 lg:space-x-7">
               <div className="col-span-1">
-                <label htmlFor="type">Mức độ</label>
+                <label className="lg:text-lg md:text-base sm:text-sm text-xs" htmlFor="type">Mức độ</label>
                 <select
                   id="type"
-                  className="w-full h-[40px] border border-gray rounded-md p-2 bg-white"
+                  className="w-full h-[40px] border border-gray rounded-md p-2 bg-white lg:text-lg md:text-base sm:text-sm text-xs"
                 >
                    value={level}
                    onChange={(e) => setLevel(e.target.value)}
@@ -300,7 +300,7 @@ const handleDeleteCourse = async () => {
                 </select>
               </div>
               <div className="col-span-1">
-                <label htmlFor="name">Giá</label>
+                <label className="lg:text-lg md:text-base sm:text-sm text-xs" htmlFor="name">Giá</label>
                 <input
                   onChange={(e) => {
                    
@@ -322,7 +322,7 @@ const handleDeleteCourse = async () => {
                 />
               </div>
               <div className="col-span-1">
-                <label htmlFor="name">Giảm Giá</label>
+                <label className="lg:text-lg md:text-base sm:text-sm text-xs" htmlFor="name">Giảm Giá</label>
                 <input
                   onChange={(e) => setDiscount(e.target.value)}
                   value={discount}
@@ -342,7 +342,7 @@ const handleDeleteCourse = async () => {
   </div>
           <div className="grid lg:grid-cols-5 md:grid-cols-7 grid-cols-7 space-x-3 md:space-x-5 lg:space-x-7">
             <div className="lg:col-span-3 md:col-span-5 col-span-5">
-              <label htmlFor="name">Mô tả</label>
+              <label className="lg:text-lg md:text-base sm:text-sm text-xs" htmlFor="name">Mô tả</label>
               <textarea
                 onChange={(e) => setIntro(e.target.value)}
                 value={intro}
@@ -351,7 +351,7 @@ const handleDeleteCourse = async () => {
               ></textarea>
             </div>
             <div className="lg:col-span-2 md:col-span-4 col-span-4">
-              <label htmlFor="name">Ảnh</label>
+              <label className="lg:text-lg md:text-base sm:text-sm text-xs" htmlFor="name">Ảnh</label>
               <div
                 className="w-full lg:h-[300px] md:h-[200px] h-[100px] border border-gray rounded-md p-2 flex items-center justify-center cursor-pointer relative"
                 onClick={handleImageClick}
@@ -381,12 +381,12 @@ const handleDeleteCourse = async () => {
                   />
                 )}
               </div>
-              <button onClick={handleImageClick} className="bg-orange text-white px-5 py-2 rounded-md mt-2">
-                <label htmlFor="name">Thay đổi ảnh</label>
+              <button onClick={handleImageClick} className="bg-orange text-white lg:px-5 lg:py-2 px-3 py-1 rounded-md mt-2">
+              <label className="lg:text-lg md:text-base sm:text-sm text-xs" htmlFor="name">Thay đổi ảnh</label>
               </button>
             </div>
           </div>
-          <h1 className="lg:text-2xl md:text-xl text-lg font-bold text-SignUp">
+          <h1 className="lg:text-2xl md:text-xl sm:text-lg text-base font-bold text-SignUp">
             Giới thiệu
           </h1>
           <div className=" border border-gray rounded-md p-5">
@@ -395,10 +395,11 @@ const handleDeleteCourse = async () => {
            renderHTML={text => mdParser.render(text)} onChange={handleEditorChange} />
           </div>
           <div className="flex justify-end space-x-3">
-            <button onClick={handleDeleteClick} className="bg-white text-orange px-5 py-2 rounded-md border border-orange">
+          <button onClick={handleDeleteClick} className="bg-white hover:bg-lightOrangeHover
+             text-orange lg:px-5 lg:py-2 px-3 py-1 rounded-md border border-orange lg:text-lg md:text-base sm:text-sm text-xs">
               Xóa khóa học
             </button>
-            <button  onClick={handlePutCourse} className="bg-orange text-white px-10 py-2 rounded-md">
+            <button  onClick={handlePutCourse} className="bg-orange text-white lg:px-10 lg:py-2 px-5 py-1 rounded-md hover:bg-orangeHover lg:text-lg md:text-base sm:text-sm text-xs">
               Tiếp tục
             </button>
           </div>

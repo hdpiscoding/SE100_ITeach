@@ -737,13 +737,13 @@ const Step2 = () => {
           <div className="flex items-center space-x-5">
             <Image
               onClick={() => router.push("/teacher/step1")}
-              className="inline-block cursor-pointer"
+             className="inline-block cursor-pointer lg:w-[20px] lg:h-[15px] md:w-[15px] md:h-[10px] w-[10px] h-[8px]"
               src="/assets/images/vector.png"
               alt="step1"
               width={20}
               height={15}
             />
-            <span className="lg:text-2xl md:text-xl text-lg font-bold text-SignUp">
+            <span className="lg:text-lg md:text-base sm:text-sm text-xs font-bold text-SignUp">
               Nội dung chi tiết
             </span>
           </div>
@@ -751,19 +751,19 @@ const Step2 = () => {
           {!lessonState.hidden && (
             <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-1 gap-3 md:gap-5 lg:gap-7 ">
               <div className="lg:col-span-1 md:col-span-2 col-span-2">
-                <label htmlFor="name">Tên bài giảng</label>
+                <label className="lg:text-lg md:text-base sm:text-sm text-xs" htmlFor="name">Tên bài giảng</label>
                 <input
                   type="text"
                   id="name"
                   value={lessonState.lessonTitle}
                   onChange={(e) => lessonState.setLessonTitle(e.target.value)}
                   placeholder="Tên bài"
-                  className="w-full h-[40px] border border-gray rounded-md p-2"
+                  className="w-full h-[40px] border border-gray rounded-md p-2 lg:text-lg md:text-base sm:text-sm text-xs"
                 />
               </div>
 
               <div className="col-span-1">
-                <label htmlFor="name">Thời lượng</label>
+                <label className="lg:text-lg md:text-base sm:text-sm text-xs" htmlFor="name">Thời lượng</label>
                 <div className="flex items-center">
                   <input
                     type="number"
@@ -783,7 +783,7 @@ const Step2 = () => {
                       }
                     }}
                   />
-                  <span className="ml-2">phút</span>
+                  <span className="ml-2 lg:text-lg md:text-base sm:text-sm text-xs">phút</span>
                 </div>
               </div>
             </div>
@@ -840,13 +840,13 @@ const Step2 = () => {
                    <div className="space-x-3">
                    <button
                      onClick={handleImageClick}
-                     className="mt-2 px-4 py-2 bg-stroke1 text-white rounded-md hover:bg-opacity-90"
+                     className="mt-2 px-4 py-2 bg-stroke1 text-white rounded-md hover:bg-opacity-90 lg:text-lg md:text-base sm:text-sm text-xs"
                    >
                      Thay đổi video
                    </button>
                    <button
                    onClick={()=>lessonState.setVideoPreview("")}
-                    className="mt-2 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-opacity-90">
+                    className="mt-2 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-opacity-90 lg:text-lg md:text-base sm:text-sm text-xs">
                      Xóa video
                    </button>
                 </div>
@@ -867,7 +867,7 @@ const Step2 = () => {
                     value={lessonState.videoUrl}
                     onChange={(e) => lessonState.setVideoUrl(e.target.value)}
                     disabled={lessonState.isVideoEnabled}
-                    className="w-full h-[40px] border border-gray rounded-md p-2"
+                    className="w-full h-[40px] border border-gray rounded-md p-2 lg:text-lg md:text-base sm:text-sm text-xs"
                   />
                 </div>
               </div>
@@ -876,7 +876,7 @@ const Step2 = () => {
             <div className="lg:col-span-1 md:col-span-1 col-span-1">
               <div className="w-full border rounded-md">
                 {courseState.isLoading ? (
-                  <span className="p-3"> Đang tải dữ liệu ....</span>
+                  <span className="p-3 lg:text-lg md:text-base sm:text-sm text-xs"> Đang tải dữ liệu ....</span>
                 ) : (
                   <div className="border border-gray rounded-md p-5">
                     
@@ -890,7 +890,7 @@ const Step2 = () => {
                           onClick={() => toggleChapter(index)}
                         >
                           <div className="flex-1 min-w-0">
-                            <h3 className="font-bold truncate">
+                            <h3 className="font-bold truncate lg:text-lg md:text-base sm:text-sm text-xs">
                               {chapter.chapterName}
                             </h3>
                             <span className="text-stroke1 text-sm">
@@ -944,13 +944,13 @@ const Step2 = () => {
 
                            
                             <div className="flex justify-between items-center p-2 mt-2 cursor-pointer hover:bg-gray-100 border-t">
-                              <span className="text-sm text-gray-500">
+                              <span className=" text-gray-500 lg:text-lg md:text-base sm:text-sm text-xs">
                                 Thêm bài học mới
                               </span>
                              
                                 <button
                                   onClick={()=>handleClickAddLesson(chapter.id)}
-                                  className="text-gray-500 bg-stroke1 rounded-sm "
+                                  className="text-gray-500 bg-stroke1 rounded-sm lg:text-lg md:text-base sm:text-sm text-xs"
                                 >
                                   <AddIcon sx={{ color: "white" }} />
                                 </button>
@@ -962,7 +962,7 @@ const Step2 = () => {
                     ))}
                     {chapterState.isEditing && (
                       <div className="mt-4 space-y-2 p-4 border rounded-md">
-                        <span>Nhập tên chương mới</span>
+                        <span className="lg:text-lg md:text-base sm:text-sm text-xs">Nhập tên chương mới</span>
                         <input
                           type="text"
                           placeholder="Nhập tên chương"
@@ -970,18 +970,18 @@ const Step2 = () => {
                           onChange={(e) =>
                             chapterState.setEditingChapterName(e.target.value)
                           }
-                          className="w-full p-2 border rounded-md"
+                          className="w-full p-2 border rounded-md lg:text-lg md:text-base sm:text-sm text-xs"
                         />
                         <div className="mt-2 flex justify-end space-x-2">
                           <button
                             onClick={() => chapterState.setIsEditing(false)}
-                            className="px-4 py-2 border rounded hover:bg-gray-50"
+                            className="px-4 py-2 border rounded hover:bg-gray-50 lg:text-lg md:text-base sm:text-sm text-xs"
                           >
                             Hủy
                           </button>
                           <button
                             onClick={handleSaveEdit}
-                            className="px-4 py-2 bg-stroke1 text-white rounded hover:bg-orange-600"
+                            className="px-4 py-2 bg-stroke1 text-white rounded hover:bg-orange-600 lg:text-lg md:text-base sm:text-sm text-xs"
                           >
                             Lưu
                           </button>
@@ -992,7 +992,7 @@ const Step2 = () => {
                     <div className="mt-4">
                       <button
                         onClick={xuLyThemChuong}
-                        className="w-full py-2 bg-stroke1 text-white rounded-md"
+                        className="w-full py-2 bg-stroke1 text-white rounded-md lg:text-lg md:text-base sm:text-sm text-xs"
                       >
                         Thêm chương mới
                       </button>
@@ -1008,12 +1008,12 @@ const Step2 = () => {
                             chapterState.setNewChapterName(e.target.value)
                           }
                           placeholder="Nhập tên chương mới"
-                          className="w-full p-2 border rounded-md mb-2"
+                          className="w-full p-2 border rounded-md mb-2 lg:text-lg md:text-base sm:text-sm text-xs"
                         />
                         <div className="flex space-x-2 justify-end">
                           <button
                             onClick={xuLyLuuChuong}
-                            className="px-4 py-2 bg-stroke1 text-white rounded-md"
+                            className="px-4 py-2 bg-stroke1 text-white rounded-md lg:text-lg md:text-base sm:text-sm text-xs"
                           >
                             Lưu
                           </button>
@@ -1021,7 +1021,7 @@ const Step2 = () => {
                             onClick={() =>
                               chapterState.setShowNewChapterForm(false)
                             }
-                            className="px-4 py-2 bg-red-500 text-white rounded-md"
+                            className="px-4 py-2 bg-red-500 text-white rounded-md lg:text-lg md:text-base sm:text-sm text-xs"
                           >
                             Hủy
                           </button>
@@ -1080,22 +1080,26 @@ const Step2 = () => {
               <div>
             {lessonState.isEditing ?(
                <div className="flex space-x-3">
-               <button onClick={handleSaveEditLesson} className=" bg-orange py-2 px-10 rounded-md  text-white hover:bg-orangeHover hover:border-orangeHover
+               <button onClick={handleSaveEditLesson} className=" bg-orange py-2 px-10 rounded-md
+                text-white hover:bg-orangeHover hover:border-orangeHover lg:text-lg md:text-base sm:text-sm text-xs
                " >
                  Lưu chỉnh sửa
                </button>
            
-            <button onClick={handleDeleteLesson} className="bg-white text-orange px-5 py-2 rounded-md border border-orange hover:bg-lightOrangeHover">
+            <button onClick={handleDeleteLesson} className="bg-white text-orange px-5 py-2 rounded-md
+             border border-orange hover:bg-lightOrangeHover lg:text-lg md:text-base sm:text-sm text-xs">
               Xóa bài học
             </button>
             </div>)
             :
             (
              <div className="flex space-x-3">
-               <button  onClick={handleAddLesson} className="bg-orange text-white px-5 py-2 rounded-md border border-orange hover:bg-OrangeHover">
+               <button  onClick={handleAddLesson} className="bg-orange text-white px-5 py-2 rounded-md border
+                border-orange hover:bg-OrangeHover lg:text-lg md:text-base sm:text-sm text-xs">
               Thêm bài học 
              </button>
-                <button onClick={()=>lessonState.setHidden(true)} className="bg-white text-orange px-5 py-2 rounded-md border border-orange hover:bg-lightOrangeHover">
+                <button onClick={()=>lessonState.setHidden(true)} className="bg-white text-orange px-5
+                 py-2 rounded-md border border-orange hover:bg-lightOrangeHover lg:text-lg md:text-base sm:text-sm text-xs">
                 Hủy
               </button>
               
@@ -1106,7 +1110,8 @@ const Step2 = () => {
           )}
             <button
               onClick={handleComplete}
-              className="bg-orange text-white px-10 py-2 rounded-md hover:bg-orangeHover hover:border-orangeHover"
+              className="bg-orange text-white px-10 py-2 rounded-md hover:bg-orangeHover
+               hover:border-orangeHover lg:text-lg md:text-base sm:text-sm text-xs"
             >
               Hoàn thành
             </button>
