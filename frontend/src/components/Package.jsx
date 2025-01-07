@@ -1,8 +1,8 @@
 import React from 'react'
 import Image from 'next/image'
-const Package = ({courseName, cost, discount, intro,anhBia,day}) => {
+const Package = ({courseName, cost, discount, intro,anhBia,day,onClick}) => {
   return (
-    <div className='flex justify-center px-2 lg:h-[200px] md:h-[150px] sm:h-[100px] h-[100px]'>
+    <div onClick={onClick} className='flex justify-center px-2 lg:h-[200px] md:h-[150px] sm:h-[100px] h-[100px] '>
       <div className='grid grid-cols-7 rounded-xl border border-black w-full overflow-hidden lg:h-[200px] md:h-[150px] sm:h-[100px] h-[100px]'
            > 
         

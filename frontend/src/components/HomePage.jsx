@@ -95,6 +95,7 @@ const Home = () => {
             cost={course.cost}
             discount={course.discount}
             intro={course.intro}
+            onClick={() => router.push(`/teacher/course/${course.id}`)}
           />
         ))}
         </div>
@@ -216,6 +217,7 @@ const Home = () => {
                 discount={course.discount}
                 intro={course.intro}
                 anhBia={course.anhBia}
+                onClick={() => router.push(`/teacher/course/${course.id}`)}
                 />
               </SwiperSlide>
             ))}
