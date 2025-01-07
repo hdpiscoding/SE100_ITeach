@@ -1,5 +1,5 @@
 "use client";
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import FilterTeacher from "../../../components/filterTeacher";
 import TeacherCard from "../../../components/teacherCard";

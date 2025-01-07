@@ -1,5 +1,5 @@
 "use client";
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Coursecard from "@/components/Course/Coursecard";
 import TeacherCard from "@/components/teacherCard";
 import { useRouter } from "next/navigation";
@@ -196,8 +196,9 @@ const Statistics = () => {
           <div className="grid grid-cols-[1fr_4fr_1fr]">
             <div></div>
             <div className="grid grid-cols-3  gap-4 ">
-              {teachers.map((teacher) => (
+              {teachers.map((teacher, index) => (
                 <TeacherCard
+                    key={index}
                  teacher={teacher}
                 />
               ))}

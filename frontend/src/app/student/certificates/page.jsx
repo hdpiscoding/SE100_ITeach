@@ -1,11 +1,9 @@
 "use client";
 import Certificate from "@/components/Certificate";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const Certificates = () => {
-  const router = useRouter();
   const [id, setId] = useState(null);
 
   useEffect(() => {

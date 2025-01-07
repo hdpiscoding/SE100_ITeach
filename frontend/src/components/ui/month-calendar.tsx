@@ -41,12 +41,12 @@ export default function MonthCalendar({
     });
 
     function previousYear() {
-        let firstDayNextYear = add(firstDayCurrentYear, { years: -1 });
+        const firstDayNextYear = add(firstDayCurrentYear, { years: -1 });
         setCurrentYear(format(firstDayNextYear, 'yyyy'));
     }
 
     function nextYear() {
-        let firstDayNextYear = add(firstDayCurrentYear, { years: 1 });
+        const firstDayNextYear = add(firstDayCurrentYear, { years: 1 });
         setCurrentYear(format(firstDayNextYear, 'yyyy'));
     }
 

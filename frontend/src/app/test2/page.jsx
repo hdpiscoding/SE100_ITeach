@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 import { useState, useEffect } from "react";
 import { ref, uploadBytes, getDownloadURL, listAll } from "firebase/storage";
@@ -39,8 +40,8 @@ function test2() {
         }}
       />
       <button onClick={uploadFile}> Upload Video</button>
-      {videoUrls.map((url) => {
-        return <video src={url} controls />;
+      {videoUrls.map((url, index) => {
+        return <video key={index} src={url} controls />;
       })}
     </div>
   );

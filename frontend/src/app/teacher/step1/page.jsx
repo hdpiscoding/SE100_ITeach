@@ -13,8 +13,6 @@ import {
   ref,
   uploadBytes,
   getDownloadURL,
-  listAll,
-  list,
 } from "firebase/storage";
 import { storage } from "@/firebase/firebase";
 import { v4 } from "uuid";
@@ -25,7 +23,6 @@ const Step1 = () => {
   const [allCourse, setAllCourse] = useState([]);
   let user=localStorage.getItem("user");
   const teacherId=JSON.parse(user).id;
-  const token=localStorage.getItem("access_token");
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);

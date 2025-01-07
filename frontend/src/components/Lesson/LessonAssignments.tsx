@@ -1,4 +1,4 @@
-/* eslint-disable react/no-children-prop,@typescript-eslint/no-unused-vars */
+/* eslint-disable react/no-children-prop,@typescript-eslint/no-unused-vars,@typescript-eslint/no-explicit-any */
 'use client';
 import React, {ChangeEvent, useEffect, useState} from 'react';
 import {Loader2, Play} from 'lucide-react'

@@ -11,7 +11,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { getAllCourses } from "@/services/admin";
-import { parse } from "path";
 const CoursesAdmin = () => {
   const [activeTab, setActiveTab] = useState("public");
   const [currentPage, setCurrentPage] = useState(1);

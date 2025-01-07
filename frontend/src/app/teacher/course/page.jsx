@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import React from "react";
 import Image from "next/image";
@@ -9,7 +10,6 @@ import{useEffect,useRef} from "react";
 import { getMyAccount,getMyCourse } from "../../../services/teacher";
 const CourseTeacher = () => {
   let user=localStorage.getItem("user");
-  let role=localStorage.getItem("role");
   console.log(user);
   let tId = JSON.parse(user).id;
   const [username, setUsername] = useState("");

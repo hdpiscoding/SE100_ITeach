@@ -1,6 +1,6 @@
  import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 
 const TeacherCard = ({ teacher }) => {

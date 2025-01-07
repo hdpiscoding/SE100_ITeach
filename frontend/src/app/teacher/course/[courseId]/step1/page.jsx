@@ -1,4 +1,4 @@
- "use client";
+/* eslint-disable @typescript-eslint/no-unused-vars */ "use client";
 import React from "react";
 import Image from "next/image";
 import MarkdownIt from "markdown-it";
@@ -14,8 +14,6 @@ import {
   ref,
   uploadBytes,
   getDownloadURL,
-  listAll,
-  list,
 } from "firebase/storage";
 import { storage } from "@/firebase/firebase";
 import { v4 } from "uuid";

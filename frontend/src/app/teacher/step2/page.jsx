@@ -5,7 +5,7 @@ import MarkdownIt from "markdown-it";
 import MdEditor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
 import { toast } from "react-toastify";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import {
   postAChapter,
@@ -15,19 +15,15 @@ import {
   putALesson,
   deleteALesson,
   getLessonContent,
-  postSendMail,
 } from "@/services/teacher";
 import {
   Delete as DeleteIcon,
   ExpandMore as ExpandMoreIcon,
   ExpandLess as ExpandLessIcon,
   Add as AddIcon,
-  Remove as RemoveIcon,
-  Check as CheckIcon,
   Edit as EditIcon,
 } from "@mui/icons-material";
-import { set } from "date-fns";
-import { ref, uploadBytes, getDownloadURL, listAll } from "firebase/storage";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/firebase/firebase";
 import { v4 } from "uuid";
 const mdParser = new MarkdownIt();
@@ -185,6 +181,7 @@ const Step2 = () => {
         );
       }
     } catch (error) {
+      console.error("Error:", error);
       toast.error("Xóa chương thất bại!");
       console.error("Delete chapter error:", error);
     }
@@ -289,6 +286,7 @@ const Step2 = () => {
         toast.error(response.errMessage);
       }
     } catch (error) {
+      console.error("Error:", error);
       toast.error("Cập nhật chương thất bại!");
     }
   };
@@ -338,6 +336,7 @@ const Step2 = () => {
             lessonState.setExerciseMarkDown(response.data.data.content.exerciseMarkDown || "");
           }
         } catch (error) {
+          console.error("Error:", error);
           toast.error("Lỗi khi tải nội dung bài học!");
         }
       }, 1000); 
@@ -670,6 +669,7 @@ const Step2 = () => {
         lessonState.setHidden(true);
       }
     } catch (error) {
+      console.error("Error:", error);
       toast.error("Xóa bài học thất bại!");
     }
   };

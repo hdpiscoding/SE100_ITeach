@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-key */
 'use client'
 import React from "react";
 import Image from "next/image";
@@ -9,7 +10,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-import { Pagination, Navigation } from "swiper/modules";
+import { Pagination } from "swiper/modules";
 import Banner from "@/components/Banner";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -108,8 +109,8 @@ const Home = () => {
         </div>
 
         <div className="grid md:grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 grid-cols-2 gap-6 mt-10 ">
-          {courseCategory.map((category) => (
-           <div className="w-full">
+          {courseCategory.map((category, index) => (
+           <div key={index} className="w-full">
               <Coursecardnoprice
                key={category.id}
                 categoryName={category.categoryName} />
