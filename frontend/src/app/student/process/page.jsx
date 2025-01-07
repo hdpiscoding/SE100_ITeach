@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import Image from "next/image";
 import { useState } from "react";
 //import FilterProcess from "@/components/filterProcess";
-import Coursecard from "../../../components/courseCard";
+import Coursecard from "../../../components/Coursecard";
 import CertificateCard from "../../../components/certificateCard";
 import { getStudentCertificates, getMyCourses } from "../../../services/student";
 import { getAllCourses } from "../../../services/admin";
