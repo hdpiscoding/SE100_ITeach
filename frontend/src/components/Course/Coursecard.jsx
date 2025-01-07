@@ -46,7 +46,12 @@ const Coursecard = ({ courseName, cost, discount, intro, onClick, anhBia,day }) 
           </span>
           {discount > 0 && (
             <span className="line-through ml-2 text-gray-500 text-sm">
-              ${cost}
+              {new Intl.NumberFormat("vi-VN", {
+                style: "currency",
+                currency: "VND",
+              }).format(
+                  Number(cost)
+              )}
             </span>
           )}
         </div>

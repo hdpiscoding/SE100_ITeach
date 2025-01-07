@@ -71,7 +71,7 @@ const CoursesPage = () => {
     const response = await getAllCourses();
     const allCourses = response.data.data;
     const filter = allCourses.filter((course) => {
-      var abovecost = 0;
+      let abovecost = 0;
       const courseCost = parseInt(course.cost);
       if (rateValue === "1") {
         abovecost = 0;
@@ -80,7 +80,7 @@ const CoursesPage = () => {
         abovecost = 100000;
       }
       if (rateValue === "3") {
-        abovecost = 10000000;
+        abovecost = 1000000;
       }
       const costCondition = courseCost >= abovecost;
 
@@ -237,7 +237,7 @@ const CoursesPage = () => {
                   disabled={currentPage === 1}
                   className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
               >
-                Previous
+                Trước
               </button>
               {pageNumbers.map((number) => (
                   <button
@@ -259,7 +259,7 @@ const CoursesPage = () => {
                   disabled={currentPage === totalPages}
                   className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
               >
-                Next
+                Sau
               </button>
             </div>
           </div>

@@ -133,7 +133,7 @@ const Login = ({ isOpen, onClose, onLogin, setLogin, setRole }) => {
             <div
               className="bg-xanhface flex p-2 justify-center rounded-2xl space-x-2 my-3 cursor-pointer"
               onClick={() => {
-                window.open("http://localhost:8080/api/auth/facebook", "_self");
+                window.open("http://localhost:7777/api/auth/facebook", "_self");
               }}
             >
               <Image
@@ -149,7 +149,7 @@ const Login = ({ isOpen, onClose, onLogin, setLogin, setRole }) => {
 
             <div className="bg-white flex p-2 justify-center rounded-2xl space-x-2 border-2 border-gray mt-3 cursor-pointer hover:bg-MoreLightGray"
               onClick={() => {
-                window.open("http://localhost:8080/api/auth/google", "_self");
+                window.open("http://localhost:7777/api/auth/google", "_self");
               }}>
               <Image
                 className="inline-block"

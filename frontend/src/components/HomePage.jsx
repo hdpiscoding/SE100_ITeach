@@ -22,6 +22,7 @@ const Home = () => {
   const router = useRouter();
   const [courseCategory, setCourseCategory] = useState([]);
   const [allCourse, setAllCourse] = useState([]);
+  const [role, setRole] = useState("");
   const fetchCourseCategory = async () => {
     const response = await getAllCoursesCategories();
     setCourseCategory(response.data.data);
@@ -37,7 +38,10 @@ const Home = () => {
   };
   console.log(courseCategory);
   useEffect(() => {
-   
+   const storageRole = localStorage.getItem("role");
+   if (storageRole) {
+        setRole(storageRole);
+   }
     fetchAllCourse();
   }, []);
 
@@ -95,7 +99,14 @@ const Home = () => {
             cost={course.cost}
             discount={course.discount}
             intro={course.intro}
-            onClick={() => router.push(`/teacher/course/${course.id}`)}
+            onClick={() => {
+              if (role) {
+                router.push(`/${role}/course/${course.id}`);
+              }
+              else {
+                router.push(`/course/${course.id}`);
+              }
+            }}
           />
         ))}
         </div>
@@ -179,7 +190,16 @@ const Home = () => {
                 </span>
               </div>
             </div>
-            <button className="text-SignUp lg:rounded-lg md:rounded-lg sm:rounded-lg rounded-sm bg-white  lg:py-3 lg:px-7 md:py-2 md:px-5 sm:py-2 sm:px-4 py-2 px-3 text-xs md:text-base lg:text-lg hover:bg-SignUp hover:text-white ">
+            <button className="text-SignUp lg:rounded-lg md:rounded-lg sm:rounded-lg rounded-sm bg-white  lg:py-3 lg:px-7 md:py-2 md:px-5 sm:py-2 sm:px-4 py-2 px-3 text-xs md:text-base lg:text-lg hover:bg-SignUp hover:text-white " onClick={() => {
+              {
+                if (role) {
+                  router.push(`/${role}/course`);
+                }
+                else {
+                  router.push(`/course`);
+                }
+              }
+            }}>
              Mua ngay
             </button>
           </div>
@@ -217,7 +237,14 @@ const Home = () => {
                 discount={course.discount}
                 intro={course.intro}
                 anhBia={course.anhBia}
-                onClick={() => router.push(`/teacher/course/${course.id}`)}
+                onClick={() => {
+                  if (role) {
+                    router.push(`/${role}/course/${course.id}`);
+                  }
+                  else {
+                    router.push(`/course/${course.id}`);
+                  }
+                }}
                 />
               </SwiperSlide>
             ))}

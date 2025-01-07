@@ -13,11 +13,11 @@ const Coursecard = ({ type, course }) => {
 
   const handleredirect = () => {
     const role = localStorage.getItem("role");
-    if (role === "RS1") {
+    if (role === "student") {
       window.location.href = "student/course/" + course.id;
-    } else if (role === "RS2") {
+    } else if (role === "teacher") {
       window.location.href = "teacher/course/" + course.id;
-    } else if (role === "RS3") {
+    } else if (role === "admin") {
       window.location.href = "admin/course/" + course.id;
     } else {
       window.location.href = "course/" + course.id;
@@ -82,14 +82,14 @@ const Coursecard = ({ type, course }) => {
                 currency: "VND",
               }).format(Number(((course.cost ?? 0) * (1 - (course.discount ?? 0) / 100)).toFixed(0)))}
             </span>
-            {course.discount && (
+            {course.discount ? (
               <span className="line-through ml-2 text-gray-500 text-xs">
                 {new Intl.NumberFormat("vi-VN", {
                   style: "currency",
                   currency: "VND",
-                }).format(course.cost ?? 0)}
+                }).format(course.cost)}
               </span>
-            )}
+            ) : <div></div>}
           </div>
           <button
             onClick={handleredirect}

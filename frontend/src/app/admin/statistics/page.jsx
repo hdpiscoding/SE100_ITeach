@@ -96,7 +96,6 @@ const Statistics = () => {
             <div className="border p-4 flex flex-col items-center justify-around col-span-2 rounded-lg border-SignUp h-full ">
              <div className="flex flex-col items-center justify-center h-full space-y-3">
                 <div className=" font-bold text-9xl  ">{data.studentsThisMonth}</div>
-                <div className="text-SignUp">+ {data.studentGrowthRate}%</div>
              </div>
               <div className="text-gray-500 ">học sinh</div>
             </div>
