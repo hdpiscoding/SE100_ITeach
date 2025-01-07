@@ -10,15 +10,16 @@ const Coursecard = ({ type, course }) => {
   const [createdAt, setCreatedAt] = useState("");
   const [courseName, setCourseName] = useState("");
   const [intro, setIntro] = useState("");
+  const [anhBia, setAnhBia] = useState("");
 
   const handleredirect = () => {
     const role = localStorage.getItem("role");
     if (role === "student") {
-      window.location.href = "student/course/" + course.id;
+      window.location.href = "course/" + course.id;
     } else if (role === "teacher") {
-      window.location.href = "teacher/course/" + course.id;
+      window.location.href = "course/" + course.id;
     } else if (role === "admin") {
-      window.location.href = "admin/course/" + course.id;
+      window.location.href = "course/" + course.id;
     } else {
       window.location.href = "course/" + course.id;
     }
@@ -33,12 +34,14 @@ const Coursecard = ({ type, course }) => {
       );
       setCourseName(course.Course.courseName ? course.Course.courseName : "");
       setIntro(course.Course.intro ? course.Course.intro : "");
+      setAnhBia(course.Course.anhBia);
     } else {
       setCreatedAt(
         course.createdAt ? new Date(course.createdAt).toLocaleDateString() : ""
       );
       setCourseName(course.courseName ? course.courseName : "");
       setIntro(course.intro ? course.introZ : "");
+        setAnhBia(course.anhBia);
     }
   }, []);
 
@@ -49,6 +52,10 @@ const Coursecard = ({ type, course }) => {
     router.push(`/student/course/${course.courseId}`);
   }
 
+  useEffect(() => {
+    console.log(course.anhBia);
+  }, [course]);
+
   return (
     <div className="cursor-pointer rounded-md overflow-hidden flex flex-col justify-between gap-1
      bg-slate-100 w-full max-w-[300px] min-h-[250px] 
@@ -57,7 +64,7 @@ const Coursecard = ({ type, course }) => {
         <Image
           width={300}
           height={200}
-          src={course.anhBia}
+          src={anhBia}
           alt="course image"
          className="w-full max-h-[160px] object-cover"
         />
