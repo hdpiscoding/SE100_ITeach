@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import { CalendarIcon, ChevronsUpDown } from "lucide-react";
+import { CalendarIcon } from "lucide-react";
 import { Button } from "./button";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import { Calendar } from "./calendar";

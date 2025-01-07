@@ -1,17 +1,13 @@
 "use client";
 
-import React, { useEffect ,useState,useRef, use} from "react";
+import React, { useEffect ,useState,useRef} from "react";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import TeacherCard from "@/components/teacherCard";
-import CourseCardAdmin from "@/components/courseCardAdmin";
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import {getATeacherInfo} from "@/services/student";
 import { toast } from "react-toastify";
 import AlertModal from "@/components/AlertDialog2/AlertModal";
 import AdminTeacherCourse from "@/components/Course/AdminTeacherCourse";
-import { set } from "date-fns";
 
 const TeacherInfor = () => {
   const [teacherr, setTeacher] = useState(null);

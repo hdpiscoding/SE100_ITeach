@@ -3,7 +3,6 @@ import React from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import Image from "next/image";
 import { useState } from "react";
-import { Poppins } from "next/font/google";
 import Rating from "@mui/material/Rating";
 
 const Filter = () => {

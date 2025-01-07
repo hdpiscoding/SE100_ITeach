@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars,@typescript-eslint/no-explicit-any */
 'use client';
 import React, {useEffect, useRef, useState} from "react";
 import { FaUser } from "react-icons/fa";
@@ -23,8 +24,6 @@ import {
   ref,
   uploadBytes,
   getDownloadURL,
-  listAll,
-  list,
 } from "firebase/storage";
 import { storage } from "../../firebase/firebase";
 import { v4 } from "uuid";

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars,@typescript-eslint/no-explicit-any */
 // noinspection JSUnusedLocalSymbols
 'use client';
 import React, {useState, useRef, useEffect, ChangeEvent} from "react";

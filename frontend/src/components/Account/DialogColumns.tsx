@@ -1,5 +1,5 @@
 "use client"
-import {ArrowUpDown, CircleX} from "lucide-react"
+import {ArrowUpDown} from "lucide-react"
 import { ColumnDef } from "@tanstack/react-table"
 import {Button} from "@/components/ui/button";
 import Image from "next/image";

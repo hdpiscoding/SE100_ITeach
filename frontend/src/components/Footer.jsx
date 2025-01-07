@@ -100,8 +100,8 @@ const Footer = () => {
           <div className="space-y-4 min-w-[150px]">
             <h1 className="font-bold lg:text-lg md:text-lg sm:text-base text-sm">Loại khóa học</h1>
             <div className="space-y-2 lg:text-base md:text-base sm:text-base text-xs">
-             {courseCategory.map((category) => (
-              <h1 className="text-SignUp">{category.categoryName}</h1>
+             {courseCategory.map((category, index) => (
+              <h1 key={index} className="text-SignUp">{category.categoryName}</h1>
              ))}
             </div>
           </div>

@@ -1,15 +1,12 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client";
-import { React, useState, useEffect, use } from "react";
+import { React } from "react";
 import Image from "next/image";
 import { QRCodeSVG } from "qrcode.react";
 import { useRouter } from "next/navigation";
 import {format} from "date-fns";
 const CertificateCard = ({ certificate }) => {
   const router = useRouter();
-  const formatDate = (dateString) => {
-    const options = { year: "numeric", month: "2-digit", day: "2-digit" };
-    return new Date(dateString).toLocaleDateString("en-US", options);
-  };
 
   return (
     <div
