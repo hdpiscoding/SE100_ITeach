@@ -1,9 +1,8 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 import { React, useState, useEffect } from "react";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import { create } from "domain";
-import { set } from "date-fns";
+import {useRouter} from "next/navigation";
 const Coursecard = ({ type, course }) => {
   if (!course || (!course.Course && type == 1)) {
     return null; // or some fallback UI
@@ -11,15 +10,16 @@ const Coursecard = ({ type, course }) => {
   const [createdAt, setCreatedAt] = useState("");
   const [courseName, setCourseName] = useState("");
   const [intro, setIntro] = useState("");
+  const [anhBia, setAnhBia] = useState("");
 
   const handleredirect = () => {
     const role = localStorage.getItem("role");
-    if (role === "RS1") {
-      window.location.href = "student/course/" + course.id;
-    } else if (role === "RS2") {
-      window.location.href = "teacher/course/" + course.id;
-    } else if (role === "RS3") {
-      window.location.href = "admin/course/" + course.id;
+    if (role === "student") {
+      window.location.href = "course/" + course.id;
+    } else if (role === "teacher") {
+      window.location.href = "course/" + course.id;
+    } else if (role === "admin") {
+      window.location.href = "course/" + course.id;
     } else {
       window.location.href = "course/" + course.id;
     }
@@ -34,23 +34,39 @@ const Coursecard = ({ type, course }) => {
       );
       setCourseName(course.Course.courseName ? course.Course.courseName : "");
       setIntro(course.Course.intro ? course.Course.intro : "");
+      setAnhBia(course.Course.anhBia);
     } else {
       setCreatedAt(
         course.createdAt ? new Date(course.createdAt).toLocaleDateString() : ""
       );
       setCourseName(course.courseName ? course.courseName : "");
       setIntro(course.intro ? course.introZ : "");
+        setAnhBia(course.anhBia);
     }
   }, []);
+
+  const router = useRouter();
+
+  const handleStudyNow = () => {
+    console.log("study now");
+    router.push(`/student/course/${course.courseId}`);
+  }
+
+  useEffect(() => {
+    console.log(course.anhBia);
+  }, [course]);
+
   return (
-    <div className="rounded-md overflow-hidden bg-slate-100 w-full sm:max-w-[300px] space-y-1 sm:space-y-2 hover:shadow-lg transition-all duration-300">
+    <div className="cursor-pointer rounded-md overflow-hidden flex flex-col justify-between gap-1
+     bg-slate-100 w-full max-w-[300px] min-h-[250px] 
+      hover:shadow-lg transition-all duration-300">
       <div className="relative">
         <Image
           width={300}
           height={200}
-          src="/assets/images/course.webp"
+          src={anhBia}
           alt="course image"
-          className="w-full h-auto"
+         className="w-full max-h-[160px] object-cover"
         />
       </div>
 
@@ -68,17 +84,19 @@ const Coursecard = ({ type, course }) => {
         <div className="flex flex-wrap justify-between mx-3 sm:mx-4 items-center pb-3 sm:pb-4 gap-2">
           <div className="flex items-center">
             <span className="text-orange font-semibold lg:text-lg md:text-base sm:text-sm text-xs">
-              {course.discount && course.discount > 0
-                ? course.cost - course.discount
-                : course.cost}
-              {" đ"}
+              {new Intl.NumberFormat("vi-VN", {
+                style: "currency",
+                currency: "VND",
+              }).format(Number(((course.cost ?? 0) * (1 - (course.discount ?? 0) / 100)).toFixed(0)))}
             </span>
-            {course.discount && course.discount > 0 && (
+            {course.discount ? (
               <span className="line-through ml-2 text-gray-500 text-xs">
-                {course.cost}
-                {" đ"}
+                {new Intl.NumberFormat("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                }).format(course.cost)}
               </span>
-            )}
+            ) : <div></div>}
           </div>
           <button
             onClick={handleredirect}
@@ -89,7 +107,7 @@ const Coursecard = ({ type, course }) => {
         </div>
       ) : (
         <div className="flex flex-wrap justify-between mx-3 sm:mx-4 items-center pb-3 sm:pb-4 gap-2">
-          <button className="bg-[#FD661F] hover:bg-[#FD661F]/90 text-xs sm:text-sm md:text-base lg:text-base text-white px-3 py-1 rounded-md">
+          <button className="bg-[#FD661F] hover:bg-[#FD661F]/90 text-xs sm:text-sm md:text-base lg:text-base text-white px-3 py-1 rounded-md" onClick={handleStudyNow}>
             Học ngay
           </button>
         </div>

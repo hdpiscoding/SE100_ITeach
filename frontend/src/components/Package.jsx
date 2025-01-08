@@ -1,36 +1,51 @@
 import React from 'react'
 import Image from 'next/image'
-const Package = () => {
+const Package = ({courseName, cost, discount, intro,anhBia,day,onClick}) => {
   return (
-    <div className='flex justify-center'>
-      <div className='grid grid-cols-7 rounded-xl border border-black w-full overflow-hidden'
-           style={{ minHeight: '200px' }}> {/* Thêm minHeight để đảm bảo chiều cao tối thiểu */}
+    <div onClick={onClick} className='flex justify-center px-2 lg:h-[200px] md:h-[150px] sm:h-[100px] h-[100px] '>
+      <div className='grid grid-cols-7 rounded-xl border border-black w-full overflow-hidden lg:h-[200px] md:h-[150px] sm:h-[100px] h-[100px]'
+           > 
         
-        {/* Phần hình ảnh */}
+       
         <div className='relative col-span-3'>
           <Image 
-            className='rounded-l-xl object-cover' 
-            src="/assets/images/course.webp"
+            className='rounded-l-xl lg:h-[200px] md:h-[150px] sm:h-[100px] h-[100px] w-full ' 
+            src={anhBia}
             alt="Course Image"
-            fill  // Sử dụng fill thay vì width/height cố định
-            style={{ objectFit: 'cover' }}
+            width={300}
+            height={200}
           />
-          <div className='bg-white rounded-xl absolute bottom-4 right-4 p-2 shadow-sm'>
-            <span className='text-orange font-semibold text-sm md:text-base lg:text-lg'>$380</span>
-            <span className='line-through text-gray-450 ml-2 text-sm md:text-base lg:text-lg'>$500</span>
+          <div className='bg-white rounded-xl absolute bottom-4 right-4 p-2 shadow-sm text-[10px] md:text-base lg:text-lg'>
+            <span className="font-semibold text-orange">
+              {new Intl.NumberFormat("vi-VN", {
+                style: "currency",
+                currency: "VND",
+              }).format(Number(((cost ?? 0) * (1 - (discount/100 ?? 0))).toFixed(0)))}
+            </span>
+
+            {discount && discount > 0
+                ?
+                <span className='line-through text-gray-450 ml-2 text-sm'> {new Intl.NumberFormat("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                }).format(Number((cost).toFixed(0)))}</span>
+                :
+                <div></div>
+            }
+
           </div>
         </div>
 
-        {/* Phần nội dung */}
+
         <div className='col-span-4 p-4 md:p-6 lg:p-8 flex flex-col gap-3'>
           <p className='text-xs md:text-sm lg:text-lg text-gray-600'>
-            1-28 July 2022
+            {new Date(day).toLocaleDateString()}
           </p>
           <h2 className='text-SignUp font-bold text-sm md:text-lg lg:text-xl'>
-            Python cơ bản- Dành cho trẻ em từ 4-8 tuổi
+            {courseName}
           </h2>
           <p className='text-xs md:text-sm lg:text-lg text-gray-700'>
-            Product Management Masterclass, you will learn with Sarah Johnson - Head of Product Customer Platform Gojek Indonesia.
+            {intro}
           </p>
         </div>
       </div>

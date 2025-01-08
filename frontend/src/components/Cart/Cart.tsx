@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-import React, {useEffect} from "react";
+import React, {useEffect, useRef} from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {DataTable} from "@/components/ui/data-table";
@@ -8,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import {getCartItems} from "@/services/student";
 import { toast } from "react-toastify";
 import {deleteAllCartItems, postPayment} from "@/services/student";
+import AlertModal from "@/components/AlertDialog2/AlertModal";
 interface OrderItem {
     id: string;
     name: string;
@@ -19,6 +21,8 @@ interface OrderItem {
 export default function Cart() {
     const [orderItems, setOrderItems] = React.useState<Array<OrderItem>>([]);
     const [total, setTotal] = React.useState<number>(0);
+
+    const paymentRef = useRef<HTMLButtonElement | null>(null);
 
     useEffect(() => {
         const fetchCartItems = async () => {
@@ -72,7 +76,7 @@ export default function Cart() {
     }, [orderItems]);
 
     const handleClick = async () => {
-        
+        toast.success("Thanh toán thành công");
         const data = {
             userId: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "{}").id : 0,
             totalCost: total,
@@ -81,8 +85,6 @@ export default function Cart() {
         await postPayment(data);
         window.location.href = "/";
         await deleteAllCartItems(data.userId);       
-        toast.success("Thanh toán thành công");
-
 
     };
     return (
@@ -135,7 +137,9 @@ export default function Cart() {
                             </span>
                         </div>
 
-                        <Button onClick={handleClick} className="rounded-3xl bg-DarkGreen hover:bg-DarkGreen_Hover mt-10">
+                        <Button onClick={() => {
+                            paymentRef.current?.click();
+                        }} className="rounded-3xl bg-DarkGreen hover:bg-DarkGreen_Hover mt-10">
                             <span className="font-semibold">
                                 Thanh toán
                             </span>
@@ -143,6 +147,17 @@ export default function Cart() {
                     </div>
                 </div>
             </div>
+
+            <AlertModal
+                title="Xác nhận thanh toán"
+                description="Bạn có chắc chắn muốn thanh toán các khóa học này?"
+                trigger={
+                    <button
+                        ref={paymentRef}
+                        style={{ display: "none" }} // Ẩn trigger button
+                    />
+                }
+                onConfirm={handleClick}/>
         </div>
     );
 }

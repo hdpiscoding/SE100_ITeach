@@ -5,7 +5,7 @@ const addToCart = async (courseId: string, userId: string) => {
         studentId: userId,
         courseId: courseId
     });
-    return response.data.data;
+    return response.data;
 }
 
 const getCartByStudentId = async (studentId: string) => {

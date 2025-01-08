@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 const AboutUs = () => {
   return (
     <div>
-      {/* Header section */}
+     
       <div className="h-[120px] bg-bg grid grid-cols-[0.5fr_11fr_0.5fr]">
         <div></div>
         <div className="flex items-center">
@@ -30,7 +30,7 @@ const AboutUs = () => {
         <div></div>
       </div>
 
-      {/* Hero section */}
+      
       <div className="relative">
         <Image
           src="/assets/images/bg_aboutus.png"
@@ -41,19 +41,17 @@ const AboutUs = () => {
         />
         <div className="space-y-3 md:space-y-5 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full px-4 md:px-0">
           <div className="flex justify-center">
-            <h1 className="text-white text-4xl md:text-5xl lg:text-7xl font-extrabold font-serif text-center">
-              About Us
+            <h1 className="text-white text-4xl md:text-5xl lg:text-7xl font-bold  text-center">
+              Về chúng tôi
             </h1>
           </div>
           <div className="flex justify-center">
-            <p className="w-full text-white text-base md:text-xl text-center">
-              From preschool to pre-tertiary, our students enjoy fun,
-              interactive and relevant lessons and are empowered to think beyond
-              the confines of the classroom.
+            <p className="w-full text-white lg:text-4xl md:text-md text-center">
+            Học code dễ dàng - Thành công bền vững.
             </p>
           </div>
           <div className="flex justify-center">
-            <Button className="bg-orange px-5 md:px-7">See more</Button>
+            <Button className="bg-orange px-5 md:px-7 hover:bg-orangeHover">Xem thêm</Button>
           </div>
         </div>
       </div>
@@ -62,7 +60,7 @@ const AboutUs = () => {
         <div className="space-y-3 md:space-y-5 lg:space-y-10">
           <div className="flex justify-center mt-5">
             <h1 className="text-SignUp text-2xl md:text-3xl lg:text-4xl font-extrabold font-serif text-center">
-              ITeach – Học tập dễ dàng, làm chủ công nghệ
+              ITeach - Học tập dễ dàng, làm chủ công nghệ
             </h1>
           </div>
 
@@ -92,7 +90,7 @@ const AboutUs = () => {
                 người mới bắt đầu hay đang nâng cao kỹ năng, chúng tôi luôn có
                 những tài liệu và bài học phù hợp với nhu cầu của bạn.
               </p>
-              <Button className="bg-orange px-5 md:px-7">View more</Button>
+              <Button className="bg-orange px-5 md:px-7 hover:bg-orangeHover">Xem thêm</Button>
             </div>
             <div className="flex justify-end">
               <Image
@@ -131,7 +129,7 @@ const AboutUs = () => {
                 tiễn phong phú, họ mang đến những kiến thức cập nhật, giúp bạn
                 nắm bắt xu hướng và ứng dụng ngay vào công việc thực tế.
               </p>
-              <Button className="bg-orange px-5 md:px-7">View more</Button>
+              <Button className="bg-orange px-5 md:px-7 hover:bg-orangeHover">Xem thêm</Button>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-20">
@@ -151,7 +149,7 @@ const AboutUs = () => {
                 đổi kinh nghiệm giữa các học viên và giảng viên, tạo ra một
                 không gian học tập năng động, kết nối và sáng tạo.
               </p>
-              <Button className="bg-orange px-5 md:px-7">View more</Button>
+              <Button className="bg-orange px-5 md:px-7 hover:bg-orangeHover">Xem thêm</Button>
             </div>
             <div className="flex justify-end">
               <Image

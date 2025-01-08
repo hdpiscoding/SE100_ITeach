@@ -12,7 +12,7 @@ import SignIn from "@/components/signin";
 const Navbar = () => {
   const pathname = usePathname();
   const router = useRouter();
-  const [login, setLogin] = useState(false);
+  const [login, setLogin] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const [role, setRole] = useState("student");
@@ -81,7 +81,7 @@ const Navbar = () => {
   return (
     <>
       <div className="lg:h-[72px] md:h-[50px] h-[40px]"></div>
-      <div className="fixed top-0 left-0 right-0 bg-white z-50">
+      <div className="fixed top-0 left-0 right-0 bg-white z-50" onClick={() => setIsMenuOpen(false)}>
         <div className="grid grid-cols-[0.5fr_11fr_0.5fr]">
           <div></div>
           <div className="relative">
@@ -93,12 +93,30 @@ const Navbar = () => {
                     alt="logo"
                     width={150}
                     height={15}
-                    className="w-[100px] sm:w-[130px] md:w-[150px] lg:w-[200px]"
+                    className="w-[100px] sm:w-[130px] md:w-[150px] lg:w-[200px] cursor-pointer"
+                    onClick={() => {
+                      switch (role) {
+                        case "student":
+                            router.push("/");
+                            break;
+                        case "teacher":
+                            router.push("/teacher/course");
+                            break;
+                        case "admin":
+                            router.push("/admin/statistics");
+                            break;
+                        default:
+                            router.push("/");
+                            break;
+                    }}}
                   />
 
                   <button
                     className="sm:hidden"
-                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsMenuOpen(!isMenuOpen)
+                    }}
                   >
                     {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
                   </button>
@@ -149,7 +167,10 @@ const Navbar = () => {
                           </Link>
                           <button
                             className="flex items-center space-x-2 py-2"
-                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                              setIsMenuOpen(!isMenuOpen)
+                            }}
                           >
                             <Image
                               src="/assets/images/user.png"
@@ -159,13 +180,16 @@ const Navbar = () => {
                             />
                           </button>
                           {isMenuOpen && (
-                            <div className="absolute bg-white shadow-lg rounded-lg p-4 mt-2">
+                            <div className="absolute bg-white shadow-lg rounded-lg p-4 mt-2 min-w-[150px] right-1 top-4">
                               <ul className="space-y-2">
                                 <li>
                                   <Link
                                     href="/student/account"
                                     className="block py-2"
-                                    onClick={() => setIsMenuOpen(false)}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setIsMenuOpen(false)
+                                    }}
                                   >
                                     Tài khoản
                                   </Link>
@@ -181,7 +205,7 @@ const Navbar = () => {
                                       router.push("/");
                                         setRole("student");
                                         localStorage.removeItem("access_token");
-                                        localStorage.setItem("role", "student");
+                                        localStorage.removeItem("role");
                                       localStorage.removeItem("user");
                                      
                                     }}
@@ -198,7 +222,10 @@ const Navbar = () => {
                         <div className="relative">
                           <button
                             className="flex items-center space-x-2 py-2"
-                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setIsMenuOpen(!isMenuOpen)
+                            }}
                           >
                             <Image
                               src="/assets/images/user.png"
@@ -208,7 +235,7 @@ const Navbar = () => {
                             />
                            </button>
                           {isMenuOpen && (
-                            <div className="absolute bg-white shadow-lg rounded-lg p-4 mt-2">
+                            <div className="absolute bg-white shadow-lg rounded-lg p-4 mt-2 min-w-[150px] right-1">
                               <ul className="space-y-2">
                                 <li>
                                   <Link
@@ -231,7 +258,8 @@ const Navbar = () => {
                                       setRole("student");
                                       localStorage.removeItem("access_token");
                                       
-                                        localStorage.setItem("role", "student");
+                                        localStorage.removeItem("role");
+                                      localStorage.removeItem("user");
                                       
 
                                     }}
@@ -248,7 +276,10 @@ const Navbar = () => {
                         <div className="relative">
                           <button
                             className="flex items-center space-x-2 py-2"
-                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setIsMenuOpen(!isMenuOpen)
+                            }}
                           >
                             <Image
                               src="/assets/images/user.png"
@@ -258,7 +289,7 @@ const Navbar = () => {
                             />
                            </button>
                           {isMenuOpen && (
-                            <div className="absolute bg-white shadow-lg rounded-lg p-4 mt-2">
+                            <div className="absolute bg-white shadow-lg rounded-lg p-4 mt-2 min-w-[150px] right-1">
                               <ul className="space-y-2">
                                  
                                 <li>
@@ -270,8 +301,9 @@ const Navbar = () => {
                                       router.push("/");
                                       setRole("student");
                                       localStorage.setItem("isLogin", "false");
-localStorage.removeItem("access_token");
-                                        localStorage.setItem("role", "student");
+                                      localStorage.removeItem("access_token");
+                                      localStorage.removeItem("role");
+                                      localStorage.removeItem("user");
                                       
                                     }}
                                   >
@@ -299,21 +331,27 @@ localStorage.removeItem("access_token");
                         className={`hover:text-orange text-sm block py-2 ${
                           pathname === link.href ? "text-orange" : ""
                         }`}
-                        onClick={() => setIsMenuOpen(false)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsMenuOpen(false)
+                        }}
                       >
                         {link.label}
                       </Link>
                     </li>
                   ))}
 
-                  {/* Thay đổi phần này */}
+                 
                   {login && (
                     <div className="pt-4 border-t space-y-4">
                       {role === "student" && (
                         <div className="relative">
                           <button
                             className="flex items-center space-x-2 py-2"
-                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setIsMenuOpen(!isMenuOpen)
+                            }}
                           >
                             <Image
                               src="/assets/images/user.png"
@@ -329,7 +367,10 @@ localStorage.removeItem("access_token");
                                   <Link
                                     href="/student/account"
                                     className="block py-2"
-                                    onClick={() => setIsMenuOpen(false)}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setIsMenuOpen(false)
+                                    }}
                                   >
                                     Tài khoản
                                   </Link>
@@ -339,7 +380,7 @@ localStorage.removeItem("access_token");
                                     className="block py-2 w-full text-left"
                                     onClick={() => {
                                       localStorage.removeItem("access_token");
-                                        localStorage.setItem("role", "student");                                      setLogin(false);
+                                        localStorage.removeItem("role");                                      setLogin(false);
                                       setIsMenuOpen(false);
                                       router.push("/");
                                       setRole("student");
@@ -362,7 +403,10 @@ localStorage.removeItem("access_token");
                         <div className="relative">
                           <button
                             className="flex items-center space-x-2 py-2"
-                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setIsMenuOpen(!isMenuOpen)
+                            }}
                           >
                             <Image
                               src="/assets/images/user.png"
@@ -378,7 +422,10 @@ localStorage.removeItem("access_token");
                                   <Link
                                     href="/teacher/account"
                                     className="block py-2"
-                                    onClick={() => setIsMenuOpen(false)}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setIsMenuOpen(false)
+                                    }}
                                   >
                                    Tài khoản
                                   </Link>
@@ -393,7 +440,7 @@ localStorage.removeItem("access_token");
                                       router.push("/");
                                       setRole("student");
                                       localStorage.removeItem("access_token");
-                                      localStorage.setItem("role", "student");
+                                      localStorage.removeItem("role");
                                       localStorage.removeItem("user");
 
                                       
@@ -412,7 +459,10 @@ localStorage.removeItem("access_token");
                         <div className="relative">
                           <button
                             className="flex items-center space-x-2 py-2"
-                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setIsMenuOpen(!isMenuOpen)
+                            }}
                           >
                             <Image
                               src="/assets/images/user.png"
@@ -435,7 +485,7 @@ localStorage.removeItem("access_token");
                                       router.push("/");
                                       setRole("student");
                                       localStorage.removeItem("access_token");
-                                      localStorage.setItem("role", "student");
+                                      localStorage.removeItem("role");
                                       localStorage.removeItem("user");
                                       
                                      

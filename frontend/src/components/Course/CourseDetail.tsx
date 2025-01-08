@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars,@typescript-eslint/no-explicit-any */
 // noinspection JSUnusedLocalSymbols
 'use client';
 import React, {useState, useRef, useEffect, ChangeEvent} from "react";
@@ -193,6 +193,7 @@ export default function CourseDetail(props: any) {
     // State for info modal
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const lessonTriggerRef = useRef<HTMLButtonElement | null>(null);
+    const checkRoleRef = useRef<HTMLButtonElement | null>(null);
 
     // State for admin confirm modal
     const deleteRef = useRef<HTMLButtonElement | null>(null);
@@ -233,7 +234,8 @@ export default function CourseDetail(props: any) {
     }
 
     useEffect(() => {
-        setUser(JSON.parse(localStorage.getItem("user") || "{}"));
+        const storedUser = localStorage.getItem("user");
+        setUser(storedUser ? JSON.parse(storedUser) : { id: null });
     }, []);
 
     useEffect(() => {
@@ -242,24 +244,31 @@ export default function CourseDetail(props: any) {
             let isEnrolled = false;
             let courseData;
             let chapterData;
-            if (props.role === "student") {
-                const [data, enroll, chapters] = await Promise.all([
-                    getCourses(String(courseId), String(user?.id)),
-                    checkIsEnrolled(String(user?.id), String(courseId)),
-                    getMyCourseChapters(String(courseId), String(user?.id))
-                ]);
-                courseData = data;
-                isEnrolled = enroll;
-                chapterData = chapters;
+            if (user?.id !== null && user?.id !== "null") {
+                console.log("User is not null");
+                if (props.role === "student") {
+                    const [data, enroll, chapters] = await Promise.all([
+                        getCourses(String(courseId), String(user?.id)),
+                        checkIsEnrolled(String(user?.id), String(courseId)),
+                        getMyCourseChapters(String(courseId), String(user?.id))
+                    ]);
+                    courseData = data;
+                    isEnrolled = enroll;
+                    chapterData = chapters;
+                    setIsBuy(isEnrolled);
+                }
+                else {
+                    console.log("User is not student");
+                    courseData = await getCourses(String(courseId), String(user?.id));
+                    chapterData = courseData.chapters;
+                }
             }
             else {
-                courseData = await getCourses(String(courseId), String(user?.id));
+                console.log("User is null");
+                courseData = await getCourses(String(courseId));
                 chapterData = courseData.chapters;
             }
 
-            if(props.role === "student") {
-                setIsBuy(isEnrolled);
-            }
             setName(courseData.course.courseName);
             setDescription(courseData.course.intro);
             setIntro(courseData.course.gioiThieu);
@@ -304,11 +313,11 @@ export default function CourseDetail(props: any) {
             setReviews(courseData.reviews);
             setIsReviewed(isUserInReviews(user?.id, courseData.reviews));
             setCertificate(courseData.certificateId);
-            console.log(courseData.certificateId);
             setMyCourse(courseData.mycourse);
         }
 
         if (user) {
+            console.log("Fetching data");
             fetchData();
         }
     }, [user]);
@@ -348,7 +357,13 @@ export default function CourseDetail(props: any) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const data = await getCourses(String(courseId), String(user?.id));
+                let data;
+                if (user?.id !== null && user?.id !== "null") {
+                    data = await getCourses(String(courseId), String(user?.id));
+                }
+                else{
+                    data = await getCourses(String(courseId));
+                }
                 setAverageRating(data.course.totalStars);
                 setRatingCount(data.reviews?.length);
                 if (data.reviews?.length > 0) {
@@ -375,10 +390,12 @@ export default function CourseDetail(props: any) {
     const handleAddToCart = async () => {
         try {
             const cartItems = await getCartByStudentId(String(user?.id));
-            if (cartItems.some((item: any) => item.courseId === courseId)) {
+            if (cartItems && cartItems.some((item: any) => item.courseId === courseId)) {
+                console.log("Course is already in cart");
                 toast.error("Khóa học đã có trong giỏ hàng");
             }
             else {
+                console.log("Adding course to cart");
                 const response = await addToCart(String(courseId), String(user?.id));
                 if (response.errMessage === "OK") {
                     toast.success("Thêm vào giỏ hàng thành công");
@@ -561,7 +578,7 @@ export default function CourseDetail(props: any) {
                                     {new Intl.NumberFormat("vi-VN", {
                                         style: "currency",
                                         currency: "VND",
-                                    }).format(Number(((price ?? 0) * (1 - (discount ?? 0))).toFixed(0)))}
+                                    }).format(Number(((price ?? 0) * (1 - (discount ?? 0) / 100)).toFixed(0)))}
                                 </span>
 
                                 {discount !== 0
@@ -576,7 +593,7 @@ export default function CourseDetail(props: any) {
                                         </span>
 
                                         <span className="text-sm bg-orange text-white px-2 py-1 rounded-lg mb-6">
-                                            -{String((discount ?? 0) * 100)}%
+                                            -{String((discount ?? 0))}%
                                         </span>
                                     </div>
                                 }
@@ -750,6 +767,9 @@ export default function CourseDetail(props: any) {
                                                         else {
                                                             if (props.role === "student" && lesson.lessonOrder !== 0 && (findLessonByOrder(chapters, lesson.lessonOrder - 1)?.isFinished === false)) {
                                                                 lessonTriggerRef.current?.click();
+                                                            }
+                                                            else if (props.role === 'user'){
+                                                                checkRoleRef.current?.click();
                                                             }
                                                             else {
                                                                 setIsPending(true);
@@ -992,7 +1012,7 @@ export default function CourseDetail(props: any) {
                                             Trạng thái
                                         </span>
 
-                                        <Button className={`${certificate !== null ? "bg-DarkGreen text-White hover:bg-DarkGreen_Hover" : "bg-gray text-black"}`} disabled={!(certificate !== null)} onClick={handleCertificate}>
+                                        <Button className={`${certificate ? "bg-DarkGreen text-White hover:bg-DarkGreen_Hover" : "bg-gray text-black"}`} disabled={!(certificate)} onClick={handleCertificate}>
                                             Xem chứng chỉ
                                         </Button>
                                     </div>
@@ -1023,6 +1043,18 @@ export default function CourseDetail(props: any) {
                 trigger={
                     <button
                         ref={lessonTriggerRef}
+                        style={{ display: "none" }} // Ẩn trigger button
+                    />
+                }
+            />
+            {isPending && <Loading/>}
+
+            <InfoModal
+                title="Thông báo"
+                description="Vui lòng đăng nhập để xem bài giảng!"
+                trigger={
+                    <button
+                        ref={checkRoleRef}
                         style={{ display: "none" }} // Ẩn trigger button
                     />
                 }

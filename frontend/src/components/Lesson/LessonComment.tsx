@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars,@typescript-eslint/no-explicit-any */
 'use client';
 import React, {useEffect, useState} from 'react';
 import NestedCommentItem from "@/components/Lesson/NestedCommentItem";
@@ -7,7 +7,7 @@ import Image from "next/image";
 import {FaUser} from "react-icons/fa";
 import {Textarea} from "@/components/ui/textarea";
 import {Send} from 'lucide-react'
-import {TooltipContent, Tooltip, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
 import {Pagination, Stack} from "@mui/material";
 import {createLessonComment} from "@/services/course";
 
@@ -31,7 +31,7 @@ interface LessonComment {
 }
 
 function buildCommentTree(comments: LessonComment[]) {
-    const commentMap = new Map();
+    const commentMap = new Map<string, LessonComment>();
 
     // Tạo bản đồ để tra cứu nhanh các comment theo ID
     comments.forEach(comment => {
@@ -46,7 +46,7 @@ function buildCommentTree(comments: LessonComment[]) {
             // Nếu có parentCommentId, thêm vào mảng children của parent
             const parent = commentMap.get(comment.parrentCommentId);
             if (parent) {
-                parent.children.push(comment);
+                parent.children?.push(comment);
             }
         } else {
             // Nếu không có parentCommentId, đây là root
@@ -54,83 +54,9 @@ function buildCommentTree(comments: LessonComment[]) {
         }
     });
 
+    // Trả về cây bình luận (rỗng nếu không có bình luận nào)
     return tree;
 }
-
-// const rawComments: LessonComment[] = [
-//     {
-//         id: "c1a2b3d4e5f6g7h8i9j0",
-//         user: {
-//             id: "u1a2b3c4d5e6f7g8h9i0",
-//             email: "lm10@gmail.com",
-//             avatar: "",
-//             role: "student"
-//         },
-//         lessonId: "l1a2b3c4d5e6f7g8h9i0",
-//         content: "This is a great lesson!",
-//         parentCommentId: null
-//     },
-//     {
-//         id: "c2b3d4e5f6g7h8i9j0a1",
-//         user: {
-//             id: "u2b3c4d5e6f7g8h9i0a1",
-//             email: "cr7@gmail.com",
-//             avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
-//             role: "student"
-//         },
-//         lessonId: "l1a2b3c4d5e6f7g8h9i0",
-//         content: "I have a question about this topic.",
-//         parentCommentId: "c1a2b3d4e5f6g7h8i9j0"
-//     },
-//     {
-//         id: "c3c4d5e6f7g8h9i0j1a2",
-//         user: {
-//             id: "u3c4d5e6f7g8h9i0j1a2",
-//             email: "njr10@gmail.com",
-//             avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
-//             role: "student"
-//         },
-//         lessonId: "l2b3c4d5e6f7g8h9i0a1",
-//         content: "Can you explain this part further? mlkgvfjgkljsdfjsdlkfjsdlkfjlskjflksdjfkljksdfmm nskjdnfsdhfkjdshfkjhsdkjfhsdkjfhsdkf",
-//         parentCommentId: null
-//     },
-//     {
-//         id: "c4d5e6f7g8h9i0j1a2b3",
-//         user: {
-//             id: "u4d5e6f7g8h9i0j1a2b3",
-//             email: "r9@gmail.com",
-//             avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
-//             role: "teacher"
-//         },
-//         lessonId: "l2b3c4d5e6f7g8h9i0a1",
-//         content: "Sure, here's my understanding...",
-//         parentCommentId: "c3c4d5e6f7g8h9i0j1a2"
-//     },
-//     {
-//         id: "c5e6f7g8h9i0j1a2b3c4",
-//         user: {
-//             id: "u5e6f7g8h9i0j1a2b3c4",
-//             email: "kdb17@gmail.com",
-//             avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
-//             role: "student"
-//         },
-//         lessonId: "l3c4d5e6f7g8h9i0a1b2",
-//         content: "Thanks for the explanation!",
-//         parentCommentId: "c4d5e6f7g8h9i0j1a2b3"
-//     },
-//     {
-//         id: "c6f7g8h9i0j1a2b3c4d5",
-//         user: {
-//             id: "u6f7g8h9i0j1a2b3c4d5",
-//             email: "m3@gmail.com",
-//             avatar: "https://img.allfootballapp.com/www/M00/51/75/720x-/-/-/CgAGVWaH49qAW82XAAEPpuITg9Y887.jpg.webp",
-//             role: "student"
-//         },
-//         lessonId: "l3c4d5e6f7g8h9i0a1b2",
-//         content: "I found another resource that might help.",
-//         parentCommentId: null
-//     }
-// ];
 
 export default function LessonComment(props: any) {
     const [userComment, setUserComment] = useState<string>("");
@@ -142,21 +68,28 @@ export default function LessonComment(props: any) {
     const [comments, setComments] = useState<LessonComment[]>([]);
 
     useEffect(() => {
-        setComments(buildCommentTree(props?.rawComments));
+        if (props?.rawComments) {
+            setComments(buildCommentTree(props.rawComments));
+        } else {
+            setComments([]);
+        }
     }, [props?.rawComments]);
 
     const addComment = (newComment: LessonComment) => {
         setComments((prevComments) => {
-            // Nếu comment là root, thêm trực tiếp
-            if (!newComment.parrentCommentId) {
-                return [...prevComments, newComment];
+            // Nếu danh sách hiện tại rỗng, thêm bình luận mới (dù là root hay child)
+            if (prevComments.length === 0) {
+                return [newComment];
             }
 
             // Hàm đệ quy để thêm comment vào đúng vị trí
             const addToParent = (comments: LessonComment[]): LessonComment[] => {
+                let foundParent = false; // Đánh dấu nếu tìm thấy parent
+
+                // Nếu không tìm thấy parent ở cấp độ hiện tại, trả về mảng gốc
                 return comments.map((comment: LessonComment) => {
                     if (comment.id === newComment.parrentCommentId) {
-                        // Nếu tìm thấy comment cha, thêm comment con vào children
+                        foundParent = true; // Đã tìm thấy parent
                         return {
                             ...comment,
                             children: [...(comment.children || []), newComment],
@@ -173,7 +106,14 @@ export default function LessonComment(props: any) {
                 });
             };
 
-            return addToParent(prevComments);
+            const updatedTree = addToParent(prevComments);
+
+            // Nếu bình luận mới không có parent (root) hoặc không tìm thấy parent trong cây, thêm nó vào gốc
+            if (!newComment.parrentCommentId || !updatedTree.some(c => c.id === newComment.parrentCommentId)) {
+                return [...updatedTree, newComment];
+            }
+
+            return updatedTree;
         });
     };
 
@@ -230,7 +170,7 @@ export default function LessonComment(props: any) {
                 Bình luận
             </span>
 
-            {props.rawComments?.length === 0
+            {(props.rawComments?.length === 0 && comments.length === 0)
                 ?
                 <div className="lg:col-start-1 w-full text-center my-4">Hiện tại chưa có bình luận nào 🤐</div>
                 :

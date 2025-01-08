@@ -1,6 +1,6 @@
  import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 
 const TeacherCard = ({ teacher }) => {
@@ -40,7 +40,7 @@ const TeacherCard = ({ teacher }) => {
         />
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0  p-4">
+      <div className="absolute bottom-0 left-0 right-0 bg-DarkGreen_Hover p-4">
         <h3 className="lg:text-xl md:text-lg sm:text-sm text-xs font-bold mb-2 text-white flex justify-center">
           {teachername}
         </h3>

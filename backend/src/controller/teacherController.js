@@ -1,5 +1,6 @@
 import teacherService from "../service/teacherService";
 let handleCreateNewCourse = async (req, res) => {
+  console.log("controller");
   if (
     !req.body.courseName ||
     !req.body.courseCategoryId ||
@@ -31,14 +32,14 @@ let handleGetAllCourse = async (req, res) => {
   return res.status(200).json(data);
 };
 let handleDeleteACourse = async (req, res) => {
-  let id = req.body.id;
+  let id = req.query.id;
   if (!id) {
     return res.status(500).json({
       errCode: 1,
       message: "Missing required parameters",
     });
   }
-  let message = await teacherService.deleteACourse(req.body);
+  let message = await teacherService.deleteACourse(id);
   return res.status(200).json({
     message,
   });
@@ -58,7 +59,7 @@ let handleEditACourse = async (req, res) => {
   });
 };
 let handleGetMyCourse = async (req, res) => {
-  let teacherId = req.body.teacherId;
+  let teacherId = req.query.teacherId;
   if (!teacherId) {
     return res.status(500).json({
       errCode: 1,
@@ -66,7 +67,7 @@ let handleGetMyCourse = async (req, res) => {
       data: [],
     });
   }
-  let data = await teacherService.getMyCourse(req.body);
+  let data = await teacherService.getMyCourse(teacherId);
   return res.status(200).json(data);
 };
 let handlePutALesson = async (req, res) => {
@@ -103,14 +104,14 @@ let handleCreateNewLesson = async (req, res) => {
   return res.status(200).json(data);
 };
 let handleDeleteALesson = async (req, res) => {
-  let id = req.body.id;
+  let id = req.query.id;
   if (!id) {
     return res.status(500).json({
       errCode: 1,
       message: "Missing required parameters",
     });
   }
-  let message = await teacherService.deleteALesson(req.body);
+  let message = await teacherService.deleteALesson(id);
   return res.status(200).json({
     message,
   });
@@ -139,14 +140,14 @@ let handlePostIDEUse = async (req, res) => {
   return res.status(200).json(data);
 };
 let handleGetMyAccount = async (req, res) => {
-  let teacherId = req.body.teacherId;
+  let teacherId = req.query.teacherId;
   if (!teacherId) {
     return res.status(500).json({
       errCode: 1,
       message: "Missing required fields",
     });
   }
-  let data = await teacherService.getMyAccountInformation(req.body);
+  let data = await teacherService.getMyAccountInformation(req.query);
   return res.status(200).json(data);
 };
 let handleGetAllStudentOfCourse = async (req, res) => {
@@ -171,14 +172,14 @@ let handleCreateNewChapter = async (req, res) => {
   return res.status(200).json(data);
 };
 let handleGetAllChapter = async (req, res) => {
-  let courseId = req.body.courseId;
+  let courseId = req.query.courseId;
   if (!courseId) {
     return res.status(500).json({
       errCode: 1,
       message: "Missing required fields",
     });
   }
-  let data = await teacherService.getAllChapter(req.body);
+  let data = await teacherService.getAllChapter(courseId);
   return res.status(200).json(data);
 };
 let handlePutAChapter = async (req, res) => {
@@ -193,14 +194,15 @@ let handlePutAChapter = async (req, res) => {
   return res.status(200).json(data);
 };
 let handleDeleteAChapter = async (req, res) => {
-  let id = req.body.id;
+  console.log("controller");
+  let id = req.query.id;
   if (!id) {
     return res.status(500).json({
       errCode: 1,
       message: "Missing required fields",
     });
   }
-  let data = await teacherService.deleteAChapter(req.body);
+  let data = await teacherService.deleteAChapter(id);
   return res.status(200).json(data);
 };
 let handleGetIDEUseByMonth = async (req, res) => {

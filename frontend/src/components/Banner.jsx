@@ -1,8 +1,18 @@
-import React from 'react';
-import { Button } from '@/components/ui/button';
+/* eslint-disable react/no-unescaped-entities,@typescript-eslint/no-unused-expressions */
+"use client";
+import React, {useEffect, useState} from 'react';
 import Image from 'next/image';
+import {useRouter} from "next/navigation";
 
 const Banner = () => {
+    const [role, setRole] = useState("");
+    const router = useRouter();
+    useEffect(() => {
+        const roleStorage = localStorage.getItem("role");
+        if (roleStorage) {
+            setRole(roleStorage);
+        }
+    }, []);
   return (
     <div className=' h-fit bg-bg font-poppins'>
       <div className='grid grid-cols-[0.5fr_11fr_0.5fr]'>
@@ -20,7 +30,9 @@ const Banner = () => {
               <div className='col-span-1'>
                 <button className='bg-orange text-white lg:text-base md:text-sm sm:text-xs
                  text-[5px] lg:px-7 lg:py-3 md:px-2 md:py-1 sm:px-3 sm:py-1 px-3 py-1
-                  lg:rounded-lg md:rounded-lg sm:rounded-sm rounded-sm '>HỌC NGAY</button>
+                  lg:rounded-lg md:rounded-lg sm:rounded-sm rounded-sm ' onClick={() => {
+                    role ? router.push("/student/course") : router.push("/course")
+                }}>HỌC NGAY</button>
               </div>
              <div className='col-span-1 flex  items-center justify-start'> <Image src="/assets/images/estimation.png" alt="Banner" width={400} height={400} className='w-2/3 ' /></div>
             </div>
@@ -32,6 +44,7 @@ const Banner = () => {
               width={400}
               height={400}
               className='w-2/3 '
+              
             />
           </div>
        </div>

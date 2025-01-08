@@ -1,18 +1,58 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import React from "react";
 import Image from "next/image";
 import { useState } from "react";
-import Coursecard from "@/components/Coursecard";
+import Coursecard from "../../../components/Course/Coursecard";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { Button } from "../../../components/ui/button";
+import{useEffect,useRef} from "react";
+import { getMyAccount,getMyCourse } from "../../../services/teacher";
 const CourseTeacher = () => {
-  let username = "Username";
-  let khoahoc = 24;
-  let hocvien = 24;
-  const [activeTab, setActiveTab] = useState("registered");
+  let user=localStorage.getItem("user");
+  console.log(user);
+  let tId = JSON.parse(user).id;
+  const [username, setUsername] = useState("");
+  const [khoahoc, setKhoahoc] = useState(0);
+  const [hocvien, setHocvien] = useState(0);
+  const [myCourse, setMyCourse] = useState([]);
+  const [courseStats, setCourseStats] = useState({ CS1: 0, CS2: 0, CS3: 0 });
+  const [activeTab, setActiveTab] = useState("active");
   const router = useRouter();
+  const fetchRef = useRef(false);
+  const fetchMyAccount = async () => {
+    const response = await getMyAccount(tId);
+    if (response && response.data) {
+      console.log(response.data);
+      setUsername(response.data.teacher.firstName+" "+response.data.teacher.lastName) ;
+      
+    }
+  };
+  const fetchMyCourse = async () => {
+    const response = await getMyCourse(tId);
+    if (response && response.data) {
+      setKhoahoc(response.data.courses.length);
+      let totalStudents = 0;
+      response.data.courses.forEach((course) => {
+        totalStudents += course.totalStudent;
+        if (course.courseStatus === "CS1") courseStats.CS1 += 1;
+        if (course.courseStatus === "CS2") courseStats.CS2 += 1;
+        if (course.courseStatus === "CS3") courseStats.CS3 += 1;
+      });
+      setHocvien(totalStudents);
+      setMyCourse(response.data.courses);
+    }
+  };
+  useEffect(() => {
+    if (!fetchRef.current) {
+      fetchRef.current = true;
+      fetchMyCourse();
+      fetchMyAccount();
+    }
+  }, []);
   return (
     <div className="space-y-3 md:space-y-5 lg:space-y-7 p-3">
+     
       <div className="relative w-full h-[30vh] md:h-[50vh] lg:h-[70vh]">
         <Image
           src="/assets/images/bg_aboutus.png"
@@ -46,7 +86,7 @@ const CourseTeacher = () => {
             </div>
             <Button
               onClick={() => router.push("/teacher/step1")}
-              className="bg-orange text-white h-[30px] w-[100px] text-[10px] sm:h-[35px] sm:w-[120px] sm:text-xs md:h-[40px] md:w-[140px] md:text-sm lg:h-[45px] lg:w-[160px] lg:text-base"
+              className="bg-orange hover:bg-orangeHover text-white h-[30px] w-[100px] text-[10px] sm:h-[35px] sm:w-[120px] sm:text-xs md:h-[40px] md:w-[140px] md:text-sm lg:h-[45px] lg:w-[160px] lg:text-base"
             >
               Tạo khóa học
             </Button>
@@ -55,37 +95,49 @@ const CourseTeacher = () => {
           <div className="flex justify-start items-center space-x-10 my-10 lg:text-2xl md:text-xl text-xs">
             <span
               className={`cursor-pointer ${
-                activeTab === "registered" ? "text-orange" : "text-black"
+                activeTab === "active" ? "text-orange" : "text-black"
               }`}
-              onClick={() => setActiveTab("registered")}
+              onClick={() => setActiveTab("active")}
             >
-              Đang hoạt động({khoahoc})
+              Đang hoạt động({courseStats.CS1})
             </span>
             <span
               className={`cursor-pointer ${
-                activeTab === "suggested" ? "text-orange" : "text-black"
+                activeTab === "approval" ? "text-orange" : "text-black"
               }`}
-              onClick={() => setActiveTab("suggested")}
+              onClick={() => setActiveTab("approval")}
             >
-              Đang chờ duyệt
+              Đang chờ duyệt({courseStats.CS2})
             </span>
             <span
               className={`cursor-pointer ${
-                activeTab === "certificate" ? "text-orange" : "text-black"
+                activeTab === "pause" ? "text-orange" : "text-black"
               }`}
-              onClick={() => setActiveTab("certificate")}
+              onClick={() => setActiveTab("pause")}
             >
-              Tạm dừng
+              Tạm dừng({courseStats.CS3})
             </span>
           </div>
           <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-6 ">
-            <Coursecard />
-            <Coursecard />
-            <Coursecard />
-            <Coursecard />
-            <Coursecard />
-            <Coursecard />
-            <Coursecard />
+          {myCourse
+    .filter(course => {
+      if (activeTab === "active") return course.courseStatus === "CS1";
+      if (activeTab === "approval") return course.courseStatus === "CS2";
+      if (activeTab === "pause") return course.courseStatus === "CS3";
+      return false;
+    })
+    .map((course) => (
+      <Coursecard
+      day={course.createdAt}
+        key={course.id}
+        anhBia={course.anhBia}
+        courseName={course.courseName}
+        cost={course.cost}
+        discount={course.discount}
+        intro={course.intro}
+        onClick={() => router.push(`/teacher/course/${course.id}`)}
+      />
+    ))}
           </div>
         </div>
         <div></div>

@@ -1,8 +1,10 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import QRCode from "react-qr-code";
-import { getACertificate } from "@/services/student";
+import { getACertificate } from "../services/student";
+import {format} from "date-fns";
 
 const Certificate = ({ id }) => {
   const [certificate, setCertificate] = useState(null);
@@ -39,8 +41,12 @@ const Certificate = ({ id }) => {
                         </div>
                       </div>
                       <div className="text-2xl md:text-3xl lg:text-5xl">
-                        {certificate?.user?.firstName}{" "}
-                        {certificate?.user?.lastName}
+                        {certificate?.user?.firstName && certificate?.user?.lastName
+                            ?
+                            (certificate?.user?.firstName + " " + certificate?.user?.lastName)
+                            :
+                            certificate?.user?.email
+                        }
                         <hr className="bg-certificate w-2/3" />
                       </div>
                       <div className="text-base md:text-lg lg:text-xl">
@@ -81,8 +87,8 @@ const Certificate = ({ id }) => {
                 </div>
                 <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                   <div className="text-sm md:text-base">
-                    <div>Hà Nội,__/__/____</div>
-                    <div>Ha Noi,__/__/____</div>
+                    <div>TP.HCM, {certificate?.createdAt ? format(new Date(certificate?.createdAt), "dd/MM/yyyy") : ""}</div>
+                    <div>HCMC, {certificate?.createdAt ? format(new Date(certificate?.createdAt), "dd/MM/yyyy") : ""}</div>
                   </div>
                   <Image
                     className="w-32 md:w-40 lg:w-48"

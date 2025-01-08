@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 import { useState, useEffect } from "react";
 import {
@@ -5,7 +6,6 @@ import {
   uploadBytes,
   getDownloadURL,
   listAll,
-  list,
 } from "firebase/storage";
 import { storage } from "../../firebase/firebase";
 import { v4 } from "uuid";
@@ -44,8 +44,8 @@ function test() {
         }}
       />
       <button onClick={uploadFile}> Upload Image</button>
-      {imageUrls.map((url) => {
-        return <img src={url} />;
+      {imageUrls.map((url, index) => {
+        return <img key={index} src={url} alt={String(index)} />;
       })}
     </div>
   );

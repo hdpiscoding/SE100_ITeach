@@ -1,22 +1,51 @@
+/* eslint-disable react/jsx-key */
 'use client'
 import React from "react";
 import Image from "next/image";
-import Coursecard from "@/components/Coursecard";
+import Coursecard from "@/components/Course/Coursecard";
 import { Button } from "@/components/ui/button";
-import Coursecardnoprice from "@/components/Coursecardnoprice";
+import Coursecardnoprice from "@/components/Course/Coursecardnoprice";
 import Package from "@/components/Package";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-import { Pagination, Navigation } from "swiper/modules";
+import { Pagination } from "swiper/modules";
 import Banner from "@/components/Banner";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { getAllCoursesCategories,getAllCourse } from "@/services/student";
+import { useEffect } from "react";
 
-const Home = () => {
-  const [activeButton, setActiveButton] = useState("All Program");
+const Home = () => {  
+  const [activeButton, setActiveButton] = useState("");
   const router = useRouter();
+  const [courseCategory, setCourseCategory] = useState([]);
+  const [allCourse, setAllCourse] = useState([]);
+  const [role, setRole] = useState("");
+  const fetchCourseCategory = async () => {
+    const response = await getAllCoursesCategories();
+    setCourseCategory(response.data.data);
+  };
+  useEffect(() => {
+    
+    fetchCourseCategory();
+  }, []);
+  const fetchAllCourse = async () => {
+    const response = await getAllCourse();
+   
+    setAllCourse(response.data);
+  };
+  console.log(courseCategory);
+  useEffect(() => {
+   const storageRole = localStorage.getItem("role");
+   if (storageRole) {
+        setRole(storageRole);
+   }
+    fetchAllCourse();
+  }, []);
+
+
   return (
     <div className="">
       <div className="relative w-full h-fit">
@@ -37,38 +66,49 @@ const Home = () => {
         </h1>
 
         <div className="flex flex-wrap gap-3 justify-center my-8 md:my-14 ">
-          {[
-            "All Program",
-            "Thuật Toán",
-            "Kiến thức cơ sở",
-            "Lập trình cơ bản",
-            "Lập trình nâng cao",
-            "Giải quyết vấn đề",
-          ].map((text) => (
+          {courseCategory?.map((category) => (
             <button
-              key={text}
-              onClick={() => setActiveButton(text)}
+              key={category.id}
+              onClick={() => setActiveButton(category.categoryName)}
               className={`border-2 whitespace-nowrap text-[8px] sm:text-sm md:text-base lg:text-lg  lg:rounded-lg
                 md:rounded-lg sm:rounded-lg rounded-sm  lg:px-3 lg:py-2 md:px-2 md:py-1 sm:px-2 sm:py-1 px-2 py-1 ${
-                activeButton === text
+                activeButton === category.categoryName
                   ? "bg-SignUp text-white"
                   : "bg-white text-black hover:bg-SignUp hover:text-white"
               }`}
             >
-              {text}
+              {category.categoryName}
             </button>
           ))}
         </div>
 
         <div className=" grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-2 gap-6 justify-items-center">
-          <Coursecard />
-          <Coursecard />
-          <Coursecard />
-          <Coursecard />
-          <Coursecard />
-          <Coursecard />
-          <Coursecard />
-          <Coursecard />
+
+        {allCourse
+         .filter(course => {
+         return course.category.categoryName === activeButton ;
+         
+        })
+        .filter((course) => course.courseStatus === "CS1")
+        .map((course) => (
+          <Coursecard
+          day={course.createdAt} 
+            key={course.id}
+            anhBia={course.anhBia}
+            courseName={course.courseName}
+            cost={course.cost}
+            discount={course.discount}
+            intro={course.intro}
+            onClick={() => {
+              if (role) {
+                router.push(`/${role}/course/${course.id}`);
+              }
+              else {
+                router.push(`/course/${course.id}`);
+              }
+            }}
+          />
+        ))}
         </div>
 
         <h1 className="text-SignUp text-center font-bold text-2xl md:text-4xl lg:text-5xl mt-12">
@@ -77,16 +117,18 @@ const Home = () => {
 
         <div className="flex justify-center">
           <h1 className="mt-10 text-base md:text-2xl text-gray-500 w-full md:w-[1000px] text-center px-4">
-            Onlearing is one powerful online software suite that combines all
-            the tools needed to run a successful school or office.
+          Chúng tôi mang đến những khóa học tuyệt vời, mở ra cánh cửa thành công cho tương lai của bạn.
           </h1>
         </div>
 
-        <div className="grid md:grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 grid-cols-2 gap-6 mt-10 justify-items-center">
-          <Coursecardnoprice />
-          <Coursecardnoprice />
-          <Coursecardnoprice />
-          <Coursecardnoprice />
+        <div className="grid md:grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 grid-cols-2 gap-6 mt-10 ">
+          {courseCategory.map((category, index) => (
+           <div key={index} className="w-full">
+              <Coursecardnoprice
+               key={category.id}
+                categoryName={category.categoryName} />
+           </div>
+          ))}
         </div>
 
         <div className="flex justify-center p-10 lg:p-20">
@@ -106,7 +148,7 @@ const Home = () => {
             alt="banner"
             className="absolute right-0 bottom-0  hidden md:block  h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] "
           />
-          <div className="w-full md:w-[500px] p-8 md:p-14 relative z-10 space-y-4">
+          <div className="w-full md:w-[600px] p-8 md:p-14 relative z-10 space-y-4">
             <h1 className="font-bold text-base md:text-4xl text-white">
               Tại sao bạn nên tham gia khóa học của ITeach ?
             </h1>
@@ -120,8 +162,7 @@ const Home = () => {
                   alt="star"
                 />
                 <span className="text-xs md:text-base lg:text-lg text-white">
-                  Teachers don't get lost in the grid view and have a dedicated
-                  Podium space.
+                Học cùng giảng viên tận tâm, luôn đồng hành và giải đáp mọi thắc mắc của bạn
                 </span>
               </div>
               <div className="flex items-start gap-2">
@@ -133,8 +174,7 @@ const Home = () => {
                   alt="star"
                 />
                 <span className="text-xs md:text-base lg:text-lg text-white">
-                  Teachers don't get lost in the grid view and have a dedicated
-                  Podium space.
+                Học nhanh - Hiểu sâu - Áp dụng ngay! 
                 </span>
               </div>
               <div className="flex items-start gap-2">
@@ -146,13 +186,21 @@ const Home = () => {
                   alt="star"
                 />
                 <span className="text-xs md:text-base lg:text-lg text-white">
-                  Teachers don't get lost in the grid view and have a dedicated
-                  Podium space.
+                Học tập hiệu quả mà không lo chi phí! Khóa học với mức giá phù hợp cho mọi người
                 </span>
               </div>
             </div>
-            <button className="text-SignUp lg:rounded-lg md:rounded-lg sm:rounded-lg rounded-sm bg-white  lg:py-3 lg:px-7 md:py-2 md:px-5 sm:py-2 sm:px-4 py-2 px-3 text-xs md:text-base lg:text-lg hover:bg-SignUp hover:text-white ">
-              BUY NOW
+            <button className="text-SignUp lg:rounded-lg md:rounded-lg sm:rounded-lg rounded-sm bg-white  lg:py-3 lg:px-7 md:py-2 md:px-5 sm:py-2 sm:px-4 py-2 px-3 text-xs md:text-base lg:text-lg hover:bg-SignUp hover:text-white " onClick={() => {
+              {
+                if (role) {
+                  router.push(`/${role}/course`);
+                }
+                else {
+                  router.push(`/course`);
+                }
+              }
+            }}>
+             Mua ngay
             </button>
           </div>
         </div>
@@ -162,12 +210,11 @@ const Home = () => {
         </h1>
         <div className="flex justify-center">
           <h1 className="mt-10 text-base md:text-2xl text-gray-500 w-full md:w-[800px] text-center px-4">
-            Onlearing is one powerful online software suite that combines all
-            the tools needed to run a successful school or office.
+          Chúng tôi mang đến những khóa học tuyệt vời, mở ra cánh cửa thành công cho tương lai của bạn.
           </h1>
         </div>
 
-        <div className="my-10 px-4 md:px-0">
+        <div className="my-10 lg:px-1 md:px-0 ">
           <Swiper
             slidesPerView={1}
             spaceBetween={30}
@@ -178,24 +225,35 @@ const Home = () => {
             modules={[Pagination]}
             className="w-full md:w-[60%] "
           >
-            <SwiperSlide className="flex justify-center">
-              <Package />
-            </SwiperSlide>
-            <SwiperSlide className="flex justify-center">
-              <Package />
-            </SwiperSlide>
-            <SwiperSlide className="flex justify-center">
-              <Package />
-            </SwiperSlide>
-            <SwiperSlide className="flex justify-center">
-              <Package />
-            </SwiperSlide>
+            {allCourse
+            .filter((course) => course.courseStatus === "CS1")
+            .map((course) => (
+              <SwiperSlide className="flex justify-center">
+                <Package
+                day={course.createdAt} 
+                key={course.id}
+                courseName={course.courseName}
+                cost={course.cost}
+                discount={course.discount}
+                intro={course.intro}
+                anhBia={course.anhBia}
+                onClick={() => {
+                  if (role) {
+                    router.push(`/${role}/course/${course.id}`);
+                  }
+                  else {
+                    router.push(`/course/${course.id}`);
+                  }
+                }}
+                />
+              </SwiperSlide>
+            ))}
           </Swiper>
 
           <style jsx global>{`
             .swiper {
               padding-bottom: 50px !important;
-              overflow: visible !important;
+             
             }
             .swiper-wrapper {
               padding: 0 1px !important; /* Thêm dòng này */

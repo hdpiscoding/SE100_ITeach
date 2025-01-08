@@ -1,10 +1,11 @@
+/* eslint-disable react-hooks/rules-of-hooks,@typescript-eslint/no-unused-vars */
 "use client"
 import {ArrowUpDown, CircleX} from "lucide-react"
 import { ColumnDef } from "@tanstack/react-table"
 import {Button} from "@/components/ui/button";
 import Image from "next/image";
 import AlertModal from "../AlertDialog2/AlertModal";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import {deleteCartItem} from "@/services/student";
 
 // This type is used to define the shape of our data.

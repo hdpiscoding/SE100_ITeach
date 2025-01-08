@@ -5,11 +5,12 @@ import MarkdownIt from "markdown-it";
 import MdEditor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
 import { toast } from "react-toastify";
-import { useState, useEffect, useRef } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useParams, useRouter } from "next/navigation";
 import {
   postAChapter,
   postALesson,
+  getDetailCourse,
   deleteAChapter,
   putAChapter,
   putALesson,
@@ -31,7 +32,7 @@ const mdParser = new MarkdownIt();
 const useCourseState = () => {
   const [courseInfo, setCourseInfo] = useState(null);
   const [chapters, setChapters] = useState([]);
- 
+  const [isLoading, setIsLoading] = useState(true);
   
 
   return {
@@ -39,7 +40,8 @@ const useCourseState = () => {
     setCourseInfo,
     chapters,
     setChapters,
-   
+    isLoading,
+    setIsLoading,
   };
 };
 const useChapterState = () => {
@@ -48,7 +50,7 @@ const useChapterState = () => {
   const [editingChapterName, setEditingChapterName] = useState("");
   const [showNewChapterForm, setShowNewChapterForm] = useState(false);
   const [newChapterName, setNewChapterName] = useState("");
-  const [isLoadingNewChap, setIsLoadingNewChap] = useState(false);
+
   return {
     isEditing,
     setIsEditing,
@@ -60,8 +62,6 @@ const useChapterState = () => {
     setShowNewChapterForm,
     newChapterName,
     setNewChapterName,
-    isLoadingNewChap,
-    setIsLoadingNewChap,
   };
 };
 const useLessonState = () => {
@@ -78,7 +78,7 @@ const useLessonState = () => {
   const [videoUrl, setVideoUrl] = useState("");
   const [lessonContent, setLessonContent] = useState(null);
   const [isEditing, setIsEditing] = useState(true);
-  const [videoFile, setVideoFile] = useState(null);
+  const [videoFile, setVideoFile] =useState(null);
   return {
     activeTab,
     setActiveTab,
@@ -114,8 +114,8 @@ const useLessonState = () => {
 const Step2 = () => {
   const [nowChapterID, setNowChapterID] = useState(null);
   const [nowLessonID, setNowLessonID] = useState(null);
-  const searchParams = useSearchParams();
-  const courseId = searchParams.get("courseId");
+  const params = useParams();
+  const courseId = params.courseId;
   const router = useRouter();
   const fileInputRef = useRef(null);
 
@@ -123,25 +123,28 @@ const Step2 = () => {
   const chapterState = useChapterState();
   const lessonState = useLessonState();
   // course API
+  const fetchDetailCourse = useCallback(async () => {
+    try {
+      courseState.setIsLoading(true);
+      const response = await getDetailCourse(courseId);
 
-  // const sendMail = async () => {
-  //   try {
-  //     const response = await postSendMail(courseId);
-  //     console.log("courseId:", courseId);
-  //     if (response) {
-  //       // router.push("/teacher/course");
-  //       console.log(response);
-  //     }
-  //   } catch (error) {
-  //    console.log("Error:", error);
-  //   }
-  // };
-  const handleComplete=()=>
-  {
-    toast.success("Tạo khóa học thành công!");
-    router.push("/teacher/course");
-
-  }
+      if (response?.data?.data) {
+        const { course, chapters } = response.data.data;
+        courseState.setCourseInfo(course);
+        courseState.setChapters(chapters);
+        chapters.forEach((chapter) => {
+          chapter.lessons?.forEach((lesson) => {
+            fetchGetLessonContent(lesson.id);
+          });
+        });
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Lỗi khi tải thông tin khóa học!");
+    } finally {
+      courseState.setIsLoading(false);
+    }
+  }, [courseId]);
   //Chapter API
   const toggleChapter = (index) => {
     courseState.setChapters(
@@ -229,10 +232,8 @@ const Step2 = () => {
             lessons: [],
           },
         ]);
-        chapterState.setIsLoadingNewChap(false);
         chapterState.setShowNewChapterForm(false);
         chapterState.setNewChapterName("");
-       
         toast.success("Thêm chương mới thành công!");
       } else {
         toast.error(response?.data?.errMessage || "Thêm chương thất bại!");
@@ -249,7 +250,7 @@ const Step2 = () => {
       return;
     }
 
- 
+    // Check for duplicate names
     const chapterExists = courseState.chapters.some(
       (chapter) =>
         chapter.chapterName.toLowerCase() ===
@@ -290,8 +291,28 @@ const Step2 = () => {
       toast.error("Cập nhật chương thất bại!");
     }
   };
- 
- const handleEditLesson = (lesson,chapterId) => {
+  //Lesson API
+  const fetchGetLessonContent = async (lessonId) => {
+    try {
+      const response = await getLessonContent(lessonId);
+      if (response?.data) {
+        courseState.setChapters((prevChapters) =>
+          prevChapters.map((chapter) => ({
+            ...chapter,
+            lessons: chapter.lessons?.map((lesson) =>
+              lesson.id === lessonId
+                ? { ...lesson, content: response.data.data.content }
+                : lesson
+            ),
+          }))
+        );
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Lỗi khi tải nội dung bài học!");
+    }
+  };
+  const handleEditLesson = (lesson,chapterId) => {
     setNowChapterID(chapterId);
     setNowLessonID(lesson.id);
     console.log("lesson",lesson);
@@ -342,7 +363,7 @@ const Step2 = () => {
       }, 1000); 
     }
   };
-  const validateAddLesson = () => {
+    const validateAddLesson = () => {
       if(lessonState.videoFile===null&&lessonState.isVideoEnabled)
         {
           toast.error("Vui lòng chọn cách nhập video!");
@@ -364,7 +385,7 @@ const Step2 = () => {
     }
    
     const isDuplicate = courseState.chapters
-    .filter((chapter) => chapter.id === nowChapterID) 
+    .filter((chapter) => chapter.id === nowChapterID) // Chỉ xét chapter có id là nowChapterID
     .some((chapter) =>
       chapter.lessons.some((lesson) => lesson.name.trim() === lessonState.lessonTitle.trim())
     );
@@ -375,8 +396,8 @@ const Step2 = () => {
   }
   return true;
     };
- const handleAddLesson = async () => {
-    
+  const handleAddLesson = async () => {
+    console.log("Add lesson");
      if(!validateAddLesson())
      {
         return;
@@ -387,9 +408,11 @@ const Step2 = () => {
         const videoRef = ref(storage, `videos/${lessonState.videoFile.name + v4()}`);
         uploadBytes(videoRef, lessonState.videoFile).then((snapshot) => {
           getDownloadURL(snapshot.ref).then(async(url) => {
-            console.log("URL:", url);
+          console.log("URL:", url);
           lessonState.setVideoPreview(url);
+          console.log("0")
           try {
+            console.log("1")
             const response = await postALesson({
               courseId: courseId,
               chapter: nowChapterID,
@@ -401,16 +424,27 @@ const Step2 = () => {
               exerciseHtml: lessonState.exerciseHtml,
               exerciseMarkDown: lessonState.exerciseMarkDown,
             });
-           
-            if (response && response.data) {
+            console.log(response);
+            console.log(courseId);
+            console.log(nowChapterID);
+            console.log(lessonState.lessonTitle);
+            console.log(lessonState.lessonDuration);
+            console.log(url);
+            console.log(lessonState.contentHtml);
+            console.log(lessonState.contentMarkDown);
+            console.log(lessonState.exerciseHtml);
+            console.log(lessonState.exerciseMarkDown);
+            if (response && response.data.errCode === 0 ) {
+              console.log("2")
               lessonState.setHidden(true);
+              console.log("2.1")
               const newLesson = {
                 id: response.data.lessonId,
                 name: lessonState.lessonTitle,
                 studyTime: lessonState.lessonDuration,
                 content:
                 {
-                  lessonId: nowLessonID,
+                lessonId: nowLessonID,
                 video:url,
                 contentHtml: lessonState.contentHtml,
                 contentMarkDown: lessonState.contentMarkDown,
@@ -418,7 +452,7 @@ const Step2 = () => {
                 exerciseMarkDown: lessonState.exerciseMarkDown,
                 },
               };
-      
+              console.log("3")
               courseState.setChapters(
                 courseState.chapters.map((chapter) =>
                   chapter.id === nowChapterID
@@ -429,10 +463,11 @@ const Step2 = () => {
                     : chapter
                 )
               );
-              console.log("Chapters:", courseState.chapters);
+             console.log("chay thanh cong")
               toast.success("Thêm bài học mới thành công!");
             }
           } catch (error) {
+            console.log("co loi ne")
             console.log("Error:", error);
             toast.error("Thêm bài học mới thất bại!");
           }
@@ -495,167 +530,162 @@ const Step2 = () => {
     
 
   };
-    const validateEditLesson = () => {
-      if(lessonState.videoFile===null&&lessonState.isVideoEnabled)
-        {
-          toast.error("Vui lòng chọn cách nhập video!");
-      
-          return false;
-        }
-    if(lessonState.videoFile===null&&lessonState.videoUrl==="")
+  const validateEditLesson = () => {
+    if(lessonState.videoFile===null&&lessonState.isVideoEnabled)
       {
-        toast.error("Vui lòng nhập đầy đủ thông tin!");
+        toast.error("Vui lòng chọn cách nhập video!");
+    
         return false;
       }
-    if (!lessonState.lessonTitle.trim() || !String(lessonState.lessonDuration).trim()
-      || !lessonState.contentHtml.trim() || !lessonState.contentMarkDown.trim()
-     || !lessonState.exerciseHtml.trim() || !lessonState.exerciseMarkDown.trim()) {
+  if(lessonState.videoFile===null&&lessonState.videoUrl==="")
+    {
       toast.error("Vui lòng nhập đầy đủ thông tin!");
       return false;
     }
-    
-    const isDuplicate = courseState.chapters
-    .filter((chapter) => chapter.id === nowChapterID) 
-    .some((chapter) =>
-      chapter.lessons.some((lesson) =>
-        lesson.id !== nowLessonID && lesson.name.trim() === lessonState.lessonTitle.trim()
-      )
-    );
-  
-  if (isDuplicate) {
-    toast.error("Tên bài học đã tồn tại!");
+  if (!lessonState.lessonTitle.trim() || !String(lessonState.lessonDuration).trim()
+    || !lessonState.contentHtml.trim() || !lessonState.contentMarkDown.trim()
+   || !lessonState.exerciseHtml.trim() || !lessonState.exerciseMarkDown.trim()) {
+    toast.error("Vui lòng nhập đầy đủ thông tin!");
     return false;
   }
-  return true;
-    }
-   const handleSaveEditLesson = async () => {
-         if(!validateEditLesson())
-         {
-           console.log("validate false");
-           return;
-         }
-         if(lessonState.isVideoEnabled)
-         {
-           console.log("chon video tu foler")
-           if(lessonState.videoFile)
-           {
-             console.log("videofile:",lessonState.videoFile);
-           }
-           else{
-             console.log(" no videofile:");
-           }
-           const videoRef = ref(storage, `videos/${lessonState.videoFile.name + v4()}`);
-           uploadBytes(videoRef, lessonState.videoFile).then((snapshot) => {
-             getDownloadURL(snapshot.ref).then(async(url) => {
-               console.log("URL edit:", url);
-             lessonState.setVideoPreview(url);
-             try {
-               const response = await putALesson({
-                 id: nowLessonID,
-                 courseId: courseId,
-                 chapter: nowChapterID,
-                 name: lessonState.lessonTitle,
-                 studyTime: parseInt(lessonState.lessonDuration),
-                 video: url,
-                 contentHtml: lessonState.contentHtml,
-                 contentMarkDown: lessonState.contentMarkDown,
-                 exerciseHtml: lessonState.exerciseHtml,
-                 exerciseMarkDown: lessonState.exerciseMarkDown,
-               });
-               if (response && response.data) {
-                 const updatedLesson = {
-                   id: nowLessonID,
-                   name: lessonState.lessonTitle,
-                   studyTime: lessonState.lessonDuration,
-                   content:
-                   {
-                     lessonId: nowLessonID,
-                   video: url,
-                   contentHtml: lessonState.contentHtml,
-                   contentMarkDown: lessonState.contentMarkDown,
-                   exerciseHtml: lessonState.exerciseHtml,
-                   exerciseMarkDown: lessonState.exerciseMarkDown,
-                   },
-                 };
-                 courseState.setChapters(
-                   courseState.chapters.map((chapter) => ({
-                     ...chapter,
-                     lessons: chapter.lessons.map((lesson) =>
-                       lesson.id === nowLessonID
-                         ? updatedLesson
-                         : lesson
-                     ),
-                   }))
-                 );
-                 
-                 toast.success("Cập nhật bài học thành công!");
-               }
-             } catch (error) {
-               console.error("Error:", error);
-               toast.error("Cập nhật bài học thất bại!");
-             }
-             });
-           });
-         }
-         else{
-           console.log("chon video tu link")
-           try {
-             const response = await putALesson({
-               id: nowLessonID,
-               courseId: courseId,
-               chapter: nowChapterID,
-               name: lessonState.lessonTitle,
-               studyTime: parseInt(lessonState.lessonDuration),
-               video: lessonState.videoUrl,
-               contentHtml: lessonState.contentHtml,
-               contentMarkDown: lessonState.contentMarkDown,
-               exerciseHtml: lessonState.exerciseHtml,
-               exerciseMarkDown: lessonState.exerciseMarkDown,
-             });
-             if (response && response.data) {
-               const updatedLesson = {
-                 id: nowLessonID,
-                 name: lessonState.lessonTitle,
-                 studyTime: lessonState.lessonDuration,
-                 content:
-                 {
-                   lessonId: nowLessonID,
-                 video: lessonState.videoUrl,
-                 contentHtml: lessonState.contentHtml,
-                 contentMarkDown: lessonState.contentMarkDown,
-                 exerciseHtml: lessonState.exerciseHtml,
-                 exerciseMarkDown: lessonState.exerciseMarkDown,
-                 },
-               };
-               courseState.setChapters(
-                 courseState.chapters.map((chapter) => ({
-                   ...chapter,
-                   lessons: chapter.lessons.map((lesson) =>
-                     lesson.id === nowLessonID
-                       ? updatedLesson
-                       : lesson
-                   ),
-                 }))
-               );
-               
-               toast.success("Cập nhật bài học thành công!");
-             }
-           } catch (error) {
-             console.error("Error:", error);
-             toast.error("Cập nhật bài học thất bại!");
-           }
-         }
-         
-    
-   };
+  
+  const isDuplicate = courseState.chapters
+  .filter((chapter) => chapter.id === nowChapterID) // Chỉ xét chapter có id là nowChapterID
+  .some((chapter) =>
+    chapter.lessons.some((lesson) =>
+      lesson.id !== nowLessonID && lesson.name.trim() === lessonState.lessonTitle.trim()
+    )
+  );
+
+if (isDuplicate) {
+  toast.error("Tên bài học đã tồn tại!");
+  return false;
+}
+return true;
+  }
+  const handleSaveEditLesson = async () => {
+        if(!validateEditLesson())
+        {
+          console.log("validate false");
+          return;
+        }
+        if(lessonState.isVideoEnabled)
+        {
+          console.log("chon video tu foler")
+          if(lessonState.videoFile)
+          {
+            console.log("videofile:",lessonState.videoFile);
+          }
+          else{
+            console.log(" no videofile:");
+          }
+          const videoRef = ref(storage, `videos/${lessonState.videoFile.name + v4()}`);
+          uploadBytes(videoRef, lessonState.videoFile).then((snapshot) => {
+            getDownloadURL(snapshot.ref).then(async(url) => {
+              console.log("URL edit:", url);
+            lessonState.setVideoPreview(url);
+            try {
+              const response = await putALesson({
+                id: nowLessonID,
+                courseId: courseId,
+                chapter: nowChapterID,
+                name: lessonState.lessonTitle,
+                studyTime: parseInt(lessonState.lessonDuration),
+                video: url,
+                contentHtml: lessonState.contentHtml,
+                contentMarkDown: lessonState.contentMarkDown,
+                exerciseHtml: lessonState.exerciseHtml,
+                exerciseMarkDown: lessonState.exerciseMarkDown,
+              });
+              if (response && response.data) {
+                const updatedLesson = {
+                  id: nowLessonID,
+                  name: lessonState.lessonTitle,
+                  studyTime: lessonState.lessonDuration,
+                  content:
+                  {
+                    lessonId: nowLessonID,
+                  video: url,
+                  contentHtml: lessonState.contentHtml,
+                  contentMarkDown: lessonState.contentMarkDown,
+                  exerciseHtml: lessonState.exerciseHtml,
+                  exerciseMarkDown: lessonState.exerciseMarkDown,
+                  },
+                };
+                courseState.setChapters(
+                  courseState.chapters.map((chapter) => ({
+                    ...chapter,
+                    lessons: chapter.lessons.map((lesson) =>
+                      lesson.id === nowLessonID
+                        ? updatedLesson
+                        : lesson
+                    ),
+                  }))
+                );
+                
+                toast.success("Cập nhật bài học thành công!");
+              }
+            } catch (error) {
+              console.error("Error:", error);
+              toast.error("Cập nhật bài học thất bại!");
+            }
+            });
+          });
+        }
+        else{
+          console.log("chon video tu link")
+          try {
+            const response = await putALesson({
+              id: nowLessonID,
+              courseId: courseId,
+              chapter: nowChapterID,
+              name: lessonState.lessonTitle,
+              studyTime: parseInt(lessonState.lessonDuration),
+              video: lessonState.videoUrl,
+              contentHtml: lessonState.contentHtml,
+              contentMarkDown: lessonState.contentMarkDown,
+              exerciseHtml: lessonState.exerciseHtml,
+              exerciseMarkDown: lessonState.exerciseMarkDown,
+            });
+            if (response && response.data) {
+              const updatedLesson = {
+                id: nowLessonID,
+                name: lessonState.lessonTitle,
+                studyTime: lessonState.lessonDuration,
+                content:
+                {
+                  lessonId: nowLessonID,
+                video: lessonState.videoUrl,
+                contentHtml: lessonState.contentHtml,
+                contentMarkDown: lessonState.contentMarkDown,
+                exerciseHtml: lessonState.exerciseHtml,
+                exerciseMarkDown: lessonState.exerciseMarkDown,
+                },
+              };
+              courseState.setChapters(
+                courseState.chapters.map((chapter) => ({
+                  ...chapter,
+                  lessons: chapter.lessons.map((lesson) =>
+                    lesson.id === nowLessonID
+                      ? updatedLesson
+                      : lesson
+                  ),
+                }))
+              );
+              
+              toast.success("Cập nhật bài học thành công!");
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            toast.error("Cập nhật bài học thất bại!");
+          }
+        }
+        
+   
+  };
   const handleDeleteLesson = async ( e) => {
     let lessonId=nowLessonID;
     e.stopPropagation();
-    if(!lessonId)
-    {
-      toast.error("Vui lòng chọn bài học cần xóa!");
-      return;
-    }
     try {
       const response = await deleteALesson(lessonId);
       if (response.data) {
@@ -675,6 +705,7 @@ const Step2 = () => {
   };
   // Handle Video
   const handleImageClick = () => {
+
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -682,9 +713,8 @@ const Step2 = () => {
   };
   const handleVideoChange = (e) => {
     const file = e.target.files[0];
-   
     if (file) {
-      lessonState.setVideoFile(file);
+     lessonState.setVideoFile(file);
       if (lessonState.videoPreview) {
         URL.revokeObjectURL(lessonState.videoPreview);
       }
@@ -704,6 +734,11 @@ const Step2 = () => {
       lessonState.setExerciseMarkDown(lessonState.exerciseMarkDown);
     }
   }, [lessonState.activeTab]);
+  useEffect(() => {
+    if (courseId) {
+      fetchDetailCourse();
+    }
+  }, [courseId, fetchDetailCourse]);
   function handleEditorChange({ html, text }) {
     if (lessonState.activeTab === "content") {
       lessonState.setContentHtml(html);
@@ -713,22 +748,25 @@ const Step2 = () => {
       lessonState.setExerciseMarkDown(text);
     }
   }
-
   const handleClickAddLesson = (chapterId) => {
-    lessonState.setLessonTitle("");
-    lessonState.setLessonDuration("");
-    lessonState.setContentHtml("");
-    lessonState.setContentMarkDown("");
-    lessonState.setExerciseHtml("");
-    lessonState.setExerciseMarkDown("");
-    lessonState.setVideoUrl("");
-    lessonState.setVideoPreview("");
-    lessonState.setIsVideoEnabled(true);
-  lessonState.setIsEditing(false);
-  lessonState.setHidden(false);
-  setNowChapterID(chapterId);
-  console.log("Chapter ID:", chapterId);
-  }
+      lessonState.setLessonTitle("");
+      lessonState.setLessonDuration("");
+      lessonState.setContentHtml("");
+      lessonState.setContentMarkDown("");
+      lessonState.setExerciseHtml("");
+      lessonState.setExerciseMarkDown("");
+      lessonState.setVideoUrl("");
+      lessonState.setVideoPreview("");
+      lessonState.setIsVideoEnabled(true);
+    lessonState.setIsEditing(false);
+    lessonState.setHidden(false);
+    setNowChapterID(chapterId);
+    console.log("Chapter ID:", chapterId);
+    }
+    const handleComplete=()=>{
+      router.push("/teacher/course");
+      toast.success("Cập nhật khóa học thành công!");
+    }
   return (
     <div className="mb-20">
       <div className="space-y-3 md:space-y-5 lg:space-y-7 grid grid-cols-[0.5fr_11fr_0.5fr]">
@@ -737,13 +775,13 @@ const Step2 = () => {
           <div className="flex items-center space-x-5">
             <Image
               onClick={() => router.push("/teacher/step1")}
-             className="inline-block cursor-pointer lg:w-[20px] lg:h-[15px] md:w-[15px] md:h-[10px] w-[10px] h-[8px]"
+              className="inline-block cursor-pointer lg:w-[20px] lg:h-[15px] md:w-[15px] md:h-[10px] w-[10px] h-[8px]"
               src="/assets/images/vector.png"
               alt="step1"
               width={20}
               height={15}
             />
-            <span className="lg:text-lg md:text-base sm:text-sm text-xs font-bold text-SignUp">
+            <span className="lg:text-2xl md:text-xl sm:text-lg text-base font-bold text-SignUp">
               Nội dung chi tiết
             </span>
           </div>
@@ -770,14 +808,14 @@ const Step2 = () => {
                     id="name"
                     value={lessonState.lessonDuration}
                     onChange={(e) => {
-                      
+                     
                       const value = e.target.value;
                       const formattedValue = value ? parseInt(value, 10).toString() : '';
                      lessonState.setLessonDuration(formattedValue);
                     }}
-                    className="w-full h-[40px] border border-gray rounded-md p-2"
+                    className="w-full h-[40px] border border-gray rounded-md p-2 lg:text-lg md:text-base sm:text-sm text-xs"
                     onKeyDown={(e) => {
-                     
+                      
                       if (e.key === '-' || e.key === '+' || e.key === 'e') {
                         e.preventDefault();
                       }
@@ -837,19 +875,19 @@ const Step2 = () => {
                   )}
                 </div>
                 {lessonState.videoPreview && lessonState.isVideoEnabled && (
-                   <div className="space-x-3">
-                   <button
-                     onClick={handleImageClick}
-                     className="mt-2 px-4 py-2 bg-stroke1 text-white rounded-md hover:bg-opacity-90 lg:text-lg md:text-base sm:text-sm text-xs"
-                   >
-                     Thay đổi video
-                   </button>
-                   <button
-                   onClick={()=>lessonState.setVideoPreview("")}
-                    className="mt-2 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-opacity-90 lg:text-lg md:text-base sm:text-sm text-xs">
-                     Xóa video
-                   </button>
-                </div>
+                 <div className="space-x-3">
+                    <button 
+                      onClick={handleImageClick}
+                      className="mt-2 px-4 py-2 bg-stroke1 text-white rounded-md hover:bg-opacity-90"
+                    >
+                      Thay đổi video
+                    </button>
+                    <button
+                    onClick={()=>lessonState.setVideoPreview("")}
+                     className="mt-2 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-opacity-90">
+                      Xóa video
+                    </button>
+                 </div>
                 )}
                 <div className="mt-4 flex items-end">
                   <input
@@ -867,7 +905,7 @@ const Step2 = () => {
                     value={lessonState.videoUrl}
                     onChange={(e) => lessonState.setVideoUrl(e.target.value)}
                     disabled={lessonState.isVideoEnabled}
-                    className="w-full h-[40px] border border-gray rounded-md p-2 lg:text-lg md:text-base sm:text-sm text-xs"
+                    className="w-full h-[40px] border border-gray rounded-md p-2"
                   />
                 </div>
               </div>
@@ -876,10 +914,10 @@ const Step2 = () => {
             <div className="lg:col-span-1 md:col-span-1 col-span-1">
               <div className="w-full border rounded-md">
                 {courseState.isLoading ? (
-                  <span className="p-3 lg:text-lg md:text-base sm:text-sm text-xs"> Đang tải dữ liệu ....</span>
+                  <span className="p-3"> Đang tải dữ liệu ....</span>
                 ) : (
                   <div className="border border-gray rounded-md p-5">
-                    
+                   
                     {courseState.chapters.map((chapter, index) => (
                       <div
                         key={chapter.id}
@@ -942,7 +980,7 @@ const Step2 = () => {
                                 </div>
                               ))}
 
-                           
+                          
                             <div className="flex justify-between items-center p-2 mt-2 cursor-pointer hover:bg-gray-100 border-t">
                               <span className=" text-gray-500 lg:text-lg md:text-base sm:text-sm text-xs">
                                 Thêm bài học mới
@@ -950,7 +988,7 @@ const Step2 = () => {
                              
                                 <button
                                   onClick={()=>handleClickAddLesson(chapter.id)}
-                                  className="text-gray-500 bg-stroke1 rounded-sm lg:text-lg md:text-base sm:text-sm text-xs"
+                                  className="text-gray-500 bg-stroke1 rounded-sm "
                                 >
                                   <AddIcon sx={{ color: "white" }} />
                                 </button>
@@ -988,7 +1026,7 @@ const Step2 = () => {
                         </div>
                       </div>
                     )}
-                   
+                    
                     <div className="mt-4">
                       <button
                         onClick={xuLyThemChuong}
@@ -998,7 +1036,7 @@ const Step2 = () => {
                       </button>
                     </div>
 
-                  
+                   
                     {chapterState.showNewChapterForm && (
                       <div className="mt-4 p-4 border rounded-md">
                         <input
@@ -1081,13 +1119,13 @@ const Step2 = () => {
             {lessonState.isEditing ?(
                <div className="flex space-x-3">
                <button onClick={handleSaveEditLesson} className=" bg-orange py-2 px-10 rounded-md
-                text-white hover:bg-orangeHover hover:border-orangeHover lg:text-lg md:text-base sm:text-sm text-xs
+                 text-white hover:bg-orangeHover hover:border-orangeHover lg:text-lg md:text-base sm:text-sm text-xs
                " >
                  Lưu chỉnh sửa
                </button>
            
-            <button onClick={handleDeleteLesson} className="bg-white text-orange px-5 py-2 rounded-md
-             border border-orange hover:bg-lightOrangeHover lg:text-lg md:text-base sm:text-sm text-xs">
+            <button onClick={handleDeleteLesson} className="bg-white text-orange px-5 py-2
+             rounded-md border border-orange hover:bg-lightOrangeHover lg:text-lg md:text-base sm:text-sm text-xs">
               Xóa bài học
             </button>
             </div>)
@@ -1098,8 +1136,8 @@ const Step2 = () => {
                 border-orange hover:bg-OrangeHover lg:text-lg md:text-base sm:text-sm text-xs">
               Thêm bài học 
              </button>
-                <button onClick={()=>lessonState.setHidden(true)} className="bg-white text-orange px-5
-                 py-2 rounded-md border border-orange hover:bg-lightOrangeHover lg:text-lg md:text-base sm:text-sm text-xs">
+                <button onClick={()=>lessonState.setHidden(true)} className="bg-white text-orange px-5 py-2 rounded-md
+                 border border-orange hover:bg-lightOrangeHover lg:text-lg md:text-base sm:text-sm text-xs">
                 Hủy
               </button>
               
@@ -1110,8 +1148,7 @@ const Step2 = () => {
           )}
             <button
               onClick={handleComplete}
-              className="bg-orange text-white px-10 py-2 rounded-md hover:bg-orangeHover
-               hover:border-orangeHover lg:text-lg md:text-base sm:text-sm text-xs"
+              className="bg-orange text-white px-10 py-2 rounded-md hover:bg-orangeHover hover:border-orangeHover lg:text-lg md:text-base sm:text-sm text-xs"
             >
               Hoàn thành
             </button>

@@ -5,6 +5,7 @@ const { Op, fn, col, literal } = require("sequelize");
 import db from "../models/index";
 import nodemailer from "nodemailer";
 let createNewCourse = (data) => {
+  console.log(data);
   return new Promise(async (resolve, reject) => {
     try {
       let newCourse = await db.Course.create({
@@ -20,7 +21,10 @@ let createNewCourse = (data) => {
         totalStudent: 0,
         totalLesson: 0,
         courseStatus: "CS2",
+        markDown: data.markDown,
+        discount: data.discount,
       });
+      console.log(newCourse);
       let teacher = await db.User.findOne({
         where: { id: data.teacherId },
         raw: false, // Ensure id is an integer
@@ -38,6 +42,7 @@ let createNewCourse = (data) => {
         courseId: newCourseId,
       });
     } catch (error) {
+      console.log(error);
       reject(error);
     }
   });
@@ -56,6 +61,7 @@ let getAllCourses = (data) => {
       });
       if (data.id & (data.id !== "All")) {
         courses = await db.Course.findOne({
+          where: { id: data.id },
           where: { id: data.id },
         });
         if (!courses) {
@@ -76,11 +82,11 @@ let getAllCourses = (data) => {
     }
   });
 };
-let deleteACourse = (data) => {
+let deleteACourse = (id) => {
   return new Promise(async (resolve, reject) => {
     try {
       let Course = await db.Course.findOne({
-        where: { id: data.id },
+        where: { id: id },
       });
       if (!Course) {
         resolve({
@@ -88,7 +94,7 @@ let deleteACourse = (data) => {
           errMessage: "Invalid id",
         });
       }
-      await db.Course.destroy({ where: { id: data.id } });
+      await db.Course.destroy({ where: { id: id } });
       resolve({
         errCode: 0,
         errMessage: "Deleted",
@@ -119,6 +125,8 @@ let editACourse = (data) => {
         course.finishTime = data.finishTime;
         course.gioiThieu = data.gioiThieu;
         course.anhBia = data.anhBia;
+        course.chungchiId = data.chungchiId;
+        course.markDown= data.markDown;
         await course.save(); // Save the instance
         resolve({
           errCode: 0,
@@ -135,11 +143,11 @@ let editACourse = (data) => {
     }
   });
 };
-let getMyCourse = (data) => {
+let getMyCourse = (teacherId) => {
   return new Promise(async (resolve, reject) => {
     try {
       let courses = await db.Course.findAll({
-        where: { teacherId: data.teacherId },
+        where: { teacherId: teacherId },
       });
       if (!courses) {
         resolve({
@@ -262,11 +270,11 @@ let PostALesson = (data) => {
     }
   });
 };
-let deleteALesson = (data) => {
+let deleteALesson = (id) => {
   return new Promise(async (resolve, reject) => {
     try {
       let Lesson = await db.Lesson.findOne({
-        where: { id: data.id },
+        where: { id: id },
       });
       if (!Lesson) {
         resolve({
@@ -274,9 +282,9 @@ let deleteALesson = (data) => {
           errMessage: "Invalid id",
         });
       }
-      await db.Lesson.destroy({ where: { id: data.id } });
+      await db.Lesson.destroy({ where: { id: id } });
       await db.LessonContent.destroy({
-        where: { lessonId: data.id },
+        where: { lessonId: id },
       });
 
         const lessonCount = await db.Lesson.count({
@@ -442,11 +450,11 @@ let createNewChapter = (data) => {
     }
   });
 };
-let getAllChapter = (data) => {
+let getAllChapter = (courseId) => {
   return new Promise(async (resolve, reject) => {
     try {
       let chapters = await db.Chapter.findAll({
-        where: { courseId: data.courseId },
+        where: { courseId: courseId }, // Use courseId directly
         attributes: { exclude: ["createdAt", "updatedAt"] },
         order: [["id", "ASC"]],
       });
@@ -492,19 +500,21 @@ let putAChapter = (data) => {
     }
   });
 };
-let deleteAChapter = (data) => {
+let deleteAChapter = (id) => {
   return new Promise(async (resolve, reject) => {
+    console.log("deleteAChapter");
     try {
       let chapter = await db.Chapter.findOne({
-        where: { id: data.id },
+        where: { id: id },
       });
+      console.log("fine one");
       if (!chapter) {
         resolve({
           errCode: 2,
           errMessage: "Invalid id",
         });
       }
-      await db.Chapter.destroy({ where: { id: data.id } });
+      await db.Chapter.destroy({ where: { id: id } });
       resolve({
         errCode: 0,
         errMessage: "Deleted",

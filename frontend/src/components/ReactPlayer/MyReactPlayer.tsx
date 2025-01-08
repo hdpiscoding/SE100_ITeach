@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name,@typescript-eslint/no-unused-vars */
 import { ForwardedRef, forwardRef } from 'react';
 import ReactPlayer from 'react-player/lazy';
 

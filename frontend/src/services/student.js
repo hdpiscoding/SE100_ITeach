@@ -1,4 +1,6 @@
+
 import instance from "../utils/AxiosCustomized";
+
 
 const editUserProfile = async (data) => {
   try {
@@ -99,6 +101,7 @@ const getACertificate = async (id) => {
     throw error;
   }
 };
+
 const getAllCoursesCategories = async () => {
   try {
     const response = await instance.get("api/v1/get-all-courses-categories");
@@ -118,6 +121,16 @@ const getATeacherInfo = async (id) => {
   }
 };
 
+const getAllCourse = async () => {
+  try {
+    const response = await instance.get("api/v1/get-all-courses", {
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error while getting all course", error);
+    return null;
+  }
+}
 export {
   editUserProfile,
   changePassword,
@@ -130,6 +143,8 @@ export {
   getStudentCertificates,
   getMyCourses,
   getACertificate,
-  getAllCoursesCategories,
   getATeacherInfo,
+  getAllCoursesCategories,
+  getAllCourse,
 };
+

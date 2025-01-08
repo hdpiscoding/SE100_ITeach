@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars,@typescript-eslint/no-explicit-any */
 'use client';
 import React, {useEffect, useRef, useState} from 'react';
 import dynamic from 'next/dynamic';
@@ -492,7 +492,7 @@ export default function LessonDetail(props: any) {
                                                         router.push(`/${props.role}/course/${courseId}/lesson/${lesson.id}`);
                                                     }
                                                 }}>
-                                                    <LessonListItem type="lesson" index={index + 1} name={lesson.name} duration={lesson.studyTime} isStarted={isStarted} isPlaying={!isPause} isChosen={currentLesson?.lessonId === lesson.id} isFinished={props.role === "student" ? lesson.isFinished : false}/>
+                                                    <LessonListItem type="lesson" index={index + 1} name={lesson.name} duration={lesson.studyTime} isStarted={(lesson.id === currentLessonId) ? isStarted : false} isPlaying={(lesson.id === currentLessonId) ? !isPause : false} isChosen={currentLesson?.lessonId === lesson.id} isFinished={props.role === "student" ? lesson.isFinished : false}/>
                                                 </AccordionContent>
                                             ))}
                                         </AccordionItem>

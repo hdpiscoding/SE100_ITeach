@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any,@typescript-eslint/no-unused-vars */
 "use client"
 import { ArrowUpDown } from "lucide-react"
 import { ColumnDef } from "@tanstack/react-table"
@@ -88,7 +89,7 @@ export const columns: ColumnDef<Order>[] = [
         cell: async ({ row }) => {
             const order = row.original
             const data = await getOrderItems(row.getValue("id"))
-             let orderItems: any[] = []
+             const orderItems: any[] = []
             if (Array.isArray(data.data)) {
                 data.data.map((item: any) => {
                     orderItems.push({

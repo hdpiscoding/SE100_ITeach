@@ -84,7 +84,24 @@ const getChartData = async (year) => {
     throw error;
   }
 };
-
+const getPopularCourses = async () => {
+  try {
+    const response = await instance.get("api/v1/get-popular-course");
+    return response;
+  } catch (error) {
+    console.error("Error fetching popular courses:", error);
+    throw error;
+  }
+};
+const getPopularTeachers = async () => {
+  try {
+    const response = await instance.get("api/v1/get-popular-teacher");
+    return response;
+  } catch (error) {
+    console.error("Error fetching popular teachers:", error);
+    throw error;
+  }
+};
 export {
   getTeachers,
   getAllReviews,
@@ -95,4 +112,6 @@ export {
   getAllCourseOfATeacher,
   getAnalysisInfo,
   getChartData,
+  getPopularCourses,
+  getPopularTeachers,
 };
