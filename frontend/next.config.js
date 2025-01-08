@@ -5,6 +5,7 @@ module.exports = {
       "lh3.googleusercontent.com",
       "letdiv.com",
       "firebasestorage.googleapis.com",
+      "cdn.tgdd.vn",
     ],
   },
   // ...existing code...
