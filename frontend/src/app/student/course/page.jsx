@@ -32,17 +32,21 @@ const router=useRouter();
 
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
   const [loading, setLoading] = useState(true); // Thê
+       
   useEffect(() => {
+     
     const getData = async () => {
+       const storedUser = JSON.parse(localStorage.getItem("user"));
+    const storedUserId = storedUser.id;
       try {
         setLoading(true); // Bắt đầu tải dữ liệu
         const response = await getAllCourses();
-        const allCourses = response.data.data;
+        const allCourses = response.data.data.filter(course => course.courseStatus === "CS1");
     
 
         setAll(allCourses);
         const rawmycourses = await getMyCourses(
-          "11ddfd9c-0066-4dcd-af1c-0050a422caea"
+          storedUserId
           
         );
         const mycourse = rawmycourses.data.data;
@@ -77,7 +81,7 @@ const router=useRouter();
       return;
     }
     const response = await getAllCourses();
-    const allCourses = response.data.data;
+     const allCourses = response.data.data.filter(course => course.courseStatus === "CS1");
     const filter = allCourses.filter((course) => {
       var abovecost = 0;
       const courseCost = parseInt(course.cost);
@@ -220,7 +224,7 @@ const router=useRouter();
                   ) : (
                     <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6">
                       {currentCourses.map((course) => {
-                        const type = myCourses.some(
+                        const type = myCourses?.some(
                           (myCourse) => myCourse.courseId === course.id
                         )
                           ? "1"

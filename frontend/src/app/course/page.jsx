@@ -31,19 +31,20 @@ const CoursesPage = () => {
 
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
   const [loading, setLoading] = useState(true); // Thê
+
   useEffect(() => {
     const getData = async () => {
       try {
         setLoading(true); // Bắt đầu tải dữ liệu
         const response = await getAllCourses();
-        const allCourses = response.data.data;
-
-
-        setAll(allCourses);
-        const rawmycourses = await getMyCourses(
-            "11ddfd9c-0066-4dcd-af1c-0050a422caea"
-
-        );
+              const allCourses = response.data.data.filter(course => course.courseStatus === "CS1");
+           
+       
+               setAll(allCourses);
+               const rawmycourses = await getMyCourses(
+                 storedUserId
+                 
+               );
         const mycourse = rawmycourses.data.data;
         setMyCourses(mycourse);
         // console.log(mycourse);
@@ -69,7 +70,8 @@ const CoursesPage = () => {
       return;
     }
     const response = await getAllCourses();
-    const allCourses = response.data.data;
+              const allCourses = response.data.data.filter(course => course.courseStatus === "CS1");
+           
     const filter = allCourses.filter((course) => {
       let abovecost = 0;
       const courseCost = parseInt(course.cost);

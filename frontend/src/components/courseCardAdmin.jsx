@@ -32,7 +32,7 @@ const CourseCardAdmin = ({ course, type }) => {
         <Image
           width={300}
           height={200}
-          src="/assets/images/course.webp"
+          src={course?.anhBia}
           alt="course image"
           className="w-full h-auto"
         />

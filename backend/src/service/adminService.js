@@ -358,6 +358,20 @@ let deleteCourse = (data) => {
         });
       } else {
         let course = await db.Course.destroy({ where: { id: data.courseId } });
+        await db.Chapter.destroy({ where: { courseId: data.courseId } });
+        const destroyLesson = await db.Lesson.findAll({
+          where: { courseId: data.courseId },
+        });
+        destroyLesson.forEach(async (lesson) => {
+          await db.LessonContent.destroy({
+            where: { lessonId: lesson.id },
+          });
+          await db.LessonComment.destroy({
+            where: { lessonId: lesson.id },
+          });
+        });
+        await db.Lesson.destroy({ where: { courseId: data.courseId } });
+
         resolve({
           errCode: 0,
           errMessage: "OK",

@@ -129,6 +129,8 @@ let login = (email, password) => {
 let updateUserInfo = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
+      console.log("data", data);
+
       if (!data.id || !data.email) {
         resolve({
           errCode: 1,

@@ -35,6 +35,7 @@ let createNewCourse = (data) => {
       }
 
       let newCourseId = newCourse ? newCourse.id : null;
+      await sendEmailToStudent(data.teacherId, data.courseName);
 
       resolve({
         errCode: 0,
@@ -95,6 +96,19 @@ let deleteACourse = (id) => {
         });
       }
       await db.Course.destroy({ where: { id: id } });
+      await db.Chapter.destroy({ where: { courseId: id } });
+      const destroyLesson = await db.Lesson.findAll({
+        where: { courseId: id },
+      });
+      destroyLesson.forEach(async (lesson) => {
+        await db.LessonContent.destroy({
+          where: { lessonId: lesson.id },
+        });
+        await db.LessonComment.destroy({
+          where: { lessonId: lesson.id },
+        });
+      });
+      await db.Lesson.destroy({ where: { courseId: id } });
       resolve({
         errCode: 0,
         errMessage: "Deleted",
@@ -126,7 +140,7 @@ let editACourse = (data) => {
         course.gioiThieu = data.gioiThieu;
         course.anhBia = data.anhBia;
         course.chungchiId = data.chungchiId;
-        course.markDown= data.markDown;
+        course.markDown = data.markDown;
         await course.save(); // Save the instance
         resolve({
           errCode: 0,
@@ -287,19 +301,19 @@ let deleteALesson = (id) => {
         where: { lessonId: id },
       });
 
-        const lessonCount = await db.Lesson.count({
-            where: { courseId: Lesson.courseId },
-        });
+      const lessonCount = await db.Lesson.count({
+        where: { courseId: Lesson.courseId },
+      });
 
-        let course = await db.Course.findOne({
-            where: { id: Lesson.courseId },
-            raw: false,
-        });
+      let course = await db.Course.findOne({
+        where: { id: Lesson.courseId },
+        raw: false,
+      });
 
-        if (course) {
-            course.totalLesson = lessonCount;
-            await course.save();
-        }
+      if (course) {
+        course.totalLesson = lessonCount;
+        await course.save();
+      }
       resolve({
         errCode: 0,
         errMessage: "Deleted",
@@ -556,29 +570,33 @@ let getIDEUseByMonth = (data) => {
     }
   });
 };
-const sendEmailToStudent = (courseId) => {
+const sendEmailToStudent = (teacherId, courseName) => {
   return new Promise(async (resolve, reject) => {
     try {
-      let course = await db.Course.findOne({
-        where: { id: courseId },
-        raw: false,
-      });
-      let teacherId = course.teacherId;
       let teacher = await db.User.findOne({
         where: { id: teacherId },
         raw: false,
       });
-      let students = await db.MyCourse.findAll({
-        where: { courseId: courseId },
-        include: [
-          {
-            model: db.User,
-            attributes: ["email"],
-          },
-        ],
-        raw: true,
-        nest: true,
+      let course = await db.Course.findAll({
+        where: { teacherId: teacherId },
+        raw: false,
       });
+      let students = [];
+      for (let c of course) {
+        let courseStudents = await db.MyCourse.findAll({
+          where: { courseId: c.id },
+          include: [
+            {
+              model: db.User,
+              attributes: ["email"],
+            },
+          ],
+          raw: true,
+          nest: true,
+        });
+        students = students.concat(courseStudents);
+      }
+      console.log("students", students);
       let studentEmails = students.map((student) => student.User.email);
 
       let transporter = nodemailer.createTransport({
@@ -592,10 +610,10 @@ const sendEmailToStudent = (courseId) => {
       let mailOptions = {
         from: "hung07092004@gmail.com",
         to: studentEmails,
-        subject: `Thông báo ra mắt khóa học ${course.courseName}`,
+        subject: `Thông báo ra mắt khóa học ${courseName}`,
         html: `
           <h1>Xin chào,</h1>
-          <p>Khóa học <strong>${course.courseName}</strong> của giáo viên <strong>${teacher.firstName} ${teacher.lastName}</strong> đã chính thức ra mắt.</p>
+          <p>Khóa học <strong>${courseName}</strong> của giáo viên <strong>${teacher.firstName} ${teacher.lastName}</strong> đã chính thức ra mắt.</p>
           <p>Hãy truy cập vào hệ thống để bắt đầu học ngay hôm nay!</p>
           <p>Trân trọng,</p>
           <p>Đội ngũ ITeach</p>

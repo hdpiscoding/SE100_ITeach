@@ -27,6 +27,7 @@ import {
 } from "firebase/storage";
 import { storage } from "../../firebase/firebase";
 import { v4 } from "uuid";
+import { format } from 'date-fns';
 
 
 const formSchema = z.object({
@@ -74,71 +75,71 @@ export default function Profile(props: any) {
     }
 
     const handleConfirm = async () => {
-         const user = JSON.parse(localStorage.getItem("user") || "{}");
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-        
-        if (avatarFile != null) 
-        {
-             const imageRef = ref(storage, `images/${avatarFile.name + v4()}`);
-            uploadBytes(imageRef, avatarFile).then((snapshot) => {
-                getDownloadURL(snapshot.ref).then(async (url) => {
-                    const data = {
-            id: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "{}").id : 0,
-            firstName: form.getValues("firstName"),
-            lastName: form.getValues("lastName"),
-            email: form.getValues("email"),
-            phoneNumber: form.getValues("phone"),
-            birthday: form.getValues("dob")?.toLocaleDateString("en-GB").replace(/\//g, "-") || "",
-            avatar: url,
-                    }
-            const response = await editUserProfile(data);
-            if (response.errCode === 0) {
-                toast.success("Cập nhật thông tin thành công");
-                user.avatar = url;
-                user.firstName = form.getValues("firstName");
-                user.lastName = form.getValues("lastName");
-                user.email = form.getValues("email");
-                user.phoneNumber = form.getValues("phone");
-                user.birthday = form.getValues("dob")?.toLocaleDateString("en-GB").replace(/\//g, "-") || "";
-                console.log("user", user);
-                localStorage.setItem("user", JSON.stringify(user));
-
-            }
-            else {
-                toast.error("Cập nhật thông tin thất bại");
-            }
-                    
-                     
-                });
-             });
-        }
-        else {
-            const data = {
-            id: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "{}").id : 0,
-            firstName: form.getValues("firstName"),
-            lastName: form.getValues("lastName"),
-            email: form.getValues("email"),
-            phoneNumber: form.getValues("phone"),
-            birthday: form.getValues("dob")?.toLocaleDateString("en-GB").replace(/\//g, "-") || "",
-             }
-            const response = await editUserProfile(data);
-            if (response.errCode === 0) {
-                toast.success("Cập nhật thông tin thành công");
-                user.firstName = form.getValues("firstName");
-                user.lastName = form.getValues("lastName");
-                user.email = form.getValues("email");
-                user.phoneNumber = form.getValues("phone");
-                user.birthday = form.getValues("dob")?.toLocaleDateString("en-GB").replace(/\//g, "-") || "";
-                console.log("user", user);
-                localStorage.setItem("user", JSON.stringify(user));
-            }
-            else {
-                toast.error("Cập nhật thông tin thất bại");
-            }
-        }
-         
-        
+    const formatDate = (date: Date) => {
+        return format(date, "yyyy-MM-dd HH:mm:ss.SSS xxx");
     };
+
+    const formattedDob = form.getValues("dob") 
+        ? formatDate(form.getValues("dob") || new Date()) 
+        : "";
+
+    if (avatarFile != null) {
+        const imageRef = ref(storage, `images/${avatarFile.name + v4()}`);
+        uploadBytes(imageRef, avatarFile).then((snapshot) => {
+            getDownloadURL(snapshot.ref).then(async (url) => {
+                const data = {
+                    id: localStorage.getItem("user") 
+                        ? JSON.parse(localStorage.getItem("user") || "{}").id 
+                        : 0,
+                    firstName: form.getValues("firstName"),
+                    lastName: form.getValues("lastName"),
+                    email: form.getValues("email"),
+                    phoneNumber: form.getValues("phone"),
+                    birthday: formattedDob,
+                    avatar: url,
+                };
+                const response = await editUserProfile(data);
+                if (response.errCode === 0) {
+                    toast.success("Cập nhật thông tin thành công");
+                    user.avatar = url;
+                    user.firstName = form.getValues("firstName");
+                    user.lastName = form.getValues("lastName");
+                    user.email = form.getValues("email");
+                    user.phoneNumber = form.getValues("phone");
+                    user.birthday = formattedDob;
+                    localStorage.setItem("user", JSON.stringify(user));
+                } else {
+                    toast.error("Cập nhật thông tin thất bại");
+                }
+            });
+        });
+    } else {
+        const data = {
+            id: localStorage.getItem("user") 
+                ? JSON.parse(localStorage.getItem("user") || "{}").id 
+                : 0,
+            firstName: form.getValues("firstName"),
+            lastName: form.getValues("lastName"),
+            email: form.getValues("email"),
+            phoneNumber: form.getValues("phone"),
+            birthday: formattedDob,
+        };
+        const response = await editUserProfile(data);
+        if (response.errCode === 0) {
+            toast.success("Cập nhật thông tin thành công");
+            user.firstName = form.getValues("firstName");
+            user.lastName = form.getValues("lastName");
+            user.email = form.getValues("email");
+            user.phoneNumber = form.getValues("phone");
+            user.birthday = formattedDob;
+            localStorage.setItem("user", JSON.stringify(user));
+        } else {
+            toast.error("Cập nhật thông tin thất bại");
+        }
+    }
+};
 
   return (
       <>

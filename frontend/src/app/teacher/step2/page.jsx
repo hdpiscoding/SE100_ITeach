@@ -118,6 +118,7 @@ const Step2 = () => {
   const courseId = searchParams.get("courseId");
   const router = useRouter();
   const fileInputRef = useRef(null);
+  const [isShowExpand, setIsShowExpand] = useState(false);
 
   const courseState = useCourseState();
   const chapterState = useChapterState();
@@ -174,7 +175,7 @@ const Step2 = () => {
       if (response.data) {
         toast.success("Xóa chương  thành công!");
         lessonState.setHidden(true);
-        lessonState.contentMarkDown("");
+        lessonState.setContentMarkDown("");
         lessonState.setExerciseMarkDown("");
         courseState.setChapters(
           courseState.chapters.filter((chapter) => chapter.id !== id)
@@ -375,7 +376,8 @@ const Step2 = () => {
   }
   return true;
     };
- const handleAddLesson = async () => {
+  const handleAddLesson = async () => {
+   setIsShowExpand(false);
     
      if(!validateAddLesson())
      {
@@ -952,7 +954,11 @@ const Step2 = () => {
                                   onClick={()=>handleClickAddLesson(chapter.id)}
                                   className="text-gray-500 bg-stroke1 rounded-sm lg:text-lg md:text-base sm:text-sm text-xs"
                                 >
-                                  <AddIcon sx={{ color: "white" }} />
+                                <AddIcon sx={{ color: "white" }} onClick={
+                                  () => {
+                                    setIsShowExpand(true);
+                                  }
+                                 } />
                                 </button>
                             
                             </div>
@@ -1033,7 +1039,9 @@ const Step2 = () => {
               </div>
             </div>
           </div>
-          <div className="flex justify-start items-center space-x-10 my-10 lg:text-xl md:text-lg text-xs">
+          {isShowExpand && (
+            <>
+              <div className="flex justify-start items-center space-x-10 my-10 lg:text-xl md:text-lg text-xs">
             <div
               className="inline-block cursor-pointer"
               onClick={() => lessonState.setActiveTab("content")}
@@ -1075,6 +1083,8 @@ const Step2 = () => {
               onChange={handleEditorChange}
             />
           </div>
+            </>
+          )}
           <div className="flex justify-end space-x-3">
             { !lessonState.hidden &&(
               <div>
@@ -1098,7 +1108,10 @@ const Step2 = () => {
                 border-orange hover:bg-OrangeHover lg:text-lg md:text-base sm:text-sm text-xs">
               Thêm bài học 
              </button>
-                <button onClick={()=>lessonState.setHidden(true)} className="bg-white text-orange px-5
+                      <button onClick={() => {
+                        lessonState.setHidden(true);
+                        setIsShowExpand(false);
+                }} className="bg-white text-orange px-5
                  py-2 rounded-md border border-orange hover:bg-lightOrangeHover lg:text-lg md:text-base sm:text-sm text-xs">
                 Hủy
               </button>

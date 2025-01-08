@@ -177,7 +177,7 @@ const Step2 = () => {
       if (response.data) {
         toast.success("Xóa chương  thành công!");
         lessonState.setHidden(true);
-        lessonState.contentMarkDown("");
+        lessonState.setContentMarkDown("");
         lessonState.setExerciseMarkDown("");
         courseState.setChapters(
           courseState.chapters.filter((chapter) => chapter.id !== id)
