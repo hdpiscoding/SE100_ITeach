@@ -96,6 +96,9 @@ const commonPaths = [
   "/api/v1/change-password",
   "/upload",
   "/down-image",
+  "/api/v1/delete-course-categories",
+  "/api/v1/post-course-categories",
+  "/api/v1/put-course-categories",
 ];
 
 const auth = (req, res, next) => {

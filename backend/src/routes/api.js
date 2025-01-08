@@ -80,7 +80,23 @@ const initARoutes = (app) => {
   );
   router.post("/api/v1/send-email", teacherController.handleSendEmailToStudent);
   router.get("/api/v1/chart-data", adminController.handleGetChartData);
-  router.get("/api/v1/get-my-course-chapters", studentController.handleGetMyCourseChapter);
+  router.get(
+    "/api/v1/get-my-course-chapters",
+    studentController.handleGetMyCourseChapter
+  );
+  router.delete(
+    "/api/v1/delete-course-categories",
+    adminController.handleDeleteCourseCategories
+  );
+  router.post(
+    "/api/v1/post-course-categories",
+    adminController.handlePostCourseCategories
+  );
+  router.put(
+    "/api/v1/put-course-categories",
+    adminController.handlePutCourseCategories
+  );
+
   return app.use("/", router);
 };
 export default initARoutes;

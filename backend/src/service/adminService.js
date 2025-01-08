@@ -499,6 +499,75 @@ const getChartData = (year) => {
     }
   });
 };
+const deleteCourseCategories = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!data.id) {
+        resolve({
+          errCode: 1,
+          errMessage: "Missing required parameters",
+        });
+      } else {
+        let category = await db.CourseCategory.destroy({
+          where: { id: data.id },
+        });
+        resolve({
+          errCode: 0,
+          errMessage: "OK",
+        });
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+const postCourseCategories = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!data.name) {
+        resolve({
+          errCode: 1,
+          errMessage: "Missing required parameters",
+        });
+      } else {
+        let category = await db.CourseCategory.create({
+          categoryName: data.name,
+        });
+        resolve({
+          errCode: 0,
+          errMessage: "OK",
+          id: category.id,
+        });
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+const putCourseCategories = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!data.name) {
+        resolve({
+          errCode: 1,
+          errMessage: "Missing required parameters",
+        });
+      } else {
+        let category = await db.CourseCategory.update(
+          { categoryName: data.name },
+          { where: { id: data.id } }
+        );
+        resolve({
+          errCode: 0,
+          errMessage: "OK",
+        });
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
 module.exports = {
   getAllTeacher,
   getPopularTeacher,
@@ -511,4 +580,7 @@ module.exports = {
   getAllCourseOfTeacher,
   createNewCourseCategory,
   getChartData,
+  deleteCourseCategories,
+  postCourseCategories,
+  putCourseCategories,
 };
